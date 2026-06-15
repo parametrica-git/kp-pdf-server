@@ -1,0 +1,3066 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КП — Parametrica</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ececec;
+  --sb: #2b3134;
+  --sb2: #333c40;
+  --sb-border: #3e4749;
+  --sb-text: #d4d8d9;
+  --sb-muted: #7a8486;
+  --paper: #ffffff;
+  --ink: #384347;
+  --ink-soft: #4d575b;
+  --muted: #9ba0a3;
+  --line: #c9ccca;
+  --line-soft: #e3e5e3;
+  --accent: #b89a5e;
+  --accent2: rgba(184,154,94,0.18);
+  --zebra: #f5f7f7;
+  --hdr-bg: #eef1f1;
+}
+/* === Helvetica Neue (как в оригинальном КП). Кириллические OTF + Condensed Bold === */
+@font-face { font-family:'HNeue'; src:url('kp_assets/fonts/HelveticaNeueCyr-Thin.otf') format('opentype'); font-weight:100; font-style:normal; font-display:swap; }
+@font-face { font-family:'HNeue'; src:url('kp_assets/fonts/HelveticaNeueCyr-UltraLight.otf') format('opentype'); font-weight:200; font-style:normal; font-display:swap; }
+@font-face { font-family:'HNeue'; src:url('kp_assets/fonts/HelveticaNeueCyr-Light.otf') format('opentype'); font-weight:300; font-style:normal; font-display:swap; }
+@font-face { font-family:'HNeue'; src:url('kp_assets/fonts/HelveticaNeueCyr-Roman.otf') format('opentype'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'HNeue'; src:url('kp_assets/fonts/HelveticaNeueCyr-Medium.otf') format('opentype'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'HNeueCond'; src:url('kp_assets/fonts/Helvetica Neue Condensed Bold.ttf') format('truetype'); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:'DINCondensed'; src:url('kp_assets/fonts/DINCondensed.woff2') format('woff2'); font-weight:600; font-style:normal; font-display:swap; }  /* DIN-условный (Oswald) для артикулов на стр. продукта */
+
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: "HNeue","HelveticaNeueCyr","Helvetica Neue",Arial,Helvetica,sans-serif;
+  font-size: 12px;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;  /* печать фонов (в т.ч. headless) */
+}
+input, select, textarea, button { font-family: inherit; }
+
+/* ====== LAYOUT ====== */
+.layout { display: flex; height: 100vh; overflow: hidden; }
+
+/* ====== SIDEBAR ====== */
+.sidebar {
+  width: 310px; min-width: 310px;
+  background: var(--sb);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sb-head {
+  padding: 13px 16px 10px;
+  border-bottom: 1px solid var(--sb-border);
+  flex-shrink: 0;
+}
+.sb-head h1 { font-size: 12px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+.sb-head .sub { font-size: 10px; color: var(--sb-muted); margin-top: 2px; }
+.sb-body {
+  flex: 1; overflow-y: auto; padding-bottom: 16px;
+}
+.sb-body::-webkit-scrollbar { width: 4px; }
+.sb-body::-webkit-scrollbar-thumb { background: var(--sb-border); border-radius: 2px; }
+
+.panel {
+  padding: 0 14px 10px;
+  border-bottom: 1px solid var(--sb-border);
+}
+.panel-title {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--accent);
+  padding: 10px 0 7px;
+}
+.field { margin-bottom: 6px; }
+.field label { display: block; font-size: 9.5px; color: var(--sb-muted); margin-bottom: 2px; }
+.field input[type=text], .field input[type=number], .field select, .field textarea {
+  width: 100%; padding: 5px 8px;
+  background: #3a4448; border: 1px solid var(--sb-border);
+  color: var(--sb-text); border-radius: 4px;
+  font-size: 11px;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--accent); outline: none; background: #414d52;
+}
+.field-row { display: flex; gap: 6px; }
+.field-row .field { flex: 1; }
+.field textarea { resize: vertical; line-height: 1.4; }
+
+.toggle-row {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; color: var(--sb-text);
+  margin-bottom: 5px; cursor: pointer;
+}
+.toggle-row input[type=checkbox] { cursor: pointer; accent-color: var(--accent); }
+.fx-info { font-size: 8.5px; color: var(--sb-muted); font-weight: 400; }
+.fx-row { display: flex; gap: 5px; align-items: stretch; }
+.fx-row #kp-rate { flex: 1; }
+.fx-btn { background: var(--sb2); border: 1px solid var(--sb-border); color: var(--sb-text); border-radius: 4px; padding: 0 9px; cursor: pointer; font-size: 13px; line-height: 1; }
+.fx-btn:hover { border-color: var(--accent); color: #fff; }
+.fx-auto { display: flex; align-items: center; gap: 5px; font-size: 9.5px; color: var(--sb-muted); margin-top: 3px; cursor: pointer; }
+.fx-auto input { accent-color: var(--accent); cursor: pointer; }
+
+/* Items list (selected) */
+.items-list { padding: 0 14px; }
+.item-row {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 7px;
+  background: var(--sb2);
+  border: 1px solid var(--sb-border);
+  border-radius: 4px; margin-bottom: 4px;
+}
+.item-art {
+  font-size: 10.5px; font-weight: 700; color: #fff;
+  min-width: 60px; flex-shrink: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.item-typelab {
+  flex: 1; padding: 2px 5px;
+  background: #3a4448; border: 1px solid var(--sb-border);
+  color: var(--sb-text); border-radius: 3px;
+  font-size: 10px; min-width: 0;
+}
+.item-typesel {
+  width: 30px; padding: 2px 2px;
+  background: #3a4448; border: 1px solid var(--sb-border);
+  color: var(--sb-text); border-radius: 3px;
+  font-size: 10px; cursor: pointer; flex-shrink: 0;
+}
+.item-qty {
+  width: 36px; padding: 2px 4px;
+  background: #3a4448; border: 1px solid var(--sb-border);
+  color: var(--sb-text); border-radius: 3px;
+  font-size: 10px; text-align: right; flex-shrink: 0;
+}
+.item-del {
+  color: var(--sb-muted); cursor: pointer; font-size: 14px;
+  flex-shrink: 0; padding: 0 2px; line-height: 1;
+  user-select: none;
+}
+.item-del:hover { color: #e07070; }
+.items-empty {
+  font-size: 10px; color: var(--sb-muted); padding: 4px 0 6px;
+  font-style: italic;
+}
+
+/* Catalog */
+.catalog-search {
+  padding: 8px 14px 6px;
+}
+.catalog-search input {
+  width: 100%; padding: 6px 10px;
+  background: #3a4448; border: 1px solid var(--sb-border);
+  color: var(--sb-text); border-radius: 4px; font-size: 11px;
+}
+.catalog-search input:focus { border-color: var(--accent); outline: none; }
+.catalog-search input::placeholder { color: var(--sb-muted); }
+.col-group { padding: 0 14px; }
+.col-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--sb-muted);
+  padding: 6px 0 3px;
+}
+.cat-item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 3px 5px; border-radius: 3px;
+  cursor: default;
+}
+.cat-item:hover { background: rgba(255,255,255,0.04); }
+.cat-name {
+  flex: 1; font-size: 11px; color: var(--sb-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cat-add {
+  width: 20px; height: 18px; flex-shrink: 0;
+  background: #3a4448; border: 1px solid var(--sb-border);
+  color: var(--sb-muted); border-radius: 3px;
+  cursor: pointer; font-size: 14px; line-height: 16px;
+  text-align: center; user-select: none;
+  transition: background 0.15s;
+}
+.cat-add:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ====== MAIN AREA ====== */
+.main-area {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+}
+.top-bar {
+  background: #fff; border-bottom: 1px solid var(--line);
+  padding: 8px 16px;
+  display: flex; align-items: center; gap: 8px;
+  flex-shrink: 0; flex-wrap: wrap;
+}
+.top-bar img { height: 22px; }
+.top-bar-title {
+  font-size: 12px; font-weight: 700; color: var(--ink);
+  flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.btn {
+  border: 1px solid var(--ink); background: var(--ink);
+  color: #fff; padding: 5px 11px; font-size: 11px;
+  border-radius: 4px; cursor: pointer;
+}
+.btn:hover { opacity: 0.88; }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.accent { background: var(--accent); border-color: var(--accent); }
+.btn.sm { padding: 4px 9px; font-size: 10.5px; }
+.save-status { font-size: 10px; color: #c8a24a; white-space: nowrap; margin: 0 3px; cursor: default; }
+/* собственный диалог подтверждения (нативный confirm() не работает в iOS-вебвью Documents) */
+.ui-modal-ov { position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.ui-modal-box { background: #fff; border-radius: 12px; padding: 20px 22px; max-width: 380px; width: 100%; box-shadow: 0 16px 48px rgba(0,0,0,.35); }
+.ui-modal-msg { font-size: 14px; color: var(--ink); line-height: 1.45; margin-bottom: 18px; }
+.ui-modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+.ui-modal-btns .btn { padding: 9px 16px; font-size: 13px; }
+
+/* ====== PAPER SCROLL ====== */
+.paper-scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;   /* лист вписан по ширине центра — не залезает под панели */
+  background: var(--bg); padding: 20px 24px;
+}
+.paper-stack {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 12mm;
+}
+
+/* ====== ВИТРИНА (правая панель выбора моделей) ====== */
+.showcase {
+  width: 358px; min-width: 358px;
+  background: var(--sb); color: var(--sb-text);
+  display: flex; flex-direction: column; overflow: hidden;
+  border-left: 1px solid var(--sb-border);
+}
+.showcase.hidden { display: none; }
+
+/* ====== МОБИЛЬНЫЙ РЕЖИМ (телефон/узкий экран ≤1024px) ====== */
+.m-toggle, .m-close, .drawer-backdrop { display: none; }
+@media (max-width: 1024px) {
+  html, body { height: auto; overflow: visible; -webkit-overflow-scrolling: touch; }  /* прокрутка всей страницы пальцем (iOS) */
+  .layout { display: block; height: auto; overflow: visible; }
+  .main-area { min-height: 100vh; display: block; overflow: visible; }
+  .sidebar, .showcase {
+    position: fixed; top: 0; bottom: 0; z-index: 300;
+    width: 88vw; max-width: 380px; min-width: 0;
+    box-shadow: 0 0 28px rgba(0,0,0,.55); transition: transform .25s ease; will-change: transform;
+  }
+  .sidebar { left: 0; transform: translateX(-102%); }
+  .showcase { right: 0; left: auto; border-left: none; transform: translateX(102%); }
+  .showcase.hidden { display: flex; }                 /* на мобиле скрываем трансформом, не display */
+  .sidebar.m-open, .showcase.m-open { transform: none; }
+  .m-toggle {
+    display: flex; position: fixed; top: 9px; z-index: 260;
+    width: 44px; height: 44px; align-items: center; justify-content: center;
+    background: var(--ink); color: #fff; border: none; border-radius: 10px;
+    font-size: 19px; box-shadow: 0 2px 8px rgba(0,0,0,.35); cursor: pointer;
+  }
+  #m-form-btn { left: 9px; }
+  #m-vitr-btn { right: 9px; }
+  .m-close {
+    display: flex; position: absolute; top: 8px; right: 8px; z-index: 5;
+    width: 34px; height: 34px; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.14); color: #fff; border: none; border-radius: 8px;
+    font-size: 17px; cursor: pointer;
+  }
+  .drawer-backdrop.show { display: block; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 280; }
+  .top-bar { padding: 8px 58px; }
+  .paper-scroll { padding: 60px 6px 28px; overflow: visible; height: auto; }   /* контент течёт в body, скроллит страница */
+  .paper-stack { width: 793.7px; align-items: flex-start; }   /* стопка = ширине листа A4, чтобы transform:scale считался верно */
+}
+.sc-head { padding: 11px 13px 9px; border-bottom: 1px solid var(--sb-border); flex-shrink: 0; }
+.sc-title { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.sc-title .sc-cnt { font-size: 11px; color: var(--sb-muted); font-weight: 600; text-transform: none; letter-spacing: 0; }
+.sc-toolbar { display: flex; gap: 6px; align-items: center; }
+.sc-toolbar select { flex: 1; min-width: 0; background: #3a4448; color: var(--sb-text); border: 1px solid var(--sb-border); border-radius: 4px; padding: 5px 7px; font-size: 11px; }
+.sc-mini { background: transparent; color: var(--sb-muted); border: 1px solid var(--sb-border); border-radius: 4px; padding: 5px 8px; font-size: 10.5px; cursor: pointer; white-space: nowrap; }
+.sc-mini:hover { color: #fff; border-color: var(--accent); }
+.sc-body { flex: 1; overflow-y: auto; padding: 9px 12px 4px; }
+.sc-body::-webkit-scrollbar { width: 8px; }
+.sc-body::-webkit-scrollbar-thumb { background: var(--sb-border); border-radius: 2px; }
+.sc-colhead { display: flex; align-items: center; gap: 7px; margin: 9px 2px 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--sb-muted); cursor: pointer; user-select: none; }
+.sc-colhead:first-child { margin-top: 2px; }
+.sc-colhead input { accent-color: var(--accent); cursor: pointer; }
+.sc-colhead .sc-colcnt { font-weight: 600; color: var(--sb-border); }
+.sc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+.sc-card { position: relative; background: #fff; border-radius: 7px; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: border-color .12s; }
+.sc-card:hover { border-color: var(--sb-muted); }
+.sc-card.sel { border-color: var(--accent); }
+.sc-thumb { width: 100%; aspect-ratio: 4 / 3; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.sc-thumb img { width: 100%; height: 100%; object-fit: contain; }
+.sc-thumb .sc-noimg { font-size: 10px; color: #c4c4c4; }
+.sc-check { position: absolute; top: 5px; left: 5px; width: 18px; height: 18px; border-radius: 4px; background: rgba(255,255,255,0.9); border: 1px solid #b5b5b5; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: transparent; }
+.sc-card.sel .sc-check { background: var(--accent); border-color: var(--accent); color: #fff; }
+.sc-meta { padding: 5px 7px 7px; background: #fff; }
+.sc-art { font-size: 11px; font-weight: 700; color: #1c1c1c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-dim { font-size: 9px; color: #8a8a8a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.sc-price { font-size: 11px; font-weight: 700; color: #1c1c1c; margin-top: 2px; }
+.sc-price .sc-cur { font-size: 9px; font-weight: 600; color: #8a8a8a; }
+.sc-foot { border-top: 1px solid var(--sb-border); padding: 9px 12px 11px; display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
+.sc-foot-info { font-size: 11px; color: var(--sb-muted); }
+.sc-foot-info b { color: #fff; }
+.sc-foot-sum { color: var(--accent); font-weight: 700; }
+.sc-actions { display: flex; gap: 6px; }
+.sc-actions .btn { flex: 1; text-align: center; padding: 6px 4px; }
+.form-wrap { position: relative; flex: 1; }
+#form-btn { width: 100%; }
+.form-menu { display: none; position: absolute; bottom: calc(100% + 5px); left: 0; right: 0; background: #2f363a; border: 1px solid var(--sb-border); border-radius: 6px; padding: 4px; z-index: 50; box-shadow: 0 6px 20px rgba(0,0,0,0.4); max-height: 250px; overflow-y: auto; }
+.form-menu.open { display: block; }
+.fm-sec { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sb-muted); padding: 5px 7px 2px; }
+.fm-item { font-size: 12px; color: var(--sb-text); padding: 6px 8px; border-radius: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.fm-item:hover { background: var(--accent); color: #fff; }
+.fm-hint { font-size: 9px; color: var(--sb-muted); }
+.fm-item:hover .fm-hint { color: #fff; }
+.sc-check { pointer-events: none; }
+.sc-ctl { display: flex; gap: 5px; margin-top: 5px; }
+.sc-ctl select { flex: 1; min-width: 0; font-size: 10px; padding: 3px 4px; border: 1px solid #cfcfcf; border-radius: 4px; background: #fff; color: #1c1c1c; }
+.sc-ctl input { width: 40px; font-size: 10px; padding: 3px 4px; border: 1px solid #cfcfcf; border-radius: 4px; text-align: center; }
+.sc-card:not(.sel) .sc-ctl { opacity: 0.5; }
+/* управление на странице продукта (НЕ печатается) */
+/* выбор на странице продукта (НЕ печатается): крупная галочка сверху, под ней назначение + кол-во */
+.prod-controls { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin: 0 0 5mm; }
+.prod-controls .pc-chk { display: flex; align-items: center; gap: 10px; font-size: 10pt; color: #555; cursor: pointer; }
+.prod-controls .pc-chk .pc-big { width: 56px; height: 56px; accent-color: var(--accent); cursor: pointer; flex: 0 0 56px; }
+.prod-controls .pc-ctl { display: flex; gap: 6px; }
+.prod-controls select, .prod-controls input { font-size: 9pt; padding: 3px 6px; border: 1px solid #ccc; border-radius: 4px; }
+.prod-controls .pc-ctl input { width: 52px; text-align: center; }
+.prod-controls .pc-price { display: flex; align-items: center; gap: 6px; font-size: 9pt; color: #555; }
+.prod-controls .pc-price input { width: 84px; text-align: right; }
+.page-product.right .prod-controls, .page-product2 .prod-controls { align-items: flex-start; }
+/* цена — как было (основной шрифт), печатается */
+.prod-price { font-size: 14.7pt; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: 0.3px; }
+.page-product2 .prod-price { font-size: 12.6pt; }
+
+/* ====== A4 PAGE ====== */
+.page {
+  width: 210mm; height: 297mm;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  position: relative; flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* ====== COVER ====== */
+.page-cover {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.cover-logo { width: 55mm; margin-bottom: 14mm; }
+.cover-brand {
+  font-size: 34pt; font-weight: 700; color: var(--ink);
+  letter-spacing: 3px; text-transform: lowercase;
+  margin-bottom: 3mm;
+}
+.cover-sub {
+  font-size: 10.5pt; color: var(--muted);
+  letter-spacing: 1.5px; margin-bottom: 18mm;
+}
+.cover-rule { width: 28mm; height: 1px; background: var(--line); margin: 0 auto 6mm; }
+.cover-url { font-size: 9pt; color: var(--accent); letter-spacing: 0.5px; }
+
+/* ====== ОБЛОЖКА и ЗАКРЫТИЕ: фон-фото (подложка) + векторный HTML-текст со ссылками ====== */
+/* шрифт: Helvetica Neue если установлен, иначе тонкий системный (Segoe UI Light) */
+.page-titpage {
+  padding: 0; position: relative; overflow: hidden; background: #fff;
+  font-family: "HNeue", "HelveticaNeueCyr", "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.page-titpage .tp-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.page-titpage .tp { position: absolute; line-height: 1; white-space: nowrap; }
+.page-titpage .tp a { color: inherit; text-decoration: none; }
+/* закрытие: фотополоса-хедер сверху (единственное изображение) + иконки соцсетей */
+.page-titpage .end-header { position: absolute; top: 0; left: 0; width: 100%; height: 72mm; overflow: hidden; background: #fff; }
+.page-titpage .end-header img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+.page-titpage .end-social { position: absolute; left: 22.6mm; top: 106mm; display: flex; gap: 3.5mm; align-items: center; }
+.page-titpage .end-social a { display: block; width: 7.5mm; height: 7.5mm; }
+.page-titpage .end-social svg { width: 100%; height: 100%; fill: #b89070; display: block; }
+
+/* ====== STATIC PAGE (template PNG/JPG) ====== */
+.page-static { padding: 0; }
+.page-static img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+/* static template page with unified footer (низ обрезан под общий колонтитул) */
+.page-static-footed { padding: 0; display: flex; flex-direction: column; }
+.page-static-footed .sf-img {
+  width: 100%; flex: 1 1 auto; min-height: 0;
+  object-fit: cover; object-position: top center; display: block;
+}
+/* на статичных страницах колонтитул идёт В ПОТОКЕ (под фото), не absolute — чтобы не перекрывать фото */
+.page-static-footed .pg-footer {
+  position: static; left: auto; right: auto; bottom: auto;
+  margin: 0; padding: 1mm 12mm 4.5mm;
+  flex: 0 0 auto;
+}
+.page-static-footed .pg-foot-contacts { line-height: 1.3; }
+
+/* ====== PRODUCT SHEET (layout of original p.2) ====== */
+.page-product {
+  padding: 12mm 12mm 23mm;
+  display: flex; flex-direction: column;
+}
+/* фотополоса-хедер вверху страницы (как в оригинальном PDF), фон белый, обрезка сверху/снизу */
+.prod-header {
+  margin: -12mm -12mm 9mm; height: 42mm; width: auto;
+  background: #fff; overflow: hidden; flex-shrink: 0;
+}
+.prod-header img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center; display: block;
+}
+/* hero: основное изображение + блок описания СБОКУ (как в оригинальном PDF) */
+.prod-hero {
+  display: flex; align-items: flex-start; gap: 5mm;
+  flex-shrink: 0; height: 132mm; margin-bottom: 0;
+}
+/* левая страница: описание слева, изображение справа; правая — наоборот */
+.page-product.right .prod-hero { flex-direction: row-reverse; }
+/* описание уже по ширине, начинается примерно от середины основного изображения */
+.prod-info { width: 46mm; flex-shrink: 0; margin-top: 64mm; position: relative; z-index: 5; }
+.page-product.right .prod-info { text-align: right; }
+/* рамка основного изображения (обрезает зум содержимого) */
+.prod-banner {
+  flex: 1 1 auto; min-width: 0; height: 100%;
+  background: #fff; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.prod-banner-img {
+  width: 100%; height: 100%;
+  object-fit: contain; object-position: center; display: block;
+  transform-origin: center center;
+}
+.prod-head {
+  display: flex; align-items: baseline; margin: 0 0 3mm; flex-shrink: 0;
+  padding: 0 3mm;   /* артикул вровень с текстом внутри рамки (у неё тоже 3мм отступ) */
+}
+.page-product.right .prod-head { justify-content: flex-end; }
+.prod-art {
+  font-family: 'DINCondensed','DIN Condensed','Oswald','HNeueCond',sans-serif;
+  font-size: 28.75pt; font-weight: 600; color: var(--ink);   /* +25% */
+  letter-spacing: 0.5px; line-height: 1;
+}
+/* блок «цена + размеры» — тонкая рамка как в таблице; строки цена / РАЗМЕРЫ / размеры разделены тонкими линиями */
+.prod-box { width: 100%; flex-shrink: 0; border: 0.5px solid var(--line); border-radius: 1mm; overflow: hidden; position: relative; z-index: 5; background: #fff; }
+.prod-price-row { padding: 2.5mm 3mm; border-bottom: 0.5px solid var(--line); }
+.prod-price-row .prod-price { margin: 0; }
+.prod-specs-head {
+  padding: 2mm 3mm; border-bottom: 0.5px solid var(--line);
+  font-size: 8pt; font-weight: 700; color: var(--ink); text-transform: uppercase; letter-spacing: 0.5px;
+}
+.prod-specs { padding: 2.5mm 3mm; }
+.spec-row {
+  display: flex; justify-content: space-between;
+  margin-bottom: 2mm; font-size: 8.5pt;
+}
+.spec-row:last-child { margin-bottom: 0; }
+.spec-lab { color: var(--ink-soft); }
+.spec-val { font-weight: 700; color: var(--ink); }
+/* выравнивание цены/«Размеры» по стороне страницы (артикул — через .prod-head) */
+.page-product.right .prod-price, .page-product.right .prod-specs-head { text-align: right; }
+
+/* product gallery (extra photos, fills remaining space) */
+.prod-gallery {
+  flex: 1; display: grid; gap: 3mm; margin-top: 2mm; min-height: 0; align-items: stretch;
+}
+.prod-gallery.gg1 { grid-template-columns: 1fr; }
+.prod-gallery.gg2 { grid-template-columns: 1fr 1fr; }
+.prod-gallery.gg3 { grid-template-columns: 1fr 1fr 1fr; }
+.prod-gallery.gg4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+/* фон белый (фон изображений белый — переход не виден), незаполненная область остаётся белой */
+.prod-gallery-cell {
+  background: #fff; border-radius: 0; overflow: hidden;
+}
+.prod-gallery-cell img {
+  width: 100%; height: 100%; object-fit: contain; object-position: center; display: block;
+  transform-origin: center center;
+}
+
+/* ====== 2 МОДЕЛИ НА СТРАНИЦЕ (ОДИН хедер сверху, ниже две модели через линию) ====== */
+.page-product2 { padding: 0 12mm 22mm; display: flex; flex-direction: column; }
+/* единый хедер на страницу — прежняя высота, на всю ширину, у края страницы */
+.page-product2 .prod-header { height: 42mm; margin: 0 -12mm 5mm; flex-shrink: 0; }
+.pp-unit { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+/* тонкая разделительная линия на всю ширину страницы */
+.pp-divider { border-top: 0.5px solid var(--line); margin: 0 -12mm; flex-shrink: 0; }
+/* компактный hero: описание по центру сбоку, без большого пустого места */
+.page-product2 .prod-hero { height: 78mm; flex: 0 0 auto; align-items: center; margin-bottom: 0; }
+.page-product2 .prod-info { margin-top: 0; }
+.page-product2 .prod-art { font-size: 22.5pt; }
+.page-product2 .prod-specs-head { padding: 1.4mm 3mm; }
+.page-product2 .prod-price-row, .page-product2 .prod-specs { padding-top: 1.6mm; padding-bottom: 1.6mm; }
+.page-product2 .spec-row { margin-bottom: 1.4mm; }
+/* нижние 3 фото — ближе к основному (минимальный зазор) */
+.page-product2 .prod-gallery { flex: 0 0 32mm; margin-top: 1mm; }
+/* зеркало по РАЗВОРОТУ: левая страница — описание слева, правая — справа (обе модели одинаково) */
+.page-product2.right .prod-hero { flex-direction: row-reverse; }
+.page-product2.right .prod-info { text-align: right; }
+.page-product2.right .prod-head { justify-content: flex-end; }
+
+/* ====== PRICING TABLE ====== */
+.page-table { padding: 9mm 12mm 22mm; display: flex; flex-direction: column; }
+/* фотополоса-хедер вверху КП (как в оригинальном PDF) */
+.kp-header {
+  margin: -9mm -12mm 5mm; height: 42mm;
+  background: #fff; overflow: hidden; flex-shrink: 0;
+}
+.kp-header img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+
+/* ====== ПРАЙС-ЛИСТ (каталог) ====== */
+.page-pricelist { padding: 9mm 12mm 14mm; display: flex; flex-direction: column; }
+.page-pricelist .kp-header { margin: -9mm -12mm 4mm; height: 42mm; }
+.pl-title { font-size: 46px; font-weight: 200; color: var(--ink); letter-spacing: 0.5px; line-height: 1; margin-bottom: 2mm; }
+.pl-sub { font-size: 6.5pt; color: var(--muted); font-weight: 400; letter-spacing: 0; }
+.pl-section { font-size: 12pt; font-weight: 700; color: var(--ink); letter-spacing: 0.5px; margin: 2.5mm 0 0.5mm; }
+/* СРОКИ И УСЛОВИЯ / ПРИМЕЧАНИЯ под таблицами прайса — в 2 колонки */
+.pl-terms { display: flex; gap: 9mm; margin-top: 5mm; }
+.pl-terms-col { flex: 1; min-width: 0; }
+.pl-terms-head { font-size: 7pt; font-weight: 700; text-transform: uppercase; color: var(--ink); letter-spacing: 0.4px; margin-bottom: 1.8mm; }
+.pl-term { display: flex; gap: 4px; font-size: 6.3pt; color: var(--ink-soft); line-height: 1.32; margin-bottom: 1.4mm; }
+.pl-term::before { content: "‣"; color: var(--accent); flex-shrink: 0; }
+.pl-coltitle {
+  font-size: 7pt; font-weight: 700; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 1px;
+  border-bottom: 1px solid var(--line); padding: 1mm 0 0.5mm; margin-top: 1.5mm;
+}
+.pl-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.pl-table th {
+  font-size: 6pt; font-weight: 700; color: var(--muted); text-transform: uppercase;
+  letter-spacing: 0.2px; text-align: left; padding: 0.7mm 1.5mm 0.5mm; border-bottom: 1px solid var(--line-soft);
+  white-space: nowrap;
+}
+.pl-table td {
+  font-size: 7.3pt; padding: 0.5mm 1.5mm; border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle; line-height: 1.12;
+}
+.pl-table td.pl-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pl-table td.pl-dim { font-size: 6.6pt; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pl-table td.pl-price { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.pl-table .r { text-align: right; }
+/* 3 колонки = 9 ячеек: модель | размер | цена ×3 */
+.pl-c3 th:nth-child(3n+1), .pl-c3 td:nth-child(3n+1) { width: 9%; }
+.pl-c3 th:nth-child(3n+2), .pl-c3 td:nth-child(3n+2) { width: 16%; }
+.pl-c3 th:nth-child(3n),   .pl-c3 td:nth-child(3n)   { width: 8%; }
+/* вертикальные разделители между тройками */
+.pl-c3 th:nth-child(3n), .pl-c3 td:nth-child(3n) { border-right: 1px solid var(--line); padding-right: 2.5mm; }
+.pl-c3 th:last-child, .pl-c3 td:last-child { border-right: none; }
+/* «Наименование» крайней левой колонки — вровень с левым краем таблицы (остальные не трогаем) */
+.pl-c3 th:first-child, .pl-c3 td:first-child { padding-left: 0; }
+.pl-c3 th:nth-child(3n+1):not(:first-child), .pl-c3 td:nth-child(3n+1):not(:first-child) { padding-left: 2.5mm; }
+.kp-title { font-size: 46px; font-weight: 200; color: var(--ink); letter-spacing: 0.3px; margin-bottom: 2.5mm; }
+.kp-sub { font-size: 9.5pt; font-weight: 700; color: var(--ink); margin-bottom: 2.5mm; }
+.kp-for { font-size: 8.5pt; color: var(--ink); margin-bottom: 1mm; }
+.kp-date-line { font-size: 8.5pt; color: var(--ink-soft); margin-bottom: 4mm; }
+/* ручное редактирование текста на странице КП (только на экране) */
+@media screen {
+  .page-table [contenteditable="true"]:hover { outline: 1px dashed rgba(184,154,94,0.55); outline-offset: 1px; cursor: text; }
+  .page-table [contenteditable="true"]:focus { outline: 1px solid var(--accent); background: #fffdf5; }
+}
+
+table.kt {
+  width: 100%; border-collapse: collapse; table-layout: fixed;
+}
+table.kt col.c1 { width: 69%; }   /* наименование — максимум места (1 строка при любом выборе) */
+table.kt col.c3 { width: 7%; }    /* кол-во */
+table.kt col.c4 { width: 12%; }   /* цена — по макс. возможной цене */
+table.kt col.c5 { width: 12%; }   /* сумма */
+/* кнопка удаления строки — сбоку (в правом поле), НЕ в таблице → таблица одной ширины на экране и в печати */
+table.kt td.last-col { position: relative; }
+.kt .row-del {
+  position: absolute; right: -6.5mm; top: 50%; transform: translateY(-50%);
+  width: 4mm; height: 4mm; line-height: 3.6mm; text-align: center;
+  color: var(--muted); font-size: 11px; cursor: pointer; border-radius: 3px;
+}
+.kt .row-del:hover { color: #c0392b; background: #f3e1e1; }
+/* без вертикальных линий и заливки: только тонкие горизонтальные разделители строк; верх/низ таблицы без границы.
+   Веса (HNeue даёт реальные веса до 500 — без синтетического жирного): середина — Regular(400),
+   САМАЯ верхняя (шапка) и нижняя (итог) строки — Medium(500), чуть жирнее. Заглавные подписи — одного размера (7pt). */
+table.kt thead th {
+  color: var(--ink); font-weight: 500;
+  padding: 4px 5px; font-size: 7pt; text-transform: uppercase;
+  letter-spacing: 0.2px; border: none; border-bottom: 1px solid var(--line);
+  text-align: left; vertical-align: middle; white-space: nowrap;   /* «Кол-во, шт.» — в одну строку */
+}
+table.kt thead th.r { text-align: right; }
+table.kt thead th.c { text-align: center; }
+table.kt tbody td {
+  padding: 3px 5px; border: none; border-bottom: 1px solid var(--line);   /* видимый разделитель строк (переживает масштаб на мобиле) */
+  font-size: 7.5pt; color: var(--ink-soft); font-weight: 400;
+  vertical-align: middle; line-height: 1.25;
+}
+table.kt tbody td.r { text-align: right; font-weight: 400; color: var(--ink); }
+table.kt tbody td.c { text-align: center; font-weight: 400; color: var(--ink); }
+table.kt tbody td.dims { color: var(--ink-soft); font-weight: 400; }
+table.kt tr.tr-subtotal td { font-weight: 400; color: var(--ink); border: none; border-bottom: 0.5px solid var(--line-soft); padding: 4px 5px; }
+table.kt tr.tr-discount td { font-weight: 400; color: var(--ink); border: none; border-bottom: 0.5px solid var(--line-soft); }
+table.kt tr.tr-net td { font-weight: 400; color: var(--ink); border: none; border-bottom: 0.5px solid var(--line-soft); }
+table.kt tr.tr-delivery td { font-weight: 400; color: var(--ink); border: none; border-bottom: 0.5px solid var(--line-soft); }
+table.kt tr.tr-mount td { font-weight: 400; color: var(--ink); border: none; border-bottom: 0.5px solid var(--line-soft); }
+table.kt tr.tr-total td {
+  font-weight: 500; font-size: 7.5pt; color: var(--ink);
+  border: none; border-top: 0.5px solid var(--line);   /* тонкая линия перед итогом; снизу таблицы границы нет */
+}
+table.kt tr.empty-row td { color: var(--muted); }
+/* ЗАГЛАВНЫЕ подписи — ВСЕ одного размера (7pt); верх (шапка) и низ (итог) чуть жирнее только за счёт веса */
+table.kt thead th,
+table.kt tr.tr-subtotal td:first-child, table.kt tr.tr-discount td:first-child, table.kt tr.tr-net td:first-child,
+table.kt tr.tr-delivery td:first-child, table.kt tr.tr-mount td:first-child, table.kt tr.tr-total td:first-child { text-transform: uppercase; font-size: 7pt; }
+/* редактируемые размеры в таблице (только экран) */
+table.kt tbody td.dims[contenteditable] { cursor: text; }
+table.kt tbody td.dims[contenteditable]:hover, table.kt tbody td.dims[contenteditable]:focus { background: var(--accent2); outline: 1px dashed var(--accent); }
+/* редактируемые вручную суммы (Упаковка/Монтаж) */
+table.kt td.r[contenteditable] { cursor: text; }
+table.kt td.r[contenteditable]:hover, table.kt td.r[contenteditable]:focus { background: var(--accent2); outline: 1px dashed var(--accent); }
+
+/* артикул-ссылка на страницу товара (тёмно-синий, как в прайсе) */
+.art-link { color: #000099; text-decoration: none; cursor: pointer; font-weight: 700; }
+.art-link:hover { text-decoration: underline; }
+.art-link-plain { color: inherit; text-decoration: none; cursor: pointer; }
+@media print { .art-link { color: #000099 !important; text-decoration: none; } }
+
+/* ----- inline-edit widgets (перенос из инвойсов) ----- */
+.kt .desc-cell { position: relative; width: 100%; line-height: 1.25; font-size: 6.8pt; }
+.kt .desc-cell .desc-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kt .desc-cell .desc-edit { margin-top: 1px; }
+.kt .desc-cell .nm { font-weight: 500; color: var(--ink); }
+.kt .desc-cell.empty .nm { color: var(--muted); font-style: italic; }
+.kt .desc-cell .desc-dims { color: var(--ink-soft); }
+.kt .desc-cell .desc-dims::before, .kt .desc-cell .desc-mat::before, .kt .desc-cell .desc-asm::before { content: " · "; color: var(--muted); }
+.kt .desc-cell .desc-dims:hover, .kt .desc-cell .desc-dims:focus { background: var(--accent2); outline: 1px dashed var(--accent); cursor: text; }
+.kt .desc-cell .desc-mat { color: var(--ink-soft); }
+.kt .desc-cell .desc-asm { color: var(--muted); }
+/* ручная строка («+ строка»): наименование/габариты вписываются вручную, плейсхолдер — серым */
+.kt .desc-cell .cust-edit { outline: none; }
+.kt .desc-cell .cust-edit:empty::before { content: attr(data-ph); color: var(--muted); font-weight: 400; font-style: italic; }
+.kt .desc-cell .cust-edit:hover, .kt .desc-cell .cust-edit:focus { background: var(--accent2); outline: 1px dashed var(--accent); cursor: text; }
+@media print { .kt .desc-cell .cust-edit:empty::before { content: ""; } }
+.kt .desc-cell .type-pick, .kt .desc-cell .desc-pick { display: inline-block; vertical-align: middle; margin-left: 4px; }
+.kt .desc-pick, .kt .type-pick {
+  position: relative; width: 16px; height: 15px; flex: 0 0 16px;
+  border: 1px solid var(--line); border-radius: 3px; background: #fafafa;
+  cursor: pointer; font-size: 8px; text-align: center; line-height: 13px;
+}
+.kt .desc-pick { color: var(--muted); }
+.kt .desc-pick::after { content: "▼"; pointer-events: none; }
+.kt .type-pick { color: var(--ink); font-weight: 700; }
+.kt .desc-pick select, .kt .type-pick select {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  border: none; padding: 0; margin: 0; background: transparent;
+  opacity: 0; cursor: pointer; font-family: inherit;
+}
+.kt .desc-pick select option, .kt .desc-pick select optgroup,
+.kt .type-pick select option {
+  color: #1a1a1a; background: #fff; font-family: Arial, sans-serif;
+  font-size: 12px; opacity: 1; font-weight: 400;
+}
+.kt .desc-pick select optgroup { font-weight: 700; }
+.kt input.qty {
+  width: 42px; text-align: right; border: 1px solid var(--line);
+  padding: 1px 4px; border-radius: 3px; font-size: 7.5pt;
+  font-family: inherit; color: var(--ink); background: #fff;
+}
+.kt input.pct {
+  width: 50px; text-align: right; border: 1px solid var(--line);
+  padding: 1px 4px; border-radius: 3px; font-size: 7.5pt;
+  font-family: inherit; color: var(--ink); background: #fff; font-weight: 700;
+}
+.kt .pc-suffix { color: var(--ink); font-weight: 400; padding-left: 3px; white-space: nowrap; }
+.kt .price-cell { position: relative; width: 100%; text-align: right; cursor: text; min-height: 14px; }
+.kt .price-cell .price-text { font-weight: 400; color: var(--ink); display: block; min-height: 13px; }
+.kt .price-cell input.price-overlay {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  border: 1px dashed transparent; padding: 0 4px; margin: 0;
+  background: transparent; opacity: 0; cursor: text; text-align: right;
+  font-family: inherit; font-size: 7.5pt; color: var(--ink); box-sizing: border-box;
+}
+.kt .price-cell:hover input.price-overlay { opacity: 1; background: #fff; border-color: var(--line); }
+.kt .price-cell input.price-overlay:focus { opacity: 1; background: #fffbe6; border-color: var(--accent); outline: none; z-index: 5; }
+.kt .price-cell:hover .price-text, .kt .price-cell:focus-within .price-text { visibility: hidden; }
+.kt .act { color: var(--muted); cursor: pointer; padding: 0 3px; user-select: none; }
+.kt .act:hover { color: #e07070; }
+
+.kp-remark {
+  font-size: 6.5pt; color: var(--muted);
+  margin-top: 2.5mm; font-style: italic;
+}
+.kp-terms {
+  display: flex; flex-direction: row; gap: 8mm; margin-top: 4mm; align-items: flex-start;
+}
+.kp-terms > div { flex: 1 1 0; min-width: 0; }
+.terms-head {
+  font-size: 7pt; font-weight: 700; color: var(--ink);
+  text-transform: uppercase; letter-spacing: 0.3px;
+  margin-bottom: 1.5mm;
+}
+.term-li {
+  display: flex; gap: 4px; margin-bottom: 1mm;
+  font-size: 7pt; color: var(--ink-soft); line-height: 1.3;
+}
+.term-li::before { content: "‣"; color: var(--accent); flex-shrink: 0; }
+/* примечания — тем же шрифтом и цветом, что и сроки */
+.kp-notes .term-li { font-size: 7pt; color: var(--ink-soft); line-height: 1.3; margin-bottom: 1mm; }
+.kp-notes .term-li::before { color: var(--accent); }
+
+/* ----- реквизиты производителя + подпись/печать ----- */
+.kp-signblock {
+  display: flex; justify-content: flex-end; align-items: flex-start;
+  gap: 8mm; margin-top: auto; margin-bottom: 13mm;   /* блок к низу; подпись/печать ещё выше; образцы и реквизиты по ВЕРХУ */
+}
+.kp-leftspace { flex: 1 1 auto; display: flex; justify-content: flex-start; align-items: flex-start; }  /* образцы покраски — у левого поля, заголовок на уровне «ПРОИЗВОДИТЕЛЬ» */
+/* ----- образцы покраски: прямоугольник 4:3 (горизонтально), при 2-х — делится пополам по вертикали → вертикальные (общий размер тот же) ----- */
+.kp-samples { display: flex; flex-direction: column; gap: 1.5mm; width: 68mm; }
+.kp-samples-title { font-size: 7pt; font-weight: 700; color: var(--ink); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1mm; }
+.kp-samples-row { display: flex; gap: 2mm; height: 51mm; }   /* 68мм × 3/4 = 51мм (4:3) */
+.kp-sample { position: relative; flex: 1 1 0; min-width: 0; height: 100%; }
+.kp-sample img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 1mm; }
+.kp-sample figcaption {                              /* надпись поверх изображения выкраса */
+  position: absolute; left: 0; right: 0; bottom: 0; text-align: center;
+  font-size: 8pt; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.3px;
+  padding: 1mm 0; background: rgba(0,0,0,0.42);
+}
+.kp-rightcol { position: relative; flex: 0 0 92mm; width: 92mm; display: flex; flex-direction: column; gap: 2mm; }
+.kp-req { font-size: 7pt; color: var(--ink-soft); line-height: 1.45; max-width: 60mm; }   /* уже — печать справа не мешает */
+.kp-req-head {
+  font-weight: 700; color: var(--ink); margin-bottom: 1mm; letter-spacing: 0.3px;
+  text-transform: uppercase; font-size: 7pt;
+}
+.kp-req-row { white-space: nowrap; }   /* каждая строка реквизитов — ровно одна визуальная строка */
+.kp-req-name { font-weight: 700; color: var(--ink); }
+.kp-req-spacer { display: none; height: 3.2mm; }   /* при переполнении страницы — одна пустая строка вместо реквизитов */
+.kp-req.req-collapsed .kp-req-details { display: none; }
+.kp-req.req-collapsed .kp-req-spacer { display: block; }
+.kp-iban-pad { visibility: hidden; }   /* невидимый префикс «IBAN » — чтобы второй номер счёта стоял ровно под первым */
+.kp-sign { position: relative; width: 92mm; flex-shrink: 0; padding-top: 0; min-height: 0; }
+.kp-sign-label { font-size: 8pt; color: var(--ink); font-weight: 700; min-height: 4mm; }
+.kp-sign-row { display: flex; align-items: flex-end; gap: 2mm; margin-top: 2mm; }   /* подпись поднята */
+.kp-sign-name { flex: 0 0 auto; font-size: 8pt; color: var(--ink); white-space: nowrap; padding-bottom: 0.3mm; }  /* имя слева: «Сатиков Р.А. /» */
+.kp-sign-line { flex: 1 1 0; border-bottom: 1px solid var(--ink); height: 0; }      /* линия справа */
+.kp-sign-img { position: absolute; left: 24mm; top: 0mm; width: 34mm; z-index: 3; pointer-events: none; }  /* подпись на строке «Сатиков Р.А.» (итог: поднята на 1.5мм от исходной) */
+.kp-stamp-img {                                     /* печать в блоке подписи → привязана к строке «Сатиков Р.А.» (не зависит от числа строк реквизитов) */
+  position: absolute; top: -9.8mm; right: 0; width: 30mm; height: 30mm;
+  z-index: 2; pointer-events: none;
+}
+
+/* ====== PHOTO PAGE ====== */
+.page-photos { padding: 7mm 8mm 22mm; display: flex; flex-direction: column; }
+.photo-grid {
+  flex: 1;
+  display: grid;
+  gap: 3mm;
+}
+.photo-grid.g6 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.photo-grid.g5 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.photo-grid.g4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.photo-grid.g3 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr; }
+.photo-grid.g2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr; }
+.photo-grid.g1 { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.photo-cell {
+  background: var(--hdr-bg); border-radius: 1mm; overflow: hidden;
+}
+.photo-cell img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+/* ====== WE ARE TRUSTED ====== */
+.page-trust {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20mm; text-align: center; gap: 10mm;
+}
+.trust-title {
+  font-size: 20pt; font-weight: 700; color: var(--ink);
+  letter-spacing: 4px; text-transform: uppercase;
+}
+.trust-subtitle {
+  font-size: 9pt; color: var(--muted); letter-spacing: 1px;
+  line-height: 1.8;
+}
+.trust-logos {
+  display: flex; flex-wrap: wrap;
+  justify-content: center; gap: 6mm;
+  max-width: 150mm;
+}
+.trust-logo-cell {
+  width: 28mm; height: 14mm;
+  background: var(--hdr-bg); border-radius: 2mm;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ====== CLOSING ====== */
+.page-closing {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20mm; text-align: center; gap: 5mm;
+}
+.closing-title {
+  font-size: 18pt; font-weight: 700; color: var(--ink);
+}
+.closing-company {
+  font-size: 11pt; color: var(--accent); letter-spacing: 0.5px;
+}
+.closing-rule { width: 28mm; height: 1px; background: var(--line); }
+.closing-info { font-size: 8.5pt; color: var(--ink-soft); line-height: 1.8; }
+.closing-director {
+  font-size: 8.5pt; color: var(--ink); line-height: 1.6; margin-top: 2mm;
+}
+.closing-url {
+  font-size: 9pt; font-weight: 700; color: var(--accent);
+  letter-spacing: 0.5px; margin-top: 4mm;
+}
+
+/* ====== PAGE FOOTER ====== */
+.pg-footer {
+  position: absolute;
+  bottom: 8mm; left: 12mm; right: 12mm;
+}
+.pg-footer.right { text-align: right; }
+.pg-footer.left  { text-align: left; }
+.pg-foot-top { font-size: 8.8pt; font-weight: 700; color: #000; line-height: 1; letter-spacing: 0.2px; }
+.pg-foot-top .pg-num { font-weight: 400; color: #000; font-size: 7.5pt; }
+.pg-foot-contacts { font-size: 7pt; color: #000; margin-top: 1mm; line-height: 1.3; }
+.pg-foot-contacts b { font-weight: 700; }
+.pg-footer a { color: inherit; text-decoration: none; }
+
+/* ====== PRINT ====== */
+@media print {
+  html, body { height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .sidebar, .top-bar, .no-print, .m-toggle, .drawer-backdrop, .ui-modal-ov { display: none !important; }
+  .layout { display: block !important; height: auto !important; overflow: visible !important; margin: 0 !important; }
+  .main-area { display: block !important; height: auto !important; overflow: visible !important; margin: 0 !important; }
+  .paper-scroll { overflow: visible !important; background: #fff !important; padding: 0 !important; margin: 0 !important; height: auto !important; }
+  /* сброс экранного масштаба — печать всегда в полный размер A4 (и zoom, и transform, и инлайн-margin от fitPaper) */
+  .paper-stack { gap: 0 !important; display: block !important; zoom: 1 !important; transform: none !important; margin: 0 !important; width: auto !important; align-items: stretch !important; }
+  .page {
+    border: none !important; box-shadow: none !important; margin: 0 !important;
+    width: 210mm !important; height: 297mm !important; overflow: hidden !important;
+    page-break-after: always; break-after: page;
+    break-inside: avoid; page-break-inside: avoid;   /* не дробить лист, если бумага чуть меньше (Letter) */
+  }
+  .page:last-child { page-break-after: auto; break-after: auto; }
+  /* таблица: прячем интерактивные пикеры/кнопки, показываем чистый текст */
+  .kt .desc-pick, .kt .type-pick,
+  .kt select, .kt .act, .kt .col-act, td.col-act, th.col-act { display: none !important; }
+  .kt tr.empty-row { display: none !important; }
+  .kt input.qty, .kt input.pct, .kt input.price-overlay {
+    border: none !important; background: transparent !important; padding: 0 !important;
+    -webkit-appearance: none; appearance: none; box-shadow: none !important; outline: none !important;
+  }
+  .kt input.price-overlay { opacity: 0 !important; }
+  .kt .price-cell .price-text { visibility: visible !important; }
+  .kt .desc-cell .desc-text { white-space: normal !important; overflow: visible !important; }
+  .kt input::-webkit-outer-spin-button, .kt input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; display: none; }
+  .kt input[type="number"] { -moz-appearance: textfield; }
+  @page { size: 210mm 297mm; margin: 0; }   /* явный размер A4 + без полей (убирает белые рамки и колонтитулы Safari) */
+}
+/* РЕЖИМ ЭКСПОРТА PDF в самой странице (snapdom/html2canvas рендерят ЭКРАН, а не @media print) —
+   на время сборки вешаем html.pdf-exporting и прячем то же, что при печати: контролы, стрелки, рамки полей. */
+html.pdf-exporting .no-print { display: none !important; }
+html.pdf-exporting .kt .desc-pick, html.pdf-exporting .kt .type-pick,
+html.pdf-exporting .kt select, html.pdf-exporting .kt .act, html.pdf-exporting .kt .col-act,
+html.pdf-exporting td.col-act, html.pdf-exporting th.col-act { display: none !important; }
+html.pdf-exporting .kt tr.empty-row { display: none !important; }
+html.pdf-exporting .kt input.qty, html.pdf-exporting .kt input.pct, html.pdf-exporting .kt input.price-overlay {
+  border: none !important; background: transparent !important; padding: 0 !important;
+  -webkit-appearance: none; appearance: none; box-shadow: none !important; outline: none !important;
+}
+html.pdf-exporting .kt input.price-overlay { opacity: 0 !important; }
+html.pdf-exporting .kt .price-cell .price-text { visibility: visible !important; }
+html.pdf-exporting .kt .desc-cell .desc-text { white-space: normal !important; overflow: visible !important; }
+html.pdf-exporting .kt input::-webkit-outer-spin-button, html.pdf-exporting .kt input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; display: none; }
+html.pdf-exporting .kt input[type="number"] { -moz-appearance: textfield; }
+</style>
+<!-- движок генерации PDF в самой странице (обход системных рамок/колонтитулов iOS-печати) -->
+<script src="https://cdn.jsdelivr.net/npm/@zumer/snapdom@1/dist/snapdom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<!-- AUTH удалён — открытый доступ без логина -->
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- мобильные переключатели панелей -->
+  <button class="m-toggle no-print" id="m-form-btn" onclick="mDrawer('form')" title="Параметры КП" aria-label="Параметры">☰</button>
+  <button class="m-toggle no-print" id="m-vitr-btn" onclick="mDrawer('vitrina')" title="Витрина моделей" aria-label="Витрина">🖼</button>
+  <div class="drawer-backdrop no-print" id="drawer-backdrop" onclick="closeDrawers()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-head">
+      <button class="m-close no-print" onclick="closeDrawers()" title="Закрыть" aria-label="Закрыть">✕</button>
+      <h1>КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</h1>
+      <div class="sub">Parametrica — редактор КП</div>
+    </div>
+    <div class="sb-body">
+
+      <!-- Переключение между КП -->
+      <div class="panel" id="kp-switch-panel" style="display:none;">
+        <div class="panel-title">Активный КП</div>
+        <div class="field">
+          <select id="kp-active-select" onchange="selectKp(+this.value)"></select>
+          <div style="font-size:9px;color:var(--sb-muted);margin-top:4px;line-height:1.35;">Поля ниже правят выбранный КП. Новый КП формируется из витрины справа и наследует клиента, условия и примечания.</div>
+        </div>
+      </div>
+
+      <!-- Реквизиты -->
+      <div class="panel">
+        <div class="panel-title">Реквизиты</div>
+        <div class="field">
+          <label>Производитель (реквизиты + печать)</label>
+          <select id="kp-entity" onchange="onEntityChange()">
+            <option value="ip" selected>ИП «Сатиков Р.А.»</option>
+            <option value="too">ТОО «Parametrica»</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field" style="flex:0 0 70px">
+            <label>№ КП</label>
+            <input type="number" id="kp-num" value="1" min="1" oninput="render()">
+          </div>
+          <div class="field">
+            <label>Дата</label>
+            <input type="text" id="kp-date" oninput="render()">
+          </div>
+        </div>
+        <label class="toggle-row"><input type="checkbox" id="opt-valid" onchange="onValidToggle()"> Действует до (по умолч. +1 неделя от даты КП)</label>
+        <div class="field" id="valid-wrap" style="display:none;">
+          <input type="date" id="kp-valid" oninput="render()" title="дата окончания (можно изменить; пусто = авто +1 неделя)">
+        </div>
+        <div class="field">
+          <label>Клиент / Компания</label>
+          <input type="text" id="kp-client" placeholder='ТОО «Компания»' oninput="render()">
+        </div>
+        <label class="toggle-row"><input type="checkbox" id="opt-obj" onchange="document.getElementById('obj-wrap').style.display=this.checked?'':'none'; render()"> для объекта</label>
+        <div class="field" id="obj-wrap" style="display:none;">
+          <input type="text" id="kp-obj" placeholder="название объекта" oninput="render()">
+        </div>
+        <div class="field">
+          <label>Город</label>
+          <input type="text" id="kp-city" value="г.Алматы" oninput="render()">
+        </div>
+      </div>
+
+      <!-- Цены -->
+      <div class="panel">
+        <div class="panel-title">Цены</div>
+        <div class="field-row">
+          <div class="field" style="flex:0 0 80px">
+            <label>Валюта</label>
+            <select id="kp-curr" onchange="onCurrChange()">
+              <option value="KZT" selected>KZT</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
+          <div class="field" id="rate-wrap">
+            <label>Курс USD→<span id="fx-rate-cur">KZT</span> <span id="fx-info" class="fx-info"></span></label>
+            <div class="fx-row">
+              <input type="number" id="kp-rate" value="500" min="1" step="0.0001" oninput="onRateInput()">
+              <button type="button" class="fx-btn" id="fx-refresh" onclick="refreshFxRate()" title="Обновить курс (как на Wix — источник XE)">↻</button>
+            </div>
+            <label class="fx-auto"><input type="checkbox" id="opt-fxauto" checked onchange="onFxAutoToggle()"> авто-курс как на Wix (XE)</label>
+          </div>
+        </div>
+        <!-- «Упаковка и транспортные расходы» и «Монтаж»: галочки показа строк + суммы.
+             По умолчанию подставляется авто-тариф РК (Wix) — он не стирается, а правится; пусто = снова авто. -->
+        <input type="checkbox" id="opt-km-auto" checked style="display:none;">
+        <div class="field-row" id="km-manual">
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="opt-pkg" checked onchange="render()"> Упаковка и транспорт (<span id="pkg-curr">KZT</span>)</label>
+            <input type="number" id="kp-pkg" min="0" step="1000" onchange="onPkgInput()" title="по умолчанию авто-тариф; впишите свою сумму">
+          </div>
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:4px;"><input type="checkbox" id="opt-mount" checked onchange="render()"> Монтаж (<span id="mount-curr">KZT</span>)</label>
+            <input type="number" id="kp-mount" min="0" step="1000" onchange="onMountInput()" title="по умолчанию авто-тариф; впишите свою сумму">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Предоплата, %</label>
+            <input type="number" id="kp-prepay" value="80" min="0" max="100" oninput="balancePay('prepay')">
+          </div>
+          <div class="field">
+            <label>Срок изготовл., дней</label>
+            <input type="number" id="kp-days" value="30" min="1" oninput="render()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Оплата 2 — % и условие (сумма с предоплатой = 100%)</label>
+          <div class="fx-row">
+            <input type="number" id="kp-pay2-pct" value="20" min="0" max="100" placeholder="%" style="flex:0 0 60px" oninput="balancePay('pay2')">
+            <input type="text" id="kp-pay2-text" placeholder="напр. перед вывозом со склада" oninput="render()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Оплата 3 (необяз.) — % и условие</label>
+          <div class="fx-row">
+            <input type="number" id="kp-pay3-pct" min="0" max="100" placeholder="%" style="flex:0 0 60px" oninput="balancePay('pay3')">
+            <input type="text" id="kp-pay3-text" placeholder="(по умолч. авто)" oninput="render()">
+          </div>
+        </div>
+        <label class="toggle-row"><input type="checkbox" id="opt-pay4" onchange="render()"> Оплата 4 — за доставку/монтаж (после доставки/монтажа)</label>
+        <div class="field-row">
+          <div class="field">
+            <label>Срок доставки, дней</label>
+            <input type="number" id="kp-delivery" value="7" min="0" placeholder="— (необяз.)" oninput="render()">
+          </div>
+          <div class="field">
+            <label>Срок монтажа, дней</label>
+            <input type="number" id="kp-mountdays" value="5" min="0" placeholder="— (необяз.)" oninput="render()">
+          </div>
+        </div>
+        <label class="toggle-row" style="margin-top:4px;"><input type="checkbox" id="opt-discount" onchange="document.getElementById('discount-wrap').style.display=this.checked?'':'none'; render()"> Применить скидку</label>
+        <div class="field" id="discount-wrap" style="display:none;">
+          <label>Скидка, % (пусто = авто по сумме)</label>
+          <input type="number" id="kp-discount" placeholder="авто" min="0" max="100" step="0.5" oninput="render()">
+        </div>
+      </div>
+
+      <!-- Описание в таблице -->
+      <div class="panel">
+        <div class="panel-title">Описание товара</div>
+        <div class="field">
+          <label>Материал (в строке КП)</label>
+          <textarea id="kp-mat" rows="2" oninput="render()">фанера березовая ФСФ 23-26мм., масло «тик»</textarea>
+        </div>
+        <div class="field">
+          <label>Сборка</label>
+          <input type="text" id="kp-assembly" value="в разборе" oninput="render()">
+        </div>
+      </div>
+
+      <!-- Страницы -->
+      <div class="panel">
+        <div class="panel-title">Состав КП</div>
+        <div style="font-size:9px;color:var(--sb-muted);margin:0 0 5px;line-height:1.4;">КП, Каталог и Прайс формируются из <b>витрины справа</b> — отметьте модели и нажмите «Сформировать в ▾». Несколько КП идут стопкой.</div>
+        <label class="toggle-row"><input type="checkbox" id="opt-sheets" checked onchange="render()"> Листы моделей (фото + описание)</label>
+        <label class="toggle-row" style="padding-left:14px;"><input type="checkbox" id="opt-2up" onchange="render()"> 2 модели на странице</label>
+        <label class="toggle-row"><input type="checkbox" id="opt-portfolio" checked onchange="render()"> Портфолио проектов (стр. 4–8)</label>
+        <label class="toggle-row"><input type="checkbox" id="opt-trust" checked onchange="render()"> Партнёры — WE ARE TRUSTED</label>
+        <label class="toggle-row"><input type="checkbox" id="opt-note-assembly" onchange="render()"> Примечание: сборка заказчиком</label>
+        <div style="font-size:9px;color:var(--sb-muted);margin-top:4px;line-height:1.4;">Обложка и задняя страница включены всегда.</div>
+      </div>
+
+      <!-- Выбранные товары и каталог моделей убраны с левой панели: выбор моделей — через витрину справа.
+           Элементы оставлены в DOM (скрыты), чтобы не ломать существующую логику. -->
+      <div class="panel" style="display:none;">
+        <div class="panel-title">В КП (<span id="items-count">0</span>)</div>
+        <div class="items-list" id="items-list">
+          <div class="items-empty">Добавьте товары из каталога ↓</div>
+        </div>
+      </div>
+
+      <div class="catalog-search" style="display:none;">
+        <input type="text" id="cat-search" placeholder="Поиск по артикулу..." oninput="filterCatalog()">
+      </div>
+      <div id="catalog-list" style="display:none;">
+        <div style="padding:12px 14px; font-size:10px; color:var(--sb-muted);">Загрузка каталога…</div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <div class="top-bar no-print">
+      <img src="logo.png" alt="Parametrica">
+      <div class="top-bar-title" id="top-title">КП №1</div>
+      <button class="btn ghost sm" onclick="toggleShowcase()" title="Витрина — интерактивный выбор моделей">🖼 Витрина</button>
+      <span id="save-status" class="save-status" title="">● автосейв в браузер</span>
+      <button class="btn ghost sm" onclick="saveNamed()" title="Сохранить КП в файл .json (в привязанную папку)">💾 Сохранить</button>
+      <button class="btn ghost sm" onclick="openSaved()" title="Открыть сохранённый КП .json">📂 Открыть</button>
+      <button class="btn ghost sm" onclick="linkFolder()" title="Привязать папку для автосохранения КП">📁 Папка</button>
+      <button class="btn ghost sm" onclick="clearItems()" title="Очистить только выбор моделей (витрину)">Очистить</button>
+      <button class="btn ghost sm" onclick="resetAll()" title="Удалить сформированные КП/каталог/прайс и начать с чистого листа">🗑 Сбросить</button>
+      <button class="btn ghost sm" onclick="doPrint()" title="Печать / сохранить в PDF (на телефоне — готовый PDF без полей)">🖨 Печать / PDF</button>
+      <button class="btn accent sm" onclick="doPrintFinal()" title="Итоговый КП — цены позиций уже со скидкой, без строки «Скидка»">📄 Итоговый PDF</button>
+    </div>
+    <div class="paper-scroll">
+      <div class="paper-stack" id="paper-stack"></div>
+    </div>
+  </div>
+
+  <!-- ВИТРИНА: интерактивный выбор моделей (миниатюры + цена) -->
+  <aside class="showcase no-print" id="showcase">
+    <div class="sc-head">
+      <button class="m-close no-print" onclick="closeDrawers()" title="Закрыть" aria-label="Закрыть">✕</button>
+      <div class="sc-title">Витрина моделей <span class="sc-cnt" id="sc-cnt">выбрано: 0</span></div>
+      <div class="sc-toolbar">
+        <select id="sc-sort" onchange="buildShowcase()">
+          <option value="col">По коллекциям</option>
+          <option value="price-asc">Цена ↑ (дешевле)</option>
+          <option value="price-desc">Цена ↓ (дороже)</option>
+          <option value="len">По габаритам (длина)</option>
+        </select>
+        <button class="sc-mini" onclick="scSelectAll(true)">Все</button>
+        <button class="sc-mini" onclick="scSelectAll(false)">Снять</button>
+      </div>
+    </div>
+    <div class="sc-body" id="sc-body"></div>
+    <div class="sc-foot">
+      <div class="sc-foot-info">Отмечено: <b id="sc-foot-cnt">0</b> <span class="sc-foot-sum" id="sc-sum"></span></div>
+      <div class="sc-foot-info" style="margin-top:2px;">сформировать выбранное в:</div>
+      <div class="sc-actions">
+        <div class="form-wrap" id="form-wrap">
+          <button class="btn accent sm" id="form-btn" onclick="toggleFormMenu()" title="Куда сформировать отмеченные модели">Сформировать в ▾</button>
+          <div class="form-menu" id="form-menu"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+// ===== AUTH удалён — открытый доступ без логина =====
+
+// ===== STATE =====
+let PRODS = {};  // article → product
+let GALLERY_PICKS = {};  // article → [filename...] — нижние фото (рендеры на белом, разные ракурсы, без видов сверху/сбоку)
+let BANNER_PICKS = {};   // article → filename — основное фото (рендер на белом, скамья целиком, перспектива)
+// ручная замена нижних фото для отдельных моделей (порядок 2up: 1-2-3-4); переживает перегенерацию подбора
+const GALLERY_OVERRIDES = {
+  'W2.12': ['01.jpg', '09.jpg', '04.jpg', '10.jpg'],  // были боковые 14,15 → перспективы 04,10
+  'Wi-8':  ['02.jpg', '05.jpg', '06.jpg'],  // убрал обрезанный 01 (нижнее левое) и слабый 04→05 — оставлено 3 фото
+  'P4.3':  ['01.jpg', '06.jpg', '04.jpg', '05.jpg'],  // 2-е слева 03 (серый фон) → 06
+  'FL1.1': ['01.jpg', '06.jpg', '07.jpg', '09.jpg'],  // правое 14 и 2-е справа 08 → перспективы 07,09
+  'W3.1':  ['01.jpg', '03.jpg', '05.jpg']   // 2-up (3 нижних): 01 бок-eye + 03 верх + 05 бок-сверху
+};
+// ОТДЕЛЬНЫЙ подбор для режима «1 модель на лист» (2 нижних слота) — где нужен более строгий набор,
+// чем в плотном 2-up. Если модели тут нет — берётся срез GALLERY_OVERRIDES/GALLERY_PICKS.
+const GALLERY_1UP = {
+  'W3.1':  ['05.jpg', '03.jpg']   // в 1-up убран 01 (зачёркнут) → ✓05 (бок-сверху) + 03 (верх); 2-up оставлен полным
+};
+// ручная замена ОСНОВНОГО фото
+const BANNER_OVERRIDES = {
+  'P4.3': '07.jpg'   // 06 переехало в галерею → основное почти идентичный 07
+};
+let PRODUCT_URLS = {};   // article → URL страницы товара на parametrica.org
+let IMAGE_ZOOM = {};     // article → {filename: zoom} — безопасное увеличение содержимого в кадре
+let ITEMS = [];  // БУФЕР витрины (стейджинг): [{id, article, typeLabel, priceType, qty, customPrice, customDesc}]
+let nextId = 0;
+// сформированные документы:
+let KPS = [];        // [{num, items:[...], data:{...поля КП...}}] — несколько независимых КП (стопкой)
+let activeKp = null; // номер редактируемого КП (форма слева правит именно его); null = шаблон (до 1-го КП)
+// поля формы, которые ХРАНЯТСЯ ПО КАЖДОМУ КП (клиент, условия, примечания). v=value, c=checkbox.
+// (валюта/курс/производитель/состав документа — общие для всего документа, не дублируются.)
+const KP_FIELDS = [
+  ['date','kp-date','v'], ['validOn','opt-valid','c'], ['valid','kp-valid','v'], ['client','kp-client','v'], ['objOn','opt-obj','c'], ['obj','kp-obj','v'], ['city','kp-city','v'],
+  ['prepay','kp-prepay','v'], ['days','kp-days','v'],
+  ['pay2pct','kp-pay2-pct','v'], ['pay2text','kp-pay2-text','v'], ['pay3pct','kp-pay3-pct','v'], ['pay3text','kp-pay3-text','v'],
+  ['pay4','opt-pay4','c'],
+  ['delivery','kp-delivery','v'], ['mountdays','kp-mountdays','v'],
+  ['mat','kp-mat','v'], ['assembly','kp-assembly','v'],
+  ['discount','kp-discount','v'], ['optDiscount','opt-discount','c'], ['noteAssembly','opt-note-assembly','c'],
+  ['pkgOn','opt-pkg','c'], ['mountOn','opt-mount','c']
+  // pkgUSD/mountUSD (ручные суммы) и kp-num — обрабатываются отдельно
+];
+let CATALOG = [];    // [article] — каталог (один)
+let PRICE = [];      // [article] — прайс (один)
+let FINAL_MODE = false;  // true → итоговый КП: цены позиций уже со скидкой, без строки «Скидка»
+let CATALOG_MODE = false; // true → каталог: все листы моделей + прайс-лист (Benches / Green Islands)
+const ASSET_V = '13';  // версия статичных картинок/данных (анти-кэш браузера)
+
+// авто-скидка по сумме заказа (USD), как в инвойсах
+const TIERS = [
+  { from: 5000, pct: 3 },
+  { from: 15000, pct: 5 },
+  { from: 40000, pct: 8 }
+];
+function autoDiscount(subtotalUSD) {
+  let pct = 0;
+  TIERS.forEach(t => { if (subtotalUSD >= t.from && t.pct > pct) pct = t.pct; });
+  return pct;
+}
+
+// тариф доставки+монтажа по РК как в Wix: по стоимости товара (USD) → тариф (USD); «до (включая)»
+const WIX_TARIFF = [
+  [901, 90], [1200, 100], [1500, 120], [2000, 150], [2500, 175], [3000, 200],
+  [4000, 275], [5000, 350], [6000, 400], [8000, 530], [9000, 600], [10000, 700],
+  [12500, 820], [15000, 1000], [20000, 1400], [60000, 2000], [Infinity, 2000]
+];
+function wixTariffUSD(valUSD) {
+  if (!(valUSD > 0)) return 0;
+  for (const [max, t] of WIX_TARIFF) { if (valUSD <= max) return t; }
+  return 2000;
+}
+
+// «N рабочий день / рабочих дня / рабочих дней» — авто-склонение по числу
+function plDays(n) {
+  n = Math.abs(parseInt(n, 10) || 0);
+  const d = n % 10, dd = n % 100;
+  const one = (d === 1 && dd !== 11);
+  const few = (d >= 2 && d <= 4 && !(dd >= 12 && dd <= 14));
+  return (one ? 'рабочий день' : few ? 'рабочих дня' : 'рабочих дней');
+}
+
+// модели, убираемые из каталога/прайса (плюс вся коллекция OTHER)
+const EXCLUDE_MODELS = ['C 1.1', 'C1.2', 'C 1.3', 'B 2.4', 'F3', 'L1.9', 'W 3.1', 'S 1', 'P2'];
+function applyExclusions() {
+  Object.keys(PRODS).forEach(art => {
+    if (PRODS[art].collection === 'other' || EXCLUDE_MODELS.includes(art)) delete PRODS[art];
+  });
+}
+
+// ===== LOAD =====
+async function loadProducts() {
+  try {
+    const r = await fetch('PRODUCTS/_data/products.json?cb=' + new Date().getTime());
+    PRODS = await r.json();
+    applyExclusions();   // убрать коллекцию OTHER и отдельные лишние модели
+    try { const g = await fetch('kp_assets/gallery_picks.json?v=' + ASSET_V); if (g.ok) GALLERY_PICKS = await g.json(); } catch(e) {}
+    Object.assign(GALLERY_PICKS, GALLERY_OVERRIDES);  // применяем ручные замены
+    try { const b = await fetch('kp_assets/banner_picks.json?v=' + ASSET_V); if (b.ok) BANNER_PICKS = await b.json(); } catch(e) {}
+    Object.assign(BANNER_PICKS, BANNER_OVERRIDES);  // ручные замены основного фото
+    try { const u = await fetch('kp_assets/product_urls.json?v=' + ASSET_V); if (u.ok) PRODUCT_URLS = await u.json(); } catch(e) {}
+    try { const z = await fetch('kp_assets/image_zoom.json?v=' + ASSET_V); if (z.ok) IMAGE_ZOOM = await z.json(); } catch(e) {}
+    buildCatalog();
+    buildShowcase();
+    if (isExportMode()) {
+      render();
+      try { const r2 = await fetch('kp_assets/_export_state.json?ts=' + Math.random()); if (r2.ok) applyState(await r2.json()); } catch(e) {}
+      window.__kpReady = true;
+    } else {
+      const saved = loadAutosave();        // восстановить последнюю сессию (localStorage)
+      if (saved) applyState(saved); else { buildCurrOptions(); render(); }
+      applyDefaultsMigration();            // одноразово применить новые дефолты сроков (30/7/5)
+      restoreFolder();                     // подключить ранее привязанную папку
+      loadFxRate(false);                   // подтянуть курс USD→KZT как на Wix (XE)
+    }
+  } catch(e) {
+    document.getElementById('catalog-list').innerHTML =
+      '<div style="padding:12px 14px; font-size:10px; color:#e07070;">Ошибка загрузки products.json<br>' + e.message + '</div>';
+  }
+}
+
+// ===== CATALOG UI =====
+const COLS = ['contour','slicing','radial','other'];
+const COL_RU = { contour:'Контур', slicing:'Слайсинг', radial:'Радиальные', other:'Прочее' };
+
+function buildCatalog() {
+  const groups = {};
+  COLS.forEach(c => groups[c] = []);
+  Object.entries(PRODS).forEach(([art, p]) => {
+    const c = p.collection || 'other';
+    if (!groups[c]) groups[c] = [];
+    groups[c].push({ art, p });
+  });
+
+  const wrap = document.getElementById('catalog-list');
+  wrap.innerHTML = '';
+
+  COLS.forEach(col => {
+    const items = groups[col];
+    if (!items || !items.length) return;
+    const grp = document.createElement('div');
+    grp.className = 'col-group'; grp.dataset.col = col;
+
+    const lbl = document.createElement('div');
+    lbl.className = 'col-label';
+    lbl.textContent = COL_EN[col] || (col || '').toUpperCase();
+    grp.appendChild(lbl);
+
+    items.forEach(({ art, p }) => {
+      const row = document.createElement('div');
+      row.className = 'cat-item'; row.dataset.art = art;
+
+      const name = document.createElement('div');
+      name.className = 'cat-name';
+      name.textContent = '«' + art + '»';
+      name.title = p.name_ru || art;
+
+      const btn = document.createElement('div');
+      btn.className = 'cat-add'; btn.textContent = '+';
+      btn.title = 'Добавить в КП';
+      btn.addEventListener('click', () => addItem(art));
+
+      row.appendChild(name); row.appendChild(btn);
+      grp.appendChild(row);
+    });
+    wrap.appendChild(grp);
+  });
+}
+
+function filterCatalog() {
+  const q = document.getElementById('cat-search').value.toLowerCase();
+  document.querySelectorAll('.cat-item').forEach(el => {
+    const art = (el.dataset.art || '').toLowerCase();
+    el.style.display = (!q || art.includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.col-group').forEach(g => {
+    const visible = [...g.querySelectorAll('.cat-item')].some(i => i.style.display !== 'none');
+    g.style.display = visible ? '' : 'none';
+  });
+}
+
+// ===== ВИТРИНА: интерактивный выбор моделей (миниатюры + цена) =====
+// набор моделей для каталога/прайса; пусто = все модели
+// «выбранные модели» = различные артикулы среди ITEMS; пусто = все модели (для каталога/прайса)
+function activeArts() {
+  const a = [...new Set(ITEMS.map(i => i.article))];
+  return a.length ? a : Object.keys(PRODS);
+}
+function scCollOf(art) { return (PRODS[art] && PRODS[art].collection) || 'other'; }
+function scThumbSrc(art) {
+  const p = PRODS[art]; if (!p) return '';
+  const fn = BANNER_PICKS[art] || (p.images || [])[0] || '';
+  return fn ? imgSrc(p, fn) : '';
+}
+function cssEsc(s) { return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/"/g, '\\"'); }
+
+// ---- ЕДИНЫЙ ВЫБОР (ITEMS — источник истины): чтение ----
+function selEntries(art) { return ITEMS.filter(i => i.article === art); }
+function isSel(art) { return selEntries(art).length > 0; }
+function isAnySel() { return ITEMS.some(i => PRODS[i.article]); }
+function selType(art) {
+  const e = selEntries(art);
+  const hasI = e.some(x => x.priceType === 'interior'), hasE = e.some(x => x.priceType === 'exterior');
+  if (hasI && hasE) return 'both'; if (hasE) return 'exterior'; if (hasI) return 'interior'; return '';
+}
+function selQty(art) { const e = selEntries(art); return e.length ? (e[0].qty || 1) : 1; }
+function scPrice(art) { const p = PRODS[art]; return p ? (p.price_interior_usd || p.price_exterior_usd || 0) : 0; }
+function scPriceByType(art, t) { const p = PRODS[art]; if (!p) return 0; return (t === 'exterior') ? (p.price_exterior_usd || p.price_interior_usd || 0) : (p.price_interior_usd || p.price_exterior_usd || 0); }
+
+// ---- ЕДИНЫЙ ВЫБОР: запись (правка из витрины ИЛИ со страницы продукта) ----
+function setSelType(art, type, qty) {
+  qty = Math.max(1, +qty || selQty(art) || 1);
+  ITEMS = ITEMS.filter(i => i.article !== art);
+  const mk = pt => ({ id: ++nextId, article: art, typeLabel: '', priceType: pt, qty: qty, customPrice: null, customDesc: null });
+  if (type === 'interior') ITEMS.push(mk('interior'));
+  else if (type === 'exterior') ITEMS.push(mk('exterior'));
+  else if (type === 'both') { ITEMS.push(mk('interior')); ITEMS.push(mk('exterior')); }
+}
+function selToggle(art) { if (isSel(art)) ITEMS = ITEMS.filter(i => i.article !== art); else setSelType(art, 'interior', 1); afterSelChange(); }
+function selSetType(art, t) { if (!t) ITEMS = ITEMS.filter(i => i.article !== art); else setSelType(art, t, selQty(art)); afterSelChange(); }
+function selSetQty(art, q) { q = Math.max(1, +q || 1); if (!isSel(art)) setSelType(art, 'interior', q); else selEntries(art).forEach(e => e.qty = q); afterSelChange(); }
+// правка буфера: обновляем только витрину/сайдбар/счётчик — документ НЕ трогаем (до «Сформировать»)
+function afterSelChange() { if (typeof renderItemsList === 'function') renderItemsList(); buildShowcase(); if (typeof scheduleAutosave === 'function') scheduleAutosave(); }
+
+// порядок витрины по выбранной сортировке
+function showcaseOrder() {
+  const sort = (document.getElementById('sc-sort') || {}).value || 'col';
+  const arts = Object.keys(PRODS);
+  if (sort === 'price-asc')  return { flat: arts.slice().sort((a, b) => scPrice(a) - scPrice(b) || natCompare(a, b)) };
+  if (sort === 'price-desc') return { flat: arts.slice().sort((a, b) => scPrice(b) - scPrice(a) || natCompare(a, b)) };
+  if (sort === 'len')        return { flat: arts.slice().sort((a, b) => lenOf(a) - lenOf(b) || natCompare(a, b)) };
+  const groups = {};
+  COLS.forEach(c => groups[c] = []);
+  arts.forEach(a => { const c = scCollOf(a); (groups[c] = groups[c] || []).push(a); });
+  Object.keys(groups).forEach(c => groups[c] = sortByLengthFamily(groups[c]));
+  return { groups };
+}
+// строка управления (назначение + кол-во) — общая для витрины и страницы продукта
+function selCtlHTML(art, cls) {
+  const t = selType(art);
+  return `<div class="${cls}" onclick="event.stopPropagation()">
+      <select onchange="selSetType('${esc(art)}', this.value)">
+        <option value=""${t===''?' selected':''}>—</option>
+        <option value="interior"${t==='interior'?' selected':''}>Интерьер</option>
+        <option value="exterior"${t==='exterior'?' selected':''}>Улица</option>
+        <option value="both"${t==='both'?' selected':''}>Обе</option>
+      </select>
+      <input type="number" min="1" value="${selQty(art)}" title="Количество" onchange="selSetQty('${esc(art)}', this.value)">
+    </div>`;
+}
+function scCardHTML(art) {
+  const p = PRODS[art];
+  const src = scThumbSrc(art);
+  const t = selType(art);
+  const sel = isSel(art) ? ' sel' : '';
+  const img = src
+    ? `<img loading="lazy" src="${src}" onerror="this.remove()">`
+    : '<span class="sc-noimg">нет фото</span>';
+  const usd = scPriceByType(art, t);
+  const price = usd ? `${moneyNum(usd)} <span class="sc-cur">${currLabel()}</span>` : '<span class="sc-cur">по запросу</span>';
+  return `<div class="sc-card${sel}" data-art="${esc(art)}">
+      <div class="sc-thumb" onclick="selToggle('${esc(art)}')">${img}</div>
+      <div class="sc-check">✓</div>
+      <div class="sc-meta">
+        <div class="sc-art" onclick="selToggle('${esc(art)}')" title="${esc(p && p.name_ru || art)}">«${esc(art)}»</div>
+        <div class="sc-dim">${esc(fmtDims(p))}</div>
+        <div class="sc-price">${price}</div>
+        ${selCtlHTML(art, 'sc-ctl')}
+      </div>
+    </div>`;
+}
+function buildShowcase() {
+  const body = document.getElementById('sc-body');
+  if (!body || !Object.keys(PRODS).length) return;
+  const keep = body.scrollTop;
+  const ord = showcaseOrder();
+  let html = '';
+  if (ord.flat) {
+    html = `<div class="sc-grid">${ord.flat.map(scCardHTML).join('')}</div>`;
+  } else {
+    COLS.forEach(col => {
+      const arts = ord.groups[col] || [];
+      if (!arts.length) return;
+      const allSel = arts.every(isSel);
+      html += `<div class="sc-colhead" data-col="${col}" onclick="scToggleCollection('${col}')">
+          <input type="checkbox" ${allSel ? 'checked' : ''} onclick="event.stopPropagation();scToggleCollection('${col}')">
+          ${COL_EN[col] || (col || '').toUpperCase()} <span class="sc-colcnt">· ${arts.length}</span></div>
+        <div class="sc-grid">${arts.map(scCardHTML).join('')}</div>`;
+    });
+  }
+  body.innerHTML = html;
+  body.scrollTop = keep;
+  scUpdateCounts();
+}
+function scUpdateCounts() {
+  const arts = ITEMS.filter(i => PRODS[i.article]);
+  const n = new Set(arts.map(i => i.article)).size;
+  const a = document.getElementById('sc-cnt'); if (a) a.textContent = 'выбрано: ' + n;
+  const b = document.getElementById('sc-foot-cnt'); if (b) b.textContent = n;
+  // сумма всех отмеченных в данный момент
+  let sumUSD = 0; arts.forEach(i => { sumUSD += priceOfKP(PRODS[i.article], i.priceType) * (i.qty || 1); });
+  const s = document.getElementById('sc-sum'); if (s) s.textContent = n ? ('· на сумму ' + fmtMoney(sumUSD)) : '';
+  // «2 модели на странице» — недоступно, пока не выбрано ≥2 моделей
+  const up = document.getElementById('opt-2up');
+  if (up) { up.disabled = n < 2; if (n < 2) up.checked = false; const lab = up.closest('label'); if (lab) lab.style.opacity = n < 2 ? '0.45' : ''; }
+}
+function scToggleCollection(col) {
+  const arts = Object.keys(PRODS).filter(a => scCollOf(a) === col);
+  const allSel = arts.length > 0 && arts.every(isSel);
+  arts.forEach(a => { if (allSel) ITEMS = ITEMS.filter(i => i.article !== a); else if (!isSel(a)) setSelType(a, 'interior', 1); });
+  afterSelChange();
+}
+function scSelectAll(on) {
+  if (on) Object.keys(PRODS).forEach(a => { if (!isSel(a)) setSelType(a, 'interior', 1); });
+  else ITEMS = [];
+  afterSelChange();
+}
+function toggleShowcase() {
+  if (isMobileUI()) { mDrawer('vitrina'); return; }
+  const el = document.getElementById('showcase'); if (el) el.classList.toggle('hidden');
+  setTimeout(fitPaper, 0);   // центр стал шире/уже — перевписать лист
+}
+// ---- мобильный режим: выезжающие панели (форма / витрина) + подгонка листа ----
+function isMobileUI() { return window.matchMedia('(max-width: 1024px)').matches; }
+function mDrawer(which) {
+  const sb = document.querySelector('.sidebar'), sc = document.querySelector('.showcase'), bg = document.getElementById('drawer-backdrop');
+  const target = which === 'form' ? sb : sc, other = which === 'form' ? sc : sb;
+  if (other) other.classList.remove('m-open');
+  const open = target && !target.classList.contains('m-open');
+  if (target) target.classList.toggle('m-open', open);
+  if (bg) bg.classList.toggle('show', !!open);
+}
+function closeDrawers() {
+  document.querySelectorAll('.sidebar, .showcase').forEach(e => e.classList.remove('m-open'));
+  const bg = document.getElementById('drawer-backdrop'); if (bg) bg.classList.remove('show');
+}
+function fitPaper() {
+  const sc = document.querySelector('.paper-scroll'), st = document.getElementById('paper-stack');
+  if (!sc || !st) return;
+  const cs = getComputedStyle(sc);
+  const avail = sc.clientWidth - parseFloat(cs.paddingLeft || 0) - parseFloat(cs.paddingRight || 0);
+  const z = Math.max(0.2, Math.min(1, avail / 793.7));   // 793.7px = ширина A4; вписываем лист в центр
+  // сброс обоих способов масштабирования
+  st.style.zoom = '';
+  st.style.transform = ''; st.style.transformOrigin = '';
+  st.style.marginRight = ''; st.style.marginBottom = ''; st.style.marginLeft = '';
+  if (z >= 0.998) return;   // помещается 1:1 — масштаб не нужен
+  const mobile = (typeof isMobileUI === 'function') && isMobileUI();
+  if (mobile) {
+    // НА МОБИЛЕ: transform:scale, а не zoom. zoom на iOS/WebKit смещает absolute-подвал
+    // и ломает ширины колонок таблицы. transform масштабирует уже корректную раскладку (1:1 с десктопом).
+    // Компенсируем габариты layout-бокса отрицательными margin, чтобы скролл/ширина были верными.
+    const W = st.offsetWidth || 793.7, H = st.offsetHeight;
+    st.style.transformOrigin = 'top left';
+    st.style.transform = 'scale(' + z.toFixed(4) + ')';
+    st.style.marginRight = (-Math.round(W * (1 - z))) + 'px';
+    st.style.marginBottom = (-Math.round(H * (1 - z))) + 'px';
+    const padL = (avail - W * z) / 2;                  // центрируем (обычно ~0, т.к. W*z≈avail)
+    st.style.marginLeft = padL > 1 ? Math.round(padL) + 'px' : '';
+  } else {
+    st.style.zoom = z.toFixed(3);                      // десктоп: zoom (Blink корректен)
+  }
+}
+window.addEventListener('resize', fitPaper);
+window.addEventListener('orientationchange', function () { setTimeout(fitPaper, 250); });
+// ---- формирование документов из буфера витрины (ITEMS) ----
+function bufArts() { return [...new Set(ITEMS.map(i => i.article).filter(a => PRODS[a]))]; }
+function bufToItems() {  // копия буфера с новыми id (для записи в КП)
+  return ITEMS.filter(i => PRODS[i.article]).map(i => ({ id: ++nextId, article: i.article, typeLabel: i.typeLabel || '', priceType: i.priceType, qty: i.qty || 1, customPrice: null, customDesc: null }));
+}
+function nextKpNum() { return KPS.reduce((m, k) => Math.max(m, +k.num || 0), 0) + 1; }
+// ---- per-КП: активный КП, чтение/запись формы ----
+function activeKpObj() { return activeKp == null ? null : (KPS.find(k => k.num === activeKp) || null); }
+function kpFormData() {  // прочитать поля формы КП → объект data
+  const g = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+  const gc = id => { const e = document.getElementById(id); return e ? e.checked : false; };
+  const d = {};
+  KP_FIELDS.forEach(([k, id, t]) => { d[k] = (t === 'c') ? gc(id) : g(id); });
+  return d;
+}
+function saveActiveKp() {  // форма → data активного КП (вызывается в начале render)
+  const kp = activeKpObj(); if (!kp) return;
+  kp.data = Object.assign(kp.data || {}, kpFormData());   // pkgUSD/mountUSD не трогаем (правятся отдельно)
+  const nf = document.getElementById('kp-num');
+  if (nf) { const nn = parseInt(nf.value, 10); if (nn > 0 && nn !== kp.num && !KPS.some(k => k.num === nn)) { kp.num = nn; activeKp = nn; } }
+}
+function loadKpForm(kp) {  // data КП → поля формы; делает КП активным
+  if (!kp) return;
+  activeKp = kp.num;
+  const d = kp.data || {};
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.value = (v == null ? '' : v); };
+  const chk = (id, v) => { const e = document.getElementById(id); if (e) e.checked = !!v; };
+  KP_FIELDS.forEach(([k, id, t]) => { (t === 'c') ? chk(id, d[k]) : set(id, d[k]); });
+  set('kp-num', kp.num);
+  const dw = document.getElementById('discount-wrap'); if (dw) dw.style.display = d.optDiscount ? '' : 'none';
+  const ow = document.getElementById('obj-wrap'); if (ow) ow.style.display = d.objOn ? '' : 'none';
+  const vw = document.getElementById('valid-wrap'); if (vw) vw.style.display = d.validOn ? '' : 'none';
+}
+function selectKp(num) {   // переключиться на другой КП для редактирования
+  saveActiveKp();
+  const kp = KPS.find(k => k.num === num); if (!kp) return;
+  loadKpForm(kp); render();
+}
+function buildKpSwitcher() {
+  const panel = document.getElementById('kp-switch-panel'), sel = document.getElementById('kp-active-select');
+  if (!panel || !sel) return;
+  if (!KPS.length) { panel.style.display = 'none'; return; }
+  panel.style.display = '';
+  if (activeKp == null || !KPS.some(k => k.num === activeKp)) activeKp = KPS[0].num;
+  sel.innerHTML = KPS.map(k => `<option value="${k.num}" ${k.num === activeKp ? 'selected' : ''}>КП №${k.num}${(k.data && k.data.client) ? ' — ' + esc(k.data.client) : ''}</option>`).join('');
+}
+// запись КП для модели (приоритет — активный КП) — чтобы цена/кол-во на стр. продукта были синхронны с таблицей
+function kpItemFor(art) {
+  const ak = activeKpObj();
+  if (ak) { const it = (ak.items || []).find(i => i.article === art); if (it) return it; }
+  for (const k of KPS) { const it = (k.items || []).find(i => i.article === art); if (it) return it; }
+  return null;
+}
+// синхронизация левых полей «Упаковка/Монтаж» с активным КП (после расчёта авто-тарифа)
+function kpSubtotalUSD(items) {
+  let s = 0; (items || []).forEach(it => { const p = PRODS[it.article]; if (p || it.customPrice != null) s += (it.customPrice != null ? it.customPrice : priceOfKP(p, it.priceType)) * (it.qty || 1); });
+  return s;
+}
+function syncPkgMountFields() {
+  const kp = activeKpObj();
+  const pkgF = document.getElementById('kp-pkg'), mF = document.getElementById('kp-mount');
+  const pkgC = document.getElementById('opt-pkg'), mC = document.getElementById('opt-mount');
+  if (!kp) return;
+  const d = kp.data || {};
+  const tariff = wixTariffUSD(kpSubtotalUSD(kp.items));
+  const pkgEff = (d.pkgUSD != null) ? d.pkgUSD : tariff;
+  const mEff = (d.mountUSD != null) ? d.mountUSD : tariff;
+  const disp = usd => getCurr() === 'KZT' ? String(Math.round(usd * getRate())) : String(+(+usd).toFixed(2));
+  const pkgOn = d.pkgOn !== false, mntOn = d.mountOn !== false;
+  if (pkgF && document.activeElement !== pkgF) pkgF.value = disp(pkgEff);
+  if (mF && document.activeElement !== mF) mF.value = disp(mEff);
+  if (pkgC) pkgC.checked = pkgOn;
+  if (mC) mC.checked = mntOn;
+  pkgF && (pkgF.disabled = !pkgOn);
+  mF && (mF.disabled = !mntOn);
+  // срок доставки привязан к «Упаковка и транспорт», срок монтажа — к «Монтаж»
+  var dl = document.getElementById('kp-delivery'); if (dl) { dl.disabled = !pkgOn; dl.closest('.field') && (dl.closest('.field').style.opacity = pkgOn ? '' : '0.4'); }
+  var md = document.getElementById('kp-mountdays'); if (md) { md.disabled = !mntOn; md.closest('.field') && (md.closest('.field').style.opacity = mntOn ? '' : '0.4'); }
+}
+function onPkgInput() { const kp = activeKpObj(); if (!kp) return; kp.data.pkgUSD = amountDisplayToUSD(document.getElementById('kp-pkg').value); render(); }
+function onMountInput() { const kp = activeKpObj(); if (!kp) return; kp.data.mountUSD = amountDisplayToUSD(document.getElementById('kp-mount').value); render(); }
+
+function formNewKP() {
+  if (!isAnySel()) { alert('Сначала отметьте модели в витрине.'); return; }
+  saveActiveKp();
+  const src = activeKpObj();
+  // новый КП наследует клиента/условия/примечания от текущего активного (или из формы-шаблона)
+  const data = src ? JSON.parse(JSON.stringify(src.data || kpFormData())) : kpFormData();
+  data.pkgUSD = null; data.mountUSD = null;   // суммы упаковки/монтажа пересчитаются авто под свой состав
+  const num = nextKpNum();
+  KPS.push({ num: num, items: bufToItems(), data: data });
+  loadKpForm(KPS[KPS.length - 1]);
+  closeFormMenu(); render();
+}
+function formIntoKP(num) {
+  if (!isAnySel()) { alert('Сначала отметьте модели в витрине.'); return; }
+  saveActiveKp();
+  const kp = KPS.find(k => k.num === num); if (!kp) return;
+  kp.items = bufToItems();   // замена содержимого, данные КП сохраняются
+  loadKpForm(kp);
+  closeFormMenu(); render();
+}
+function formCatalog() { if (!isAnySel()) { alert('Сначала отметьте модели в витрине.'); return; } CATALOG = bufArts(); closeFormMenu(); render(); }
+function formPrice()   { if (!isAnySel()) { alert('Сначала отметьте модели в витрине.'); return; } PRICE = bufArts(); closeFormMenu(); render(); }
+// собственный диалог подтверждения — нативный confirm() не срабатывает в iOS-вебвью (Documents) и молча возвращает false
+function uiConfirm(msg, onYes, yesLabel) {
+  const ov = document.createElement('div'); ov.className = 'ui-modal-ov no-print';
+  const box = document.createElement('div'); box.className = 'ui-modal-box';
+  const m = document.createElement('div'); m.className = 'ui-modal-msg'; m.textContent = msg;
+  const btns = document.createElement('div'); btns.className = 'ui-modal-btns';
+  const no = document.createElement('button'); no.className = 'btn ghost sm'; no.type = 'button'; no.textContent = 'Отмена';
+  const yes = document.createElement('button'); yes.className = 'btn accent sm'; yes.type = 'button'; yes.textContent = yesLabel || 'Да';
+  btns.appendChild(no); btns.appendChild(yes); box.appendChild(m); box.appendChild(btns); ov.appendChild(box);
+  document.body.appendChild(ov);
+  const close = () => { if (ov.parentNode) ov.parentNode.removeChild(ov); };
+  no.onclick = close;
+  yes.onclick = () => { close(); try { onYes(); } catch (e) {} };
+  ov.onclick = (e) => { if (e.target === ov) close(); };
+}
+function deleteKP(num) {
+  KPS = KPS.filter(k => k.num !== num);
+  if (activeKp === num) { activeKp = KPS.length ? KPS[KPS.length - 1].num : null; const a = activeKpObj(); if (a) loadKpForm(a); }
+  render();
+  if (typeof autosave === 'function') autosave();
+}
+function clearDocs() {
+  uiConfirm('Удалить все сформированные документы (КП, каталог, прайс)?', function () {
+    KPS = []; CATALOG = []; PRICE = []; activeKp = null; render();
+    if (typeof autosave === 'function') autosave();
+  }, 'Удалить');
+}
+// полный сброс: удалить сформированные документы И очистить выбор моделей — «с чистого листа»
+function resetAll() {
+  uiConfirm('Сбросить всё? Будут удалены все сформированные КП / каталог / прайс и очищен выбор моделей. Отменить нельзя.', function () {
+    KPS = []; CATALOG = []; PRICE = []; activeKp = null; ITEMS = [];
+    if (typeof renderItemsList === 'function') renderItemsList();
+    if (typeof closeFormMenu === 'function') closeFormMenu();
+    if (typeof closeDrawers === 'function') closeDrawers();
+    render();
+    if (typeof autosave === 'function') autosave();   // сразу сохранить пустое состояние, иначе КП «возвращаются» после переоткрытия
+  }, 'Сбросить');
+}
+
+// меню кнопки «Сформировать в ▸»
+function toggleFormMenu() {
+  const m = document.getElementById('form-menu'); if (!m) return;
+  if (m.classList.contains('open')) { m.classList.remove('open'); return; }
+  buildFormMenu(); m.classList.add('open');
+}
+function closeFormMenu() { const m = document.getElementById('form-menu'); if (m) m.classList.remove('open'); }
+function buildFormMenu() {
+  const m = document.getElementById('form-menu'); if (!m) return;
+  let h = '<div class="fm-sec">КП</div>';
+  h += `<div class="fm-item" onclick="formNewKP()">➕ Новый КП (№${nextKpNum()})</div>`;
+  KPS.forEach(k => { h += `<div class="fm-item" onclick="formIntoKP(${k.num})">КП №${k.num} <span class="fm-hint">заменить</span></div>`; });
+  h += '<div class="fm-sec">Прочее</div>';
+  h += `<div class="fm-item" onclick="formCatalog()">📕 Каталог${CATALOG.length ? ' <span class="fm-hint">заменить</span>' : ''}</div>`;
+  h += `<div class="fm-item" onclick="formPrice()">💰 Прайс${PRICE.length ? ' <span class="fm-hint">заменить</span>' : ''}</div>`;
+  if (KPS.length || CATALOG.length || PRICE.length) {
+    h += '<div class="fm-sec">Документы</div>';
+    KPS.forEach(k => { h += `<div class="fm-item" onclick="deleteKP(${k.num});closeFormMenu()">🗑 Удалить КП №${k.num}</div>`; });
+    h += `<div class="fm-item" onclick="clearDocs();closeFormMenu()">🗑 Очистить все документы</div>`;
+  }
+  m.innerHTML = h;
+}
+document.addEventListener('click', function (e) {
+  const w = document.getElementById('form-wrap'), m = document.getElementById('form-menu');
+  if (m && m.classList.contains('open') && w && !w.contains(e.target)) m.classList.remove('open');
+});
+
+// ===== ITEMS =====
+function addItem(article) {
+  const existing = ITEMS.filter(i => i.article === article);
+  const num = existing.length + 1;
+  ITEMS.push({ id: ++nextId, article, typeLabel: 'тип ' + num, priceType: 'interior', qty: 1, customPrice: null, customDesc: null });
+  renderItemsList();
+  render();
+}
+
+function addBlankRow() {
+  ITEMS.push({ id: ++nextId, article: '', typeLabel: '', priceType: 'interior', qty: 1, customPrice: null, customDesc: null });
+  renderItemsList();
+  render();
+}
+
+function removeItem(id) {
+  ITEMS = ITEMS.filter(i => i.id !== id);
+  renderItemsList();
+  render();
+}
+
+function clearItems() {
+  ITEMS = [];
+  renderItemsList();
+  render();
+}
+
+function renderItemsList() {
+  const list = document.getElementById('items-list');
+  document.getElementById('items-count').textContent = ITEMS.length;
+
+  if (!ITEMS.length) {
+    list.innerHTML = '<div class="items-empty">Добавьте товары из каталога ↓</div>';
+    return;
+  }
+  list.innerHTML = '';
+
+  ITEMS.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+
+    const art = document.createElement('div');
+    art.className = 'item-art';
+    art.textContent = '«' + item.article + '»';
+    art.title = item.article;
+
+    const lab = document.createElement('input');
+    lab.type = 'text'; lab.className = 'item-typelab';
+    lab.value = item.typeLabel; lab.placeholder = 'тип 1';
+    lab.addEventListener('change', () => { item.typeLabel = lab.value; render(); });
+
+    const typ = document.createElement('select');
+    typ.className = 'item-typesel';
+    typ.innerHTML = '<option value="interior">И</option><option value="exterior">У</option>';
+    typ.value = item.priceType;
+    typ.title = 'И = Интерьерная, У = Уличная';
+    typ.addEventListener('change', () => { item.priceType = typ.value; render(); });
+
+    const qty = document.createElement('input');
+    qty.type = 'number'; qty.className = 'item-qty';
+    qty.value = item.qty; qty.min = 1;
+    qty.addEventListener('change', () => { item.qty = Math.max(1, +qty.value || 1); render(); });
+
+    const del = document.createElement('div');
+    del.className = 'item-del'; del.textContent = '×';
+    del.addEventListener('click', () => removeItem(item.id));
+
+    row.appendChild(art); row.appendChild(lab);
+    row.appendChild(typ); row.appendChild(qty); row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+// ===== FORMAT =====
+function getCurr() { return document.getElementById('kp-curr').value; }
+function getRate() {                                  // курс USD→текущая валюта
+  if (getCurr() === 'USD') return 1;
+  const el = document.getElementById('kp-rate'); const v = el ? +el.value : 0;
+  return v > 0 ? v : (FX_RATES[getCurr()] || 1);
+}
+
+// ===== КУРСЫ USD→валюта КАК НА WIX (источник XE, обновление раз в сутки) =====
+// KZT берём из kp_assets/fx_rate.json (точный курс Wix за сегодня) или с рынка; RUB/EUR/CHF — с рынка (≈XE).
+let FX_RATES = { KZT: null, RUB: null, EUR: null, CHF: null };   // USD → валюта
+let FX = { source: '', date: '' };
+
+async function fetchLiveRates() {
+  try { const r = await fetch('https://open.er-api.com/v6/latest/USD'); if (r.ok) { const j = await r.json(); if (j && j.rates) return j.rates; } } catch (e) {}
+  try { const r2 = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json'); if (r2.ok) { const j2 = await r2.json(); if (j2 && j2.usd) return { KZT:j2.usd.kzt, RUB:j2.usd.rub, EUR:j2.usd.eur, CHF:j2.usd.chf }; } } catch (e) {}
+  return null;
+}
+async function loadFxRate(force) {
+  const today = new Date().toISOString().slice(0, 10);
+  let seedKzt = null;
+  try { const r = await fetch('kp_assets/fx_rate.json?ts=' + new Date().getTime()); if (r.ok) { const j = await r.json(); if (j && j.usd_kzt && (j.date || '').slice(0,10) === today) seedKzt = +j.usd_kzt; } } catch (e) {}
+  const live = await fetchLiveRates();
+  const pick = (o, A, a) => { const v = o ? (o[A] != null ? o[A] : o[a]) : null; return v ? +v : null; };
+  if (live) {
+    FX_RATES.KZT = seedKzt || pick(live,'KZT','kzt') || FX_RATES.KZT;
+    FX_RATES.RUB = pick(live,'RUB','rub') || FX_RATES.RUB;
+    FX_RATES.EUR = pick(live,'EUR','eur') || FX_RATES.EUR;
+    FX_RATES.CHF = pick(live,'CHF','chf') || FX_RATES.CHF;
+    FX = { source: seedKzt ? 'Wix/XE' : 'рыночный ≈XE', date: today };
+  } else if (seedKzt) { FX_RATES.KZT = seedKzt; FX = { source: 'Wix/XE', date: today }; }
+  applyFxRate(force);
+}
+function applyFxRate(force) {                         // подставить авто-курс выбранной валюты в поле
+  const auto = document.getElementById('opt-fxauto');
+  const el = document.getElementById('kp-rate');
+  const curr = getCurr();
+  const r = (curr === 'USD') ? null : FX_RATES[curr];
+  if (r && el && (force || (auto && auto.checked))) el.value = Math.round(r * 1e6) / 1e6;
+  updateFxInfo();
+  render();
+}
+function refreshFxRate() { const a = document.getElementById('opt-fxauto'); if (a) a.checked = true; loadFxRate(true); }
+function onFxAutoToggle() { const a = document.getElementById('opt-fxauto'); if (a && a.checked) applyFxRate(true); else { updateFxInfo(); render(); } }
+function onRateInput() { const a = document.getElementById('opt-fxauto'); if (a) a.checked = false; updateFxInfo(); render(); }
+function updateFxInfo() {
+  const s = document.getElementById('fx-info'); if (!s) return;
+  const a = document.getElementById('opt-fxauto');
+  s.textContent = (a && a.checked && FX.source) ? ('· ' + FX.source + ' ' + FX.date) : '· вручную';
+  const lab = document.getElementById('fx-rate-cur'); if (lab) lab.textContent = getCurr();
+}
+// набор валют зависит от производителя: ИП — KZT/USD; ТОО — +RUB/EUR/CHF
+function buildCurrOptions() {
+  const sel = document.getElementById('kp-curr'); if (!sel) return;
+  const entity = (document.getElementById('kp-entity') || {}).value || 'ip';
+  const list = entity === 'too' ? ['KZT','USD','RUB','EUR','CHF'] : ['KZT','USD'];
+  const cur = sel.value;
+  sel.innerHTML = list.map(c => `<option value="${c}">${c}</option>`).join('');
+  sel.value = list.indexOf(cur) >= 0 ? cur : 'KZT';
+}
+function onEntityChange() { buildCurrOptions(); onCurrChange(); }
+
+function fmtMoney(usd) { return moneyNum(usd) + ' ' + getCurr(); }
+
+let DIM_OVERRIDES = {};   // {article: dimsObj} — переопределение размеров на сессию (НЕ сохраняется)
+function dimsOf(article) { return DIM_OVERRIDES[article] || (PRODS[article] && PRODS[article].dimensions) || null; }
+function fmtDimsObj(d) {
+  if (!d) return '';
+  if (d.length_mm) {
+    let s = d.length_mm + '×' + (d.width_mm || '');
+    if (d.height_min_mm && d.height_max_mm && d.height_min_mm !== d.height_max_mm)
+      s += '×' + d.height_min_mm + '-' + d.height_max_mm;
+    else if (d.height_min_mm) s += '×' + d.height_min_mm;
+    else if (d.height_max_mm) s += '×' + d.height_max_mm;
+    return s + 'мм';
+  }
+  return d.raw || '';
+}
+function fmtDims(p) { return p ? fmtDimsObj(DIM_OVERRIDES[p.article] || p.dimensions) : ''; }
+// разобрать введённую строку размеров «L×W×H» (или «…×H1-H2») → объект размеров (сессионное переопределение)
+function tbSetDims(article, text) {
+  if (!PRODS[article]) return;
+  const s = String(text || '').replace(/\*/g, '').replace(/мм/gi, '').trim();
+  const parts = s.split(/[×x*]/i).map(x => x.trim()).filter(Boolean);
+  const d = {};
+  if (parts[0]) d.length_mm = parseInt(parts[0], 10) || null;
+  if (parts[1]) d.width_mm = parseInt(parts[1], 10) || null;
+  if (parts[2]) {
+    const mm = parts[2].match(/(\d+)\s*-\s*(\d+)/);
+    if (mm) { d.height_min_mm = +mm[1]; d.height_max_mm = +mm[2]; }
+    else { const h = parseInt(parts[2], 10); if (h) { d.height_min_mm = h; d.height_max_mm = h; } }
+  }
+  DIM_OVERRIDES[article] = (d.length_mm || d.width_mm || d.height_min_mm) ? d : { raw: s };
+  render();
+}
+function fmtValid(v) {
+  if (v == null) { const el = document.getElementById('kp-valid'); v = el ? el.value : ''; }
+  if (!v) return '';
+  const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const a = v.split('-'); if (a.length !== 3) return v;
+  return (+a[2]) + ' ' + (m[(+a[1]) - 1] || '') + ' ' + a[0] + 'г.';
+}
+
+function parseRuDate(s) {                              // «7 июня 2026г.» / «2026-06-07» → Date
+  s = String(s || '').trim(); if (!s) return null;
+  const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  const mt = s.match(/(\d{1,2})\s+([а-яё]+)\s+(\d{4})/i);
+  if (mt) { const mi = m.indexOf(mt[2].toLowerCase()); if (mi >= 0) return new Date(+mt[3], mi, +mt[1]); }
+  const iso = s.match(/(\d{4})-(\d{2})-(\d{2})/); if (iso) return new Date(+iso[1], +iso[2] - 1, +iso[3]);
+  const d = new Date(s); return isNaN(d.getTime()) ? null : d;
+}
+function autoValidISO(dateStr) {                       // дата КП (или сегодня) + 1 неделя → ISO
+  const base = parseRuDate(dateStr) || new Date();
+  base.setDate(base.getDate() + 7);
+  const tz = base.getTimezoneOffset() * 60000;
+  return new Date(base.getTime() - tz).toISOString().slice(0, 10);
+}
+function onValidToggle() {
+  const c = document.getElementById('opt-valid'), w = document.getElementById('valid-wrap'), v = document.getElementById('kp-valid');
+  const on = !!(c && c.checked);
+  if (w) w.style.display = on ? '' : 'none';
+  if (on && v && !v.value) v.value = autoValidISO(document.getElementById('kp-date').value);   // дата КП + 1 неделя (можно изменить)
+  render();
+}
+function fmtDate(v) {
+  if (v == null) { v = document.getElementById('kp-date').value; }
+  if (v) return v;
+  const now = new Date();
+  const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  return now.getDate() + ' ' + m[now.getMonth()] + ' ' + now.getFullYear() + 'г.';
+}
+
+function imgSrc(p, filename) {
+  return 'PRODUCTS/' + p.collection + '/' + p.article + '/' + filename + '?c=4';
+}
+
+function onCurrChange() {
+  const curr = getCurr();
+  document.getElementById('rate-wrap').style.display = (curr === 'USD') ? 'none' : '';   // курс нужен всем, кроме USD
+  document.getElementById('pkg-curr').textContent = curr;
+  const mc = document.getElementById('mount-curr'); if (mc) mc.textContent = curr;
+  const lab = document.getElementById('fx-rate-cur'); if (lab) lab.textContent = curr;
+  applyFxRate(true);   // подставить авто-курс выбранной валюты + render
+}
+
+// авто-тариф доставки+монтажа по РК: серым ручные поля, когда включено
+function kmManualSync() {
+  const on = !!(document.getElementById('opt-km-auto') && document.getElementById('opt-km-auto').checked);
+  const m = document.getElementById('km-manual');
+  if (m) { m.style.opacity = on ? '0.4' : ''; m.style.pointerEvents = on ? 'none' : ''; }
+}
+function onKmAuto() { kmManualSync(); render(); }
+
+// авто-баланс оплат до 100% (приоритет: предоплата → оплата2 → оплата3)
+function balancePay(changed) {
+  const el = id => document.getElementById(id);
+  const num = id => { const e = el(id); return (e && e.value !== '') ? Math.max(0, Math.min(100, Math.round(+e.value || 0))) : null; };
+  let pre = num('kp-prepay'); if (pre === null) pre = 0;
+  let p2 = num('kp-pay2-pct');   // null = строка не задействована
+  let p3 = num('kp-pay3-pct');
+  const p2a = p2 !== null, p3a = p3 !== null;
+  if (changed === 'prepay') {
+    if (p3a) { p3 = 100 - pre - (p2 || 0); if (p3 < 0) { p3 = 0; p2 = 100 - pre; if (p2 < 0) { p2 = 0; pre = 100; } } }
+    else if (p2a) { p2 = 100 - pre; if (p2 < 0) { p2 = 0; pre = 100; } }
+  } else if (changed === 'pay2') {
+    if (p3a) { p3 = 100 - pre - (p2 || 0); if (p3 < 0) { p3 = 0; pre = 100 - (p2 || 0); if (pre < 0) pre = 0; } }
+    else { pre = 100 - (p2 || 0); if (pre < 0) { pre = 0; p2 = 100; } }
+  } else if (changed === 'pay3') {
+    if (p2a) { p2 = 100 - pre - (p3 || 0); if (p2 < 0) { p2 = 0; pre = 100 - (p3 || 0); if (pre < 0) pre = 0; } }
+    else { pre = 100 - (p3 || 0); if (pre < 0) pre = 0; }
+  }
+  el('kp-prepay').value = Math.round(pre);
+  if (p2a) el('kp-pay2-pct').value = Math.round(p2);
+  if (p3a) el('kp-pay3-pct').value = Math.round(p3);
+  render();
+}
+
+// ===== TABLE HELPERS (перенос конфигурируемой таблицы из инвойсов) =====
+function priceOfKP(p, priceType) {
+  if (!p) return 0;
+  return priceType === 'exterior'
+    ? (p.price_exterior_usd || p.price_interior_usd || 0)
+    : (p.price_interior_usd || p.price_exterior_usd || 0);
+}
+function toUSDfromDisplay(val) {
+  return val / getRate();   // getRate() = USD→текущая валюта (USD→1)
+}
+function priceDisplayStr(usd) {
+  const v = usd * getRate(), c = getCurr();
+  return (c === 'KZT' || c === 'RUB') ? String(Math.round(v)) : String(+v.toFixed(2));
+}
+function rowDesc(item) {
+  const p = PRODS[item.article];
+  if (!p) return '';
+  const mat = document.getElementById('kp-mat').value;
+  const assembly = document.getElementById('kp-assembly').value;
+  const tl = (item.typeLabel || '').trim();
+  // "type 1" добавляется автоматически (только в таблице) после артикула для уличной модели
+  const typeSuffix = item.priceType === 'exterior' ? ' type 1' : '';
+  // дефолтную метку "тип N" в описание не выводим (она для различения вариантов в сайдбаре)
+  const lab = (tl && !/^тип\s*\d+$/i.test(tl)) ? ' ' + tl : '';
+  return `«${item.article}»${typeSuffix}${lab}${mat ? ' (' + mat + ')' : ''}${assembly ? ' ' + assembly : ''}`;
+}
+// то же, но артикул — кликабельная ссылка (для отображения в таблице)
+function rowDescHTML(item) {
+  const p = PRODS[item.article];
+  if (!p) return '';
+  const mat = document.getElementById('kp-mat').value;
+  const assembly = document.getElementById('kp-assembly').value;
+  const tl = (item.typeLabel || '').trim();
+  const typeSuffix = item.priceType === 'exterior' ? ' type 1' : '';
+  const lab = (tl && !/^тип\s*\d+$/i.test(tl)) ? ' ' + tl : '';
+  const rest = `${typeSuffix}${lab}${mat ? ' (' + mat + ')' : ''}${assembly ? ' ' + assembly : ''}`;
+  return artLinkHTML(item.article) + esc(rest);
+}
+function buildOptsKP(selectedArt) {
+  const groups = {};
+  COLS.forEach(c => groups[c] = []);
+  Object.entries(PRODS).forEach(([art, p]) => {
+    const c = p.collection || 'other';
+    (groups[c] = groups[c] || []).push({ art, p });
+  });
+  let opts = '<option value="">— модель —</option>';
+  COLS.forEach(col => {
+    const items = groups[col];
+    if (!items || !items.length) return;
+    opts += `<optgroup label="${COL_EN[col] || (col || '').toUpperCase()}">`;
+    items.forEach(({ art, p }) => {
+      const sel = art === selectedArt ? 'selected' : '';
+      const dims = fmtDims(p);
+      opts += `<option value="${esc(art)}" ${sel}>${esc(art)}${dims ? '  ' + esc(dims) : ''}</option>`;
+    });
+    opts += '</optgroup>';
+  });
+  return opts;
+}
+
+// --- inline-обработчики строк таблицы (правят items конкретного КП по id) ---
+function findKpItem(id) { for (const k of KPS) { const r = k.items.find(i => i.id === id); if (r) return r; } return null; }
+function findKpOf(id) { return KPS.find(k => k.items.some(i => i.id === id)) || null; }
+function tbSetBench(id, art) {
+  const r = findKpItem(id); if (!r) return;
+  r.article = art || ''; r.customPrice = null; r.customDesc = null;
+  const kp = findKpOf(id);
+  if (art && !r.typeLabel) r.typeLabel = 'тип ' + (kp ? kp.items.filter(i => i.article === art).length : 1);
+  render();
+}
+function tbSetType(id, t) {
+  const r = findKpItem(id); if (!r) return;
+  r.priceType = t;
+  if (PRODS[r.article]) r.customPrice = null;   // сброс оверрайда цены только для моделей (у ручной строки цена вписана вручную)
+  render();
+}
+function tbSetQty(id, q) {
+  const r = findKpItem(id); if (r) r.qty = Math.max(1, Math.round(+q) || 1); render();
+}
+function tbSetPrice(id, disp) {
+  const r = findKpItem(id); if (!r) return;
+  r.customPrice = (disp === '' || disp == null) ? null : toUSDfromDisplay(+disp); render();
+}
+function tbSetDesc(id, text) {
+  const r = findKpItem(id); if (!r) return;
+  const def = rowDesc(r).trim();
+  const t = (text || '').trim();
+  r.customDesc = (t === '' || t === def) ? null : t;
+}
+function tbRemove(id) {
+  const kp = findKpOf(id); if (!kp) return;
+  kp.items = kp.items.filter(i => i.id !== id);
+  if (!kp.items.length) KPS = KPS.filter(k => k !== kp);   // пустой КП убираем
+  render();
+}
+// «+ строка»: добавить ручную строку прямо в таблицу нужного КП (заполняется вручную, как модель)
+function addKpRow(kpNum) {
+  const kp = KPS.find(k => String(k.num) === String(kpNum));
+  if (!kp) return;
+  kp.items.push({ id: ++nextId, article: '', custom: true, typeLabel: '', priceType: 'interior', qty: 1, customPrice: null, customDesc: null, customName: '', customDims: '' });
+  render();
+}
+// сохранение вручную вписанных наименования/габаритов ручной строки (без render — чтобы не сбить курсор)
+function tbSetCustomName(id, text) { const r = findKpItem(id); if (r) r.customName = (text || '').trim(); }
+function tbSetCustomDims(id, text) { const r = findKpItem(id); if (r) r.customDims = (text || '').trim(); }
+// строка из отображаемой валюты → USD (пусто = вернуть авто-тариф)
+function amountDisplayToUSD(text) {
+  const s = String(text == null ? '' : text).replace(/[^\d.,-]/g, '').replace(',', '.');
+  if (s === '' || s === '-') return null;
+  const v = parseFloat(s); if (isNaN(v)) return null;
+  return getCurr() === 'KZT' ? v / getRate() : v;
+}
+// ручная правка сумм «Упаковка и транспортные расходы» / «Монтаж» (хранится на КП; пусто → авто-тариф)
+function tbSetKpPkg(kpNum, text) { const kp = KPS.find(k => String(k.num) === String(kpNum)); if (!kp) return; kp.data = kp.data || {}; kp.data.pkgUSD = amountDisplayToUSD(text); render(); }
+function tbSetKpMount(kpNum, text) { const kp = KPS.find(k => String(k.num) === String(kpNum)); if (!kp) return; kp.data = kp.data || {}; kp.data.mountUSD = amountDisplayToUSD(text); render(); }
+function tbSetDiscPct(v) { document.getElementById('kp-discount').value = v; render(); }
+
+// ===== ИТОГОВЫЙ PDF (скидка распределена в цены позиций, без строки «Скидка») =====
+function printFinalKP() {
+  FINAL_MODE = true;
+  render();
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => { FINAL_MODE = false; render(); }, 150);
+  }, 120);
+}
+
+// ===== PDF ПРЯМО В СТРАНИЦЕ (для iOS/Safari — обход системных рамок и колонтитулов печати) =====
+// На десктопе остаётся нативная печать (векторная, чётче); на телефоне собираем A4-PDF без полей.
+// клиентский PDF нужен там, где системная печать добавляет рамки/колонтитулы (iOS) или экран узкий
+function _useClientPDF() {
+  if (typeof isMobileUI === 'function' && isMobileUI()) return true;
+  var ua = navigator.userAgent || '';
+  return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+// ===== АДРЕС СЕРВЕРА PDF (серверный рендер — идеальный вектор без полей) =====
+// Вставь сюда адрес после деплоя (см. kp-pdf-server/README.md), напр. 'https://kp-pdf-server-xxxx.onrender.com'
+// Пусто = на телефоне используется нативная печать браузера (с полями на iOS).
+const PDF_SERVER = '';
+const KP_KEY = '';   // секретный ключ сервера (тот же, что KP_TOKEN на сервере) — впишу вместе с адресом
+
+// Десктоп: нативная печать (идеальна). Телефон/iOS: если задан PDF_SERVER — берём PDF с сервера (без полей, вектор, ссылки).
+function doPrint()      { if (_useClientPDF() && PDF_SERVER) downloadServerPDF(false); else window.print(); }
+function doPrintFinal() { if (_useClientPDF() && PDF_SERVER) downloadServerPDF(true);  else printFinalKP(); }
+
+async function downloadServerPDF(finalMode) {
+  if (!PDF_SERVER) { alert('Адрес сервера PDF не задан.'); return; }
+  if (!document.querySelectorAll('#paper-stack .page').length) { alert('Сначала сформируйте КП.'); return; }
+  const wasFinal = FINAL_MODE;
+  if (finalMode) { FINAL_MODE = true; render(); await new Promise(r => setTimeout(r, 180)); }
+  // самодостаточный HTML текущего КП: весь CSS (со шрифтами) + листы (с data-URI картинками)
+  const css = [...document.querySelectorAll('style')].map(s => s.textContent).join('\n');
+  const stackHTML = document.getElementById('paper-stack').innerHTML;
+  const html = '<!doctype html><html lang="ru"><head><meta charset="utf-8"><style>' + css +
+    '\n#paper-stack{transform:none!important;margin:0!important;zoom:1!important;width:auto!important}</style></head>' +
+    '<body><div class="layout"><div class="main-area"><div class="paper-scroll"><div class="paper-stack" id="paper-stack">' +
+    stackHTML + '</div></div></div></div></body></html>';
+  if (finalMode) { FINAL_MODE = wasFinal; render(); }
+  const name = (typeof kpPrintFilename === 'function' ? kpPrintFilename() : 'КП') || 'КП';
+  const ov = _pdfOverlay('Готовлю PDF на сервере… (первый раз — до минуты)');
+  try {
+    const resp = await fetch(PDF_SERVER.replace(/\/+$/, '') + '/pdf', {
+      method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json' }, KP_KEY ? { 'x-kp-key': KP_KEY } : {}),
+      body: JSON.stringify({ html: html, name: name })
+    });
+    if (!resp.ok) throw new Error('сервер вернул ' + resp.status);
+    const blob = await resp.blob();
+    ov.style.display = 'none';
+    const fname = name + '.pdf';
+    try {
+      const file = new File([blob], fname, { type: 'application/pdf' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: fname }); return; }
+    } catch (e) {}
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  } catch (e) { ov.style.display = 'none'; alert('Не удалось получить PDF с сервера: ' + e); }
+}
+function _pdfOverlay(text) {
+  let ov = document.getElementById('pdf-progress');
+  if (!ov) {
+    ov = document.createElement('div'); ov.id = 'pdf-progress'; ov.className = 'ui-modal-ov no-print';
+    ov.innerHTML = '<div class="ui-modal-box" style="text-align:center"><div class="ui-modal-msg" id="pdf-progress-msg"></div><div style="font-size:12px;color:var(--muted)">Не закрывайте страницу…</div></div>';
+    document.body.appendChild(ov);
+  }
+  ov.querySelector('#pdf-progress-msg').textContent = text; ov.style.display = 'flex'; return ov;
+}
+function _isBlankCanvas(c) {
+  try {
+    const x = c.getContext('2d'), W = c.width, H = c.height;
+    const pts = [[W >> 1, H >> 1], [10, H >> 2], [W - 10, H >> 2], [W >> 1, H - 20], [W >> 2, H >> 1]];
+    return pts.every(p => { const d = x.getImageData(p[0], p[1], 1, 1).data; return d[0] >= 250 && d[1] >= 250 && d[2] >= 250; });
+  } catch (e) { return false; }
+}
+// быстрый рендер листа: snapdom (нативный, в разы быстрее); если пусто/ошибка — надёжный html2canvas.
+// targetScale = итоговое разрешение относительно A4 (1.5 ≈ 150 DPI). КРИТИЧНО: snapdom множит на
+// devicePixelRatio — на iPhone (dpr=3) это раздувало холст в 3× и адски тормозило. Делим на dpr → фиксируем размер.
+async function renderPageCanvas(page, targetScale) {
+  const dpr = window.devicePixelRatio || 1;
+  if (window.snapdom && window.snapdom.toCanvas) {
+    try { const c = await window.snapdom.toCanvas(page, { scale: targetScale / dpr, backgroundColor: '#ffffff', cache: 'full' }); if (c && !_isBlankCanvas(c)) return c; } catch (e) {}
+  }
+  if (window.html2canvas) {
+    try { return await html2canvas(page, { scale: targetScale, useCORS: true, backgroundColor: '#ffffff', logging: false, imageTimeout: 0,
+      width: page.offsetWidth, height: page.offsetHeight, windowWidth: page.offsetWidth, windowHeight: page.offsetHeight }); } catch (e) {}
+  }
+  return null;
+}
+async function makePDF(finalMode) {
+  if (!window.jspdf || (!window.snapdom && !window.html2canvas)) { alert('Модуль PDF не загрузился (нужен интернет). Открываю системную печать.'); window.print(); return; }
+  const wasFinal = FINAL_MODE;
+  if (finalMode) { FINAL_MODE = true; render(); await new Promise(r => setTimeout(r, 180)); }
+  const pages = [...document.querySelectorAll('#paper-stack .page')];
+  if (!pages.length) { if (finalMode) { FINAL_MODE = wasFinal; render(); } alert('Сначала сформируйте КП.'); return; }
+  const ov = _pdfOverlay('Готовлю PDF… 0/' + pages.length);
+  const st = document.getElementById('paper-stack');
+  const sv = { t: st.style.transform, mr: st.style.marginRight, mb: st.style.marginBottom, ml: st.style.marginLeft, z: st.style.zoom, to: st.style.transformOrigin };
+  st.style.transform = 'none'; st.style.transformOrigin = ''; st.style.marginRight = ''; st.style.marginBottom = ''; st.style.marginLeft = ''; st.style.zoom = '';
+  document.documentElement.classList.add('pdf-exporting');   // спрятать интерактив (стрелки, рамки полей, селекторы тип/кол-во) — как при печати
+  try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch (e) {}
+  await new Promise(r => setTimeout(r, 60));
+  const jsPDF = window.jspdf.jsPDF;
+  const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+  try {
+    for (let i = 0; i < pages.length; i++) {
+      ov.querySelector('#pdf-progress-msg').textContent = 'Готовлю PDF… ' + (i + 1) + '/' + pages.length;
+      await new Promise(r => setTimeout(r, 20));
+      const canvas = await renderPageCanvas(pages[i], 1.5);
+      if (!canvas) throw new Error('пустой рендер листа ' + (i + 1));
+      const img = canvas.toDataURL('image/jpeg', 0.82);
+      if (i > 0) pdf.addPage();
+      pdf.addImage(img, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+    }
+  } catch (e) { ov.style.display = 'none'; alert('Не удалось собрать PDF: ' + e); }
+  document.documentElement.classList.remove('pdf-exporting');
+  st.style.transform = sv.t; st.style.transformOrigin = sv.to; st.style.marginRight = sv.mr; st.style.marginBottom = sv.mb; st.style.marginLeft = sv.ml; st.style.zoom = sv.z;
+  if (finalMode) { FINAL_MODE = wasFinal; render(); }
+  if (typeof fitPaper === 'function') fitPaper();
+  ov.style.display = 'none';
+  const fname = ((typeof kpPrintFilename === 'function' ? kpPrintFilename() : 'КП') || 'КП') + '.pdf';
+  const blob = pdf.output('blob');
+  try {
+    const file = new File([blob], fname, { type: 'application/pdf' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: fname }); return; }
+  } catch (e) {}
+  pdf.save(fname);
+}
+
+// имя файла при печати КП: «[клиент]-[моя компания] [артикулы] КП№[номера], [валюта]»
+let _savedDocTitle = '';
+function kpPrintFilename() {
+  const client = ((document.getElementById('kp-client') || {}).value || 'Клиент').trim();
+  const entity = (document.getElementById('kp-entity') || {}).value || 'ip';
+  const mine = entity === 'too' ? 'ТОО Parametrica' : 'ИП Сатиков Р.А.';
+  let arts = [...new Set([].concat(...KPS.map(k => k.items.map(i => i.article)), CATALOG).filter(a => PRODS[a]))];
+  const more = arts.length > 3; if (more) arts = arts.slice(0, 3);   // не раздуваем имя — иначе Chrome обрежет хвост (КП№/валюту)
+  const nums = KPS.map(k => k.num);
+  let s = client + ' - ' + mine;
+  if (arts.length) s += ' ' + arts.join(',') + (more ? ' и др.' : '');
+  if (nums.length) s += ' КП№' + nums.join(',');   // напр. «КП№1,2»
+  s += ' ' + getCurr();                            // валюта в самом конце, напр. «KZT»
+  return s.replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+window.addEventListener('beforeprint', function () { _savedDocTitle = document.title; document.title = kpPrintFilename(); });
+window.addEventListener('afterprint', function () { if (_savedDocTitle) document.title = _savedDocTitle; });
+
+// ===== FOOTER HTML =====
+function footer(pageNo) {
+  const side = (pageNo % 2 === 0) ? 'left' : 'right';   // чёт = левый разворот, нечёт = правый
+  const brand = '<b>parametrica</b>';
+  const top = side === 'left'
+    ? `<span class="pg-num">${pageNo} /</span> ${brand}`
+    : `${brand} <span class="pg-num">/ ${pageNo}</span>`;
+  const contacts =
+      '050962, РК, г. Алматы, мкр. Аксай-5, 25, оф. 1332,&nbsp; '
+    + '<b>Моб</b>: <a href="tel:+77771459415">8-777-145-94-15</a>, '
+    + '<b>Тел</b>: <a href="tel:+77272760386">8-727-276-03-86</a>, '
+    + '<a href="mailto:parametricakz@gmail.com">parametricakz@gmail.com</a>&nbsp; '
+    + '<a href="https://www.parametrica.org" target="_blank" rel="noopener">www.parametrica.org</a>';
+  return `<div class="pg-footer ${side}">
+    <div class="pg-foot-top">${top}</div>
+    <div class="pg-foot-contacts">${contacts}</div>
+  </div>`;
+}
+
+// ===== RENDER =====
+function render() {
+  saveActiveKp();          // форма слева → данные активного КП
+  buildKpSwitcher();       // обновить список КП для переключения
+  const stack = document.getElementById('paper-stack');
+  stack.innerHTML = '';
+
+  const showSheets = document.getElementById('opt-sheets').checked;
+  const showPortfolio = document.getElementById('opt-portfolio').checked;
+  const showTrust = document.getElementById('opt-trust').checked;
+  CATALOG_MODE = (CATALOG.length > 0 || PRICE.length > 0);
+
+  // заголовок-сводка по сформированным документам
+  const titleParts = [];
+  if (KPS.length) titleParts.push('КП ' + KPS.map(k => '№' + k.num).join(', '));
+  if (CATALOG.length) titleParts.push('Каталог');
+  if (PRICE.length) titleParts.push('Прайс');
+  document.getElementById('top-title').textContent = titleParts.length ? ('Parametrica — ' + titleParts.join(' · ')) : 'Parametrica';
+
+  let pageNo = 0;
+  const add = (el, footed) => {
+    pageNo++;
+    if (footed) el.insertAdjacentHTML('beforeend', footer(pageNo));
+    stack.appendChild(el);
+  };
+  const sideForNext = () => (((pageNo + 1) % 2) === 0 ? 'left' : 'right');
+
+  // 1. ОБЛОЖКА
+  add(makeCover(), false);
+
+  // 2. ОБЩИЕ СТРАНИЦЫ ПРОДУКТА — все модели из всех КП + каталога, каждая 1 раз (без цены/назначения)
+  const allArts = [...new Set([].concat(...KPS.map(k => k.items.map(i => i.article)), CATALOG).filter(a => PRODS[a]))];
+  const sheetArts = catalogModelOrder(allArts);
+  if (showSheets && sheetArts.length) renderSheets(sheetArts.map(a => ({ article: a, entry: kpItemFor(a), kpMode: false })), add, sideForNext);
+
+  // 3. ТАБЛИЦА на каждый КП (стопкой) — каждый со своими данными
+  KPS.forEach(kp => add(makeTable(kp, sideForNext()), true));
+
+  // 4. ПРАЙС (один)
+  if (PRICE.length) add(makePriceList(catalogGroups(PRICE), sideForNext()), true);
+
+  // ПОРТФОЛИО
+  if (showPortfolio) [4, 5, 6, 7, 8].forEach(n => add(makeStaticFooted('kp_assets/page_' + String(n).padStart(2, '0') + '.jpg'), true));
+  if (showTrust) add(makeStaticFooted('kp_assets/page_09.jpg'), true);
+  // ЗАДНЯЯ СТРАНИЦА
+  add(makeEnd(), false);
+
+  syncPkgMountFields();    // левые поля «Упаковка/Монтаж» ← активный КП
+  fitReqBlocks();
+  if (typeof fitPaper === 'function') fitPaper();   // лист по ширине экрана (мобильный)
+  if (typeof scheduleAutosave === 'function') scheduleAutosave();
+}
+
+// ===== КАТАЛОГ: категории / коллекции / прайс-лист =====
+const COL_EN = { contour: 'CONTOUR', slicing: 'SLICING', radial: 'RADIAL', other: 'OTHER' };
+function isGreenIsland(art) {
+  const p = PRODS[art];
+  if (!p) return false;
+  const s = ((p.series_ru || p.series_en || '') + '').toLowerCase();
+  return p.collection === 'radial' || /остров|island/.test(s);
+}
+// натуральная сортировка артикулов (W2.12 < W5.12 < W10.1)
+function natCompare(a, b) {
+  return a.replace(/\s+/g, '').localeCompare(b.replace(/\s+/g, ''), undefined, { numeric: true, sensitivity: 'base' });
+}
+// длина изделия (для сортировки)
+function lenOf(art) { return (PRODS[art] && PRODS[art].dimensions && PRODS[art].dimensions.length_mm) || 1e9; }
+// «семейство»: артикул без последней группы цифр (S3.21/S3.26 → s3., P4.5/P4.51 → p4.)
+function famKey(art) { return art.replace(/\s+/g, '').toLowerCase().replace(/\d+(?!.*\d)/, ''); }
+// сортировка: от коротких к длинным, семейства (одинаковое начало, разные цифры в конце) — рядом
+function sortByLengthFamily(arts) {
+  const fams = {};
+  arts.forEach(a => { const k = famKey(a); (fams[k] = fams[k] || []).push(a); });
+  Object.values(fams).forEach(g => g.sort((x, y) => lenOf(x) - lenOf(y) || natCompare(x, y)));
+  const order = Object.keys(fams).sort((k1, k2) => {
+    const m1 = Math.min(...fams[k1].map(lenOf)), m2 = Math.min(...fams[k2].map(lenOf));
+    return m1 - m2 || k1.localeCompare(k2);
+  });
+  return order.reduce((acc, k) => acc.concat(fams[k]), []);
+}
+// {benches:{contour:[],slicing:[],other:[]}, green:{radial:[],contour:[],...}}
+function catalogGroups(arts) {
+  if (!arts) arts = Object.keys(PRODS);   // нет аргумента → все; пустой массив → пусто
+  const cats = { benches: {}, green: {} };
+  arts.forEach(art => {
+    if (!PRODS[art]) return;
+    const cat = isGreenIsland(art) ? 'green' : 'benches';
+    const col = PRODS[art].collection || 'other';
+    (cats[cat][col] = cats[cat][col] || []).push(art);
+  });
+  Object.values(cats).forEach(g => Object.keys(g).forEach(c => { g[c] = sortByLengthFamily(g[c]); }));
+  return cats;
+}
+// порядок листов моделей: Benches (contour, slicing, other) → Green Islands (radial, contour, ...)
+function catalogModelOrder(arts) {
+  const g = catalogGroups(arts);
+  const ordB = ['contour', 'slicing', 'other'];
+  const ordG = ['radial', 'contour', 'slicing', 'other'];
+  const out = [];
+  ordB.forEach(c => (g.benches[c] || []).forEach(a => out.push(a)));
+  ordG.forEach(c => (g.green[c] || []).forEach(a => out.push(a)));
+  return out;
+}
+// цена без суффикса валюты (число) и метка валюты для заголовка
+function moneyNum(usd) {
+  const curr = getCurr(); const v = usd * getRate();
+  if (curr === 'KZT' || curr === 'RUB') return Math.round(v).toLocaleString('en-US', { maximumFractionDigits: 0 }).replace(/,/g, ' ');
+  return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });   // USD/EUR/CHF — 2 знака
+}
+function currLabel() { return getCurr(); }
+function dimsStar(p) { const s = fmtDims(p); if (!s) return ''; return /мм$/.test(s) ? s.replace(/мм$/, ' мм*') : (s + ' мм*'); }   // размеры с «мм*»
+
+// заголовок одной колонки прайса
+function plHeadTrio() { return `<th>Наименование</th><th></th><th class="r">Цена, ${currLabel()}</th>`; }
+// ячейка-тройка: наименование(ссылка) | размеры(«…мм*») | цена(без валюты)
+function plTrio(art) {
+  if (!art) return '<td class="pl-name"></td><td class="pl-dim"></td><td class="pl-price r"></td>';
+  const p = PRODS[art];
+  const usd = p.price_interior_usd || p.price_exterior_usd || 0;
+  return `<td class="pl-name">${artLinkHTML(art)}</td><td class="pl-dim">${esc(dimsStar(p))}</td><td class="pl-price r">${usd ? moneyNum(usd) : ''}</td>`;
+}
+// таблица коллекции: 3 поля × N колонок (column-major)
+function plTable(col, arts, ncols) {
+  ncols = ncols || 3;
+  if (!arts || !arts.length) return '';
+  const per = Math.ceil(arts.length / ncols);
+  const cols = [];
+  for (let c = 0; c < ncols; c++) cols.push(arts.slice(c * per, (c + 1) * per));
+  let rows = '';
+  for (let i = 0; i < per; i++) rows += '<tr>' + cols.map(cc => plTrio(cc[i] || '')).join('') + '</tr>';
+  let head = ''; for (let c = 0; c < ncols; c++) head += plHeadTrio();
+  return `<div class="pl-coltitle">${esc(COL_EN[col] || col)} collection</div>
+    <table class="pl-table pl-c${ncols}"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+// весь прайс на ОДНОЙ странице: Benches (выше) + Green Islands (ниже), коллекции по 3 колонки
+function plTerms() {
+  const cond = [
+    'предоплата - 80%, оплата 20% перед вывозом продукции со склада.',
+    'гарантия на интерьерные скамьи- 12 мес., на уличные скамьи гарантия не распространяется.',
+    'все цены указаны без НДС для интерьерных скамей покрытых маслом под «тик/орех» в разборе. стоимость уличных скамей на 10% дороже. стоимость доставки и монтажа по г. Алматы +7-10% к стоимости изделий.',
+    'условия поставки- EXW Инкотермс 2020, г.Алматы.',
+    'сроки изготовления- от 10-ти до 60-ти рабочих дней.'
+  ];
+  const notes = [
+    '*- размеры изделий могут отличаться по длине на 5%, по ширине и высоте на 6 мм, что не является дефектом.',
+    'видимые пороки древесины, разнооттеночность сегментов, отличие текстуры на разных сегментах, потемнения на торцах фанеры от масла, наличие выпавших и зашпаклеванных сучков так же не является дефектом.',
+    'все изделия изготавливаются из натурального дерева (влагостойкая березовая фанера ФСФ, класс эмиссии Е1) и покрываются маслом.'
+  ];
+  const li = arr => arr.map(t => `<div class="pl-term">${t}</div>`).join('');
+  return `<div class="pl-terms">
+    <div class="pl-terms-col"><div class="pl-terms-head">Сроки и условия:</div>${li(cond)}</div>
+    <div class="pl-terms-col"><div class="pl-terms-head">Примечания:</div>${li(notes)}</div>
+  </div>`;
+}
+function makePriceList(groups, side) {
+  const el = div('page page-pricelist' + (side === 'right' ? ' right' : ''));
+  const secB = ['contour', 'slicing'].map(c => plTable(c, groups.benches[c], 3)).join('');
+  const secG = ['radial', 'contour', 'slicing'].map(c => plTable(c, groups.green[c], 3)).join('');
+  el.innerHTML = `
+    <div class="kp-header"><img src="kp_assets/header_${side === 'right' ? 'right' : 'left'}.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"></div>
+    <div class="pl-title">Прайс</div>
+    <div class="pl-section">Benches</div>
+    ${secB}
+    <div class="pl-section">Green Islands</div>
+    ${secG}
+    ${plTerms()}`;
+  return el;
+}
+
+// ссылки на соцсети (Instagram найден на parametrica.org; Facebook/Pinterest — уточнить у клиента)
+const SOCIAL = {
+  facebook:  'https://www.facebook.com/people/Parametrica/61576679342658/?mibextid=wwXIfr',
+  instagram: 'https://www.instagram.com/parametric_benches/',
+  pinterest: 'https://www.pinterest.com/parametric_bench/'
+};
+const SOCIAL_SVG = {
+  facebook: '<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>',
+  pinterest: '<svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345c-.091.378-.293 1.194-.333 1.361-.052.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12z"/></svg>'
+};
+function socialIcons() {
+  return '<div class="end-social">'
+    + `<a href="${SOCIAL.facebook}" target="_blank" rel="noopener" aria-label="Facebook">${SOCIAL_SVG.facebook}</a>`
+    + `<a href="${SOCIAL.instagram}" target="_blank" rel="noopener" aria-label="Instagram">${SOCIAL_SVG.instagram}</a>`
+    + `<a href="${SOCIAL.pinterest}" target="_blank" rel="noopener" aria-label="Pinterest">${SOCIAL_SVG.pinterest}</a>`
+    + '</div>';
+}
+
+// --- текстовый блок поверх фона (позиции/размеры из исходного PDF) ---
+function tp(left, top, size, weight, color, html, fam) {
+  const ff = fam ? `font-family:'${fam}';` : '';
+  return `<div class="tp" style="left:${left}mm;top:${top}mm;font-size:${size}pt;font-weight:${weight};color:${color};${ff}">${html}</div>`;
+}
+// --- ОБЛОЖКА: фон-фото + текст (parametrica и т.д.), ссылки кликабельны при печати ---
+function makeCover() {
+  const el = div('page page-titpage');
+  el.innerHTML = `<img class="tp-bg" src="kp_assets/cover_bg.jpg?v=${ASSET_V}" alt="" onerror="this.style.display='none'">`
+    + tp(31.0, 90.5, 90, 200, '#fff', 'parametrica')
+    + tp(68.8, 122.0, 15, 700, '#fff', 'benches', 'HNeueCond')
+    + tp(87.8, 122.0, 15, 300, '#fff', '// by SATIKOV DESIGN')
+    + tp(82.5, 284.5, 12, 700, '#fff', '<a href="https://www.parametrica.org" target="_blank" rel="noopener">www.parametrica.org</a>');
+  return el;
+}
+// --- ЗАКРЫТИЕ: белый лист + ТОЛЬКО фотополоса-хедер (картинка) + текст + иконки соцсетей ---
+function makeEnd() {
+  const el = div('page page-titpage');
+  // в режиме ИП «ТОО» заменяется на «проект»
+  const isIP = ((document.getElementById('kp-entity') || {}).value || 'ip') === 'ip';
+  const dirLine = isIP ? 'директор проекта Parametrica)' : 'директор ТОО Parametrica)';
+  const orgLine = isIP ? 'проект Parametrica' : 'ТОО Parametrica';
+  el.innerHTML = `<div class="end-header"><img src="kp_assets/end_header_full.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"></div>`
+    + socialIcons()
+    + tp(25.1, 80.0, 12, 700, '#000', 'Благодарим за доверие!')
+    + tp(25.1, 87.4, 10, 300, '#000', 'С наилучшими пожеланиями,')
+    + tp(25.1, 91.6, 10, 300, '#000', 'Сатиков Руслан (основатель и')
+    + tp(25.1, 95.9, 10, 300, '#000', dirLine)
+    + tp(85.4, 80.0, 12, 700, '#000', orgLine)
+    + tp(85.4, 87.4, 10, 300, '#000', '050062 РК, г.Алматы,')
+    + tp(85.4, 91.6, 10, 300, '#000', '4-й мкр дом 17')
+    + tp(126.7, 80.0, 12, 700, '#000', 'Моб:')
+    + tp(141.8, 80.8, 10, 300, '#000099', '<a href="tel:+77771459415">8-777-145-94-15</a>')
+    + tp(126.7, 87.4, 12, 700, '#000', 'E-mail:')
+    + tp(142.2, 87.8, 10, 300, '#000099', '<a href="mailto:parametricakz@gmail.com">parametricakz@gmail.com</a>')
+    + tp(86.1, 286.0, 10, 700, '#000', '<a href="https://www.parametrica.org" target="_blank" rel="noopener">www.parametrica.org</a>');
+  return el;
+}
+
+// --- Static template page (PNG/JPG) ---
+function makeStatic(src) {
+  const el = div('page page-static');
+  const img = document.createElement('img');
+  img.src = src + '?v=' + ASSET_V;
+  img.alt = '';
+  img.onerror = () => {
+    el.innerHTML = '<div style="padding:20mm;color:#9ba0a3;font-size:9pt;text-align:center;">Нет файла:<br>' + esc(src) + '</div>';
+    el.style.display = 'flex';
+    el.style.alignItems = 'center';
+    el.style.justifyContent = 'center';
+  };
+  el.appendChild(img);
+  return el;
+}
+
+// --- Static template page with unified footer (низ обрезан под общий колонтитул) ---
+function makeStaticFooted(src) {
+  const el = div('page page-static-footed');
+  const img = document.createElement('img');
+  img.className = 'sf-img';
+  img.src = src + '?v=' + ASSET_V;
+  img.alt = '';
+  img.onerror = () => {
+    el.innerHTML = '<div style="padding:20mm;color:#9ba0a3;font-size:9pt;text-align:center;">Нет файла:<br>' + esc(src) + '</div>';
+    el.style.display = 'flex';
+    el.style.alignItems = 'center';
+    el.style.justifyContent = 'center';
+  };
+  el.appendChild(img);
+  return el;
+}
+
+// --- Подбор нижних фото (разные ракурсы, без фронтальных/видов сверху); count: 2 (1up) / 4 (2up) ---
+// возвращает имена файлов (для src и для поиска зума)
+function pickGallery(p, count) {
+  count = count || 2;
+  // отдельный набор для 1-up (count<=2): строже, чем плотный 2-up
+  if (count <= 2 && typeof GALLERY_1UP !== 'undefined' && Array.isArray(GALLERY_1UP[p.article]))
+    return GALLERY_1UP[p.article].slice(0, count);
+  const picks = GALLERY_PICKS[p.article];
+  // кураторский список уже отфильтрован по правилам (рендеры на белом, без видов сверху/сбоку) —
+  // НЕ добиваем отсеянными кадрами; лучше показать меньше
+  if (Array.isArray(picks)) return picks.slice(0, count);
+  return (p.images || []).slice(1, 1 + count);
+}
+// безопасный зум содержимого изображения (1 = без зума)
+function imgZoom(article, filename) {
+  const z = IMAGE_ZOOM[article] && IMAGE_ZOOM[article][filename];
+  return (z && z > 1.01) ? z : 1;
+}
+function zoomStyle(article, filename) {
+  const z = imgZoom(article, filename);
+  return z > 1.01 ? ` style="transform:scale(${z})"` : '';
+}
+
+// --- внутренность листа модели (хедер опц. + hero + галерея) — переиспользуется в 1up и 2up ---
+// opts = { entry, kpMode } — entry: запись ITEMS (для цены/назначения), kpMode: показывать цену+назначение (печатается только в КП)
+function productInner(p, article, side, withHeader, galleryCount, opts) {
+  opts = opts || {};
+  const entry = opts.entry || null;
+  const kpMode = !!opts.kpMode;
+  const d = DIM_OVERRIDES[article] || p.dimensions || {};
+  const specRows = [];
+  if (d.length_mm) specRows.push(['Длина', d.length_mm + ' мм']);
+  if (d.width_mm) specRows.push(['Ширина', d.width_mm + ' мм']);
+  if (d.height_min_mm && d.height_max_mm && d.height_min_mm !== d.height_max_mm)
+    specRows.push(['Высота', d.height_min_mm + '-' + d.height_max_mm + ' мм']);
+  else if (d.height_min_mm) specRows.push(['Высота', d.height_min_mm + ' мм']);
+  else if (d.height_max_mm) specRows.push(['Высота', d.height_max_mm + ' мм']);
+
+  const bannerFn = BANNER_PICKS[article] || (p.images || [])[0] || '';  // основное фото по правилам (рендер, скамья целиком)
+  const banner = bannerFn ? imgSrc(p, bannerFn) : '';
+  const gallery = pickGallery(p, galleryCount || 2);   // имена нижних фото
+  const gg = gallery.length >= 4 ? 'gg4' : gallery.length === 3 ? 'gg3' : gallery.length === 2 ? 'gg2' : 'gg1';
+
+  // наименование и цена под ним — ПЕЧАТАЮТСЯ ( «type 1» на странице продукта НЕ пишем )
+  const t = entry ? entry.priceType : selType(article);
+  const isExt = (t === 'exterior');
+  const nameStr = article;   // артикул без кавычек
+  const usd = entry ? (entry.customPrice != null ? entry.customPrice : priceOfKP(p, entry.priceType)) : priceOfKP(p, isExt ? 'exterior' : 'interior');
+  // контролы (НЕ печатаются): для модели В КП правим запись КП (цена/кол-во/назначение — синхронно с таблицей); иначе — буфер витрины
+  const ctl = entry
+    ? `<div class="prod-controls no-print">
+        <div class="pc-ctl">
+          <select onchange="tbSetType(${entry.id}, this.value)" title="назначение">
+            <option value="interior" ${entry.priceType === 'interior' ? 'selected' : ''}>Интерьер</option>
+            <option value="exterior" ${entry.priceType === 'exterior' ? 'selected' : ''}>Улица</option>
+          </select>
+          <input type="number" min="1" value="${entry.qty || 1}" title="Количество" onchange="tbSetQty(${entry.id}, this.value)">
+        </div>
+        <label class="pc-price">Цена (${getCurr()}): <input type="number" step="0.01" value="${entry.customPrice != null ? priceDisplayStr(entry.customPrice) : ''}" placeholder="${priceDisplayStr(priceOfKP(p, entry.priceType))}" onchange="tbSetPrice(${entry.id}, this.value)"></label>
+      </div>`
+    : `<div class="prod-controls no-print">
+        <label class="pc-chk"><input type="checkbox" class="pc-big" ${isSel(article) ? 'checked' : ''} onchange="selToggle('${esc(article)}')"><span class="pc-lab">в подборку</span></label>
+        ${selCtlHTML(article, 'pc-ctl')}
+      </div>`;
+
+  return `
+    ${withHeader ? `<div class="prod-header"><img src="kp_assets/header_${side === 'right' ? 'right' : 'left'}.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"></div>` : ''}
+    <div class="prod-hero">
+      <div class="prod-info">
+        ${ctl}
+        <div class="prod-head">
+          <div class="prod-art">${artLinkWrap(article, esc(nameStr), 'art-link-plain')}</div>
+        </div>
+        <div class="prod-box">
+          ${usd ? `<div class="prod-price-row"><div class="prod-price">${esc(fmtMoney(usd))}</div></div>` : ''}
+          <div class="prod-specs-head">Размеры</div>
+          <div class="prod-specs">
+            ${specRows.map(([l,v]) => `<div class="spec-row"><span class="spec-lab">${l}:</span><span class="spec-val">${v}</span></div>`).join('')}
+            ${!specRows.length && d.raw ? `<div class="spec-row"><span class="spec-lab">Габариты:</span><span class="spec-val">${esc(d.raw)}</span></div>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="prod-banner">${banner ? `<img class="prod-banner-img"${zoomStyle(article, bannerFn)} src="${banner}" onerror="this.style.visibility='hidden'">` : ''}</div>
+    </div>
+    ${gallery.length
+      ? `<div class="prod-gallery ${gg}">${gallery.map(fn => `<div class="prod-gallery-cell"><img${zoomStyle(article, fn)} src="${imgSrc(p, fn)}" onerror="this.parentNode.style.background='#fff';this.style.display='none'"></div>`).join('')}</div>`
+      : ''}`;
+}
+
+// единица листа: { article, entry, kpMode }
+// --- 1 модель на страницу ---
+function makeProductSheet1(unit, side) {
+  const el = div('page page-product' + (side === 'right' ? ' right' : ''));
+  el.innerHTML = productInner(PRODS[unit.article], unit.article, side, true, 2, unit);
+  return el;
+}
+// --- 2 модели на страницу ---
+function makeProductSheet2up(u1, u2, side) {
+  const el = div('page page-product2' + (side === 'right' ? ' right' : ''));
+  const header = `<div class="prod-header"><img src="kp_assets/header_${side === 'right' ? 'right' : 'left'}.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"></div>`;
+  const cell = u => (u && PRODS[u.article]) ? `<div class="pp-unit">${productInner(PRODS[u.article], u.article, side, false, 4, u)}</div>` : '<div class="pp-unit"></div>';
+  el.innerHTML = header + cell(u1) + '<div class="pp-divider"></div>' + cell(u2);
+  return el;
+}
+// --- добавить листы (units = [{article, entry, kpMode}]) ---
+function renderSheets(units, add, sideForNext) {
+  const twoUp = document.getElementById('opt-2up').checked;
+  if (twoUp) {
+    for (let i = 0; i < units.length; i += 2) add(makeProductSheet2up(units[i], units[i + 1], sideForNext()), true);
+  } else {
+    units.forEach(u => { if (u && PRODS[u.article]) add(makeProductSheet1(u, sideForNext()), true); });
+  }
+}
+
+// --- Pricing Table (конфигурируемая, перенос из инвойсов) ---
+function makeTable(kp, side) {
+  const items = kp.items || [];
+  const d = kp.data || {};
+  const kpNum = kp.num;
+  const mat = d.mat || '';
+  const assembly = d.assembly || '';
+  const el = div('page page-table' + (side === 'right' ? ' right' : ''));
+  const curr = getCurr();
+  const rate = getRate();
+  const showDisc = !!d.optDiscount;
+  const discManual = (d.discount != null ? d.discount : '');
+  const showAssemblyNote = !!d.noteAssembly;
+
+  // ---- 1-й проход: сумма товаров без скидки → % и распределение ----
+  let subtotalUSD = 0;
+  items.forEach(item => {
+    const p = PRODS[item.article];
+    if (p || item.customPrice != null)
+      subtotalUSD += (item.customPrice != null ? item.customPrice : priceOfKP(p, item.priceType)) * (item.qty || 1);
+  });
+
+  let pct = showDisc ? (discManual !== '' ? +discManual : autoDiscount(subtotalUSD)) : 0;
+  if (isNaN(pct)) pct = 0;
+  pct = Math.max(0, Math.min(100, pct));
+  const discUSD = subtotalUSD * pct / 100;
+  const netUSD = subtotalUSD - discUSD;
+  // «Упаковка и транспортные расходы» и «Монтаж» — включаются галочками (по умолчанию вкл.).
+  // Сумма по умолчанию = тариф РК (Wix) по стоимости товара; ручная правка хранится в kp.data.pkgUSD / mountUSD.
+  const tariffUSD = wixTariffUSD(subtotalUSD);
+  const pkgOn = d.pkgOn !== false;
+  const mountOn = d.mountOn !== false;
+  const pkgUSD = pkgOn ? ((d.pkgUSD != null) ? d.pkgUSD : tariffUSD) : 0;
+  const mountUSD = mountOn ? ((d.mountUSD != null) ? d.mountUSD : tariffUSD) : 0;
+  const totalUSD = netUSD + pkgUSD + mountUSD;
+  // итоговый режим: скидка «зашита» в цены позиций, отдельная строка «Скидка» не показывается
+  const finalFactor = (FINAL_MODE && showDisc && pct > 0) ? (1 - pct / 100) : 1;
+
+  // ---- 2-й проход: строки таблицы ----
+  let rows = '';
+  items.forEach(item => {
+    const p = PRODS[item.article];
+    const hasPrice = p || item.customPrice != null;
+    const unitUSD = item.customPrice != null ? item.customPrice : priceOfKP(p, item.priceType);
+    const qty = item.qty || 1;
+    const unitShown = unitUSD * finalFactor;
+    const lineShown = unitShown * qty;
+
+    const isCustom = !p && !!item.custom;       // ручная строка («+ строка»)
+    const isEmpty = !p && !isCustom;            // legacy: пустая строка с выбором модели
+    const tl = (item.typeLabel || '').trim();
+    const typeSuffix = item.priceType === 'exterior' ? ' type 1' : '';
+    const lab = (tl && !/^тип\s*\d+$/i.test(tl)) ? ' ' + tl : '';
+    const typeLetter = item.priceType === 'exterior' ? 'У' : 'И';
+    const typePick = `<span class="type-pick" title="И — интерьерная / У — уличная">${typeLetter}<select onchange="tbSetType(${item.id}, this.value)">
+            <option value="interior" ${item.priceType === 'interior' ? 'selected' : ''}>Интерьерная (И)</option>
+            <option value="exterior" ${item.priceType === 'exterior' ? 'selected' : ''}>Уличная (У)</option>
+          </select></span>`;
+    const modelPick = `<span class="desc-pick" title="выбрать модель"><select onchange="tbSetBench(${item.id}, this.value)">${buildOptsKP(item.article)}</select></span>`;
+
+    // столбец «Наименование»: текст в ОДНУ строку (печатается), редакторы — отдельной непечатаемой строкой
+    let descCell;
+    if (p) {
+      const nameHtml = artLinkHTML(item.article) + esc(typeSuffix + lab);
+      const dimsLine = esc(fmtDims(p)) + '*';
+      descCell = `
+      <div class="desc-cell">
+        <div class="desc-text"><span class="nm">${nameHtml}</span><span class="desc-dims" contenteditable="true" onblur="tbSetDims('${esc(item.article)}', this.innerText)" title="изменить размеры (сессия; влияет на страницу продукта)">${dimsLine}</span>${mat ? `<span class="desc-mat">${esc(mat)}</span>` : ''}${assembly ? `<span class="desc-asm">${esc(assembly)}</span>` : ''}</div>
+        <div class="desc-edit no-print">${typePick}${modelPick}</div>
+      </div>`;
+    } else if (isCustom) {
+      // ручная строка: всё как у моделей (шрифт/толщина), наименование и габариты — вписываются вручную
+      descCell = `
+      <div class="desc-cell">
+        <div class="desc-text"><span class="nm">«<span class="cust-edit" contenteditable="true" data-ph="наименование" onblur="tbSetCustomName(${item.id}, this.innerText)">${esc(item.customName || '')}</span>»</span><span class="desc-dims"><span class="cust-edit" contenteditable="true" data-ph="габариты" onblur="tbSetCustomDims(${item.id}, this.innerText)">${esc(item.customDims || '')}</span>мм*</span>${mat ? `<span class="desc-mat">${esc(mat)}</span>` : ''}${assembly ? `<span class="desc-asm">${esc(assembly)}</span>` : ''}</div>
+        <div class="desc-edit no-print">${typePick}</div>
+      </div>`;
+    } else {
+      descCell = `
+      <div class="desc-cell empty">
+        <div class="desc-text"><span class="nm">— выберите модель —</span></div>
+        <div class="desc-edit no-print">${typePick}${modelPick}</div>
+      </div>`;
+    }
+
+    const priceText = hasPrice ? moneyNum(unitShown) : '';
+    const overlayVal = item.customPrice != null ? priceDisplayStr(item.customPrice) : '';
+    const overlayPh = p ? priceDisplayStr(priceOfKP(p, item.priceType)) : '';
+
+    rows += `<tr class="data${isEmpty ? ' empty-row' : ''}">
+      <td>${descCell}</td>
+      <td class="c"><input type="number" class="qty" min="1" step="1" value="${qty}" onchange="tbSetQty(${item.id}, this.value)"></td>
+      <td class="r">
+        <div class="price-cell">
+          <span class="price-text">${priceText}</span>
+          <input type="number" class="price-overlay" step="0.01" value="${overlayVal}" placeholder="${overlayPh}" onchange="tbSetPrice(${item.id}, this.value)">
+        </div>
+      </td>
+      <td class="r last-col">${priceText ? moneyNum(lineShown) : ''}<span class="row-del no-print" onclick="tbRemove(${item.id})" title="удалить">×</span></td>
+    </tr>`;
+  });
+
+  const subtotalRow = `<tr class="tr-subtotal">
+    <td colspan="3">Стоимость изделий</td>
+    <td class="r">${moneyNum(FINAL_MODE ? netUSD : subtotalUSD)}</td>
+  </tr>`;
+
+  let discountRows = '';
+  if (showDisc && !FINAL_MODE) {
+    discountRows += `<tr class="tr-discount">
+      <td colspan="2">Скидка</td>
+      <td class="r"><input type="number" class="pct" step="0.5" min="0" max="100" value="${pct}" onchange="tbSetDiscPct(this.value)"> %</td>
+      <td class="r">${discUSD > 0 ? '−' + moneyNum(discUSD) : moneyNum(0)}</td>
+    </tr>`;
+    if (discUSD > 0) {
+      discountRows += `<tr class="tr-net">
+        <td colspan="3">Стоимость со скидкой</td>
+        <td class="r">${moneyNum(netUSD)}</td>
+      </tr>`;
+    }
+  }
+
+  // «Упаковка и транспортные расходы» и «Монтаж» — только если включены галочкой; суммы редактируются и в таблице
+  const kmRow = '';
+  const pkgRow = pkgOn ? `<tr class="tr-delivery">
+    <td colspan="3">Упаковка и транспортные расходы</td>
+    <td class="r" contenteditable="true" onblur="tbSetKpPkg('${esc(String(kpNum))}', this.innerText)" title="изменить сумму вручную">${moneyNum(pkgUSD)}</td>
+  </tr>` : '';
+  const mountRow = mountOn ? `<tr class="tr-mount">
+    <td colspan="3">Монтаж</td>
+    <td class="r" contenteditable="true" onblur="tbSetKpMount('${esc(String(kpNum))}', this.innerText)" title="изменить сумму вручную">${moneyNum(mountUSD)}</td>
+  </tr>` : '';
+
+  const totalRow = `<tr class="tr-total">
+    <td colspan="3">Итого без НДС:</td>
+    <td class="r">${moneyNum(totalUSD)}</td>
+  </tr>`;
+
+  const client = (d.client || '').trim() || '___________';
+  const city = d.city || '';
+  const objStr = (d.objOn && (d.obj || '').trim()) ? (', для объекта ' + esc(d.obj.trim())) : '';
+  const kpDate = fmtDate(d.date);
+
+  // ---- флаги по составу КП ----
+  const isReal = i => !!(PRODS[i.article] || i.custom);
+  const hasExterior = items.some(i => isReal(i) && i.priceType === 'exterior');
+  const hasInterior = items.some(i => isReal(i) && i.priceType === 'interior');
+  const hasMontage = mountUSD > 0;   // монтаж есть, если сумма монтажа > 0
+
+  // ---- примечания ----
+  const notes = [];
+  notes.push('*- размеры изделий могут отличаться по длине, высоте и ширине на 10-20&nbsp;мм, что не является дефектом, видимые пороки древесины, отличие текстуры на разных сегментах, разноотеночность, темные пятна в результате тонирования, наличие выпавших и зашпатлеванных сучков и трещин так же не является дефектом.');
+  if (!hasMontage || showAssemblyNote) notes.push('сборка скамеек происходит на месте установки силами заказчика с поддержкой производителя.');
+  notes.push('озеленение и прокладка коммуникаций не входят в стоимость изделий.');
+
+  // ---- сроки и оплаты (из данных КП) ---- срок доставки/монтажа только если включена соответствующая галочка
+  const hasDelivery = pkgOn && +(d.delivery) > 0, hasMount = mountOn && +(d.mountdays) > 0;
+  const termLines = [];
+  termLines.push('предоплата — ' + esc(d.prepay) + '%');
+  if (+(d.pay2pct) > 0) termLines.push('оплата — ' + esc(d.pay2pct) + '% (' + esc(d.pay2text || 'перед отгрузкой') + ')');
+  if (+(d.pay3pct) > 0) termLines.push('оплата — ' + esc(d.pay3pct) + '% (' + esc(d.pay3text || 'перед отгрузкой') + ')');
+  if (d.pay4 && (hasDelivery || hasMount)) {
+    termLines.push(hasMount ? 'оплата за доставку и монтаж — после доставки и монтажа изделий' : 'оплата за доставку- после доставки изделий');
+  }
+  termLines.push('срок изготовления — ' + esc(d.days) + ' ' + plDays(d.days));
+  if (hasDelivery) termLines.push('срок доставки — ' + esc(d.delivery) + ' ' + plDays(d.delivery));
+  if (hasMount) termLines.push('срок монтажа — ' + esc(d.mountdays) + ' ' + plDays(d.mountdays));
+  termLines.push('гарантия — 12 месяцев' + (hasExterior ? ', на уличные изделия гарантия не распространяется' : ''));
+  const validStr = d.validOn ? fmtValid(d.valid || autoValidISO(d.date)) : '';
+
+  el.innerHTML = `
+    <div class="kp-header"><img src="kp_assets/header_${side === 'right' ? 'right' : 'left'}.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"></div>
+    <div class="kp-title" contenteditable="true">Коммерческое предложение №${esc(kpNum)}</div>
+    <div class="kp-sub" contenteditable="true">Параметрические скамейки // <span style="font-weight:400">фанера березовая ФСФ Е1 23-30&nbsp;мм., сталь</span></div>
+    <div class="kp-for" contenteditable="true">Данное предложение разработано специально для ${esc(client)}${objStr},</div>
+    <div class="kp-date-line" contenteditable="true">${esc(city)}, ${esc(kpDate)}${validStr ? ' и действует до ' + esc(validStr) + ' включительно' : ''}</div>
+
+    <table class="kt">
+      <colgroup><col class="c1"><col class="c3"><col class="c4"><col class="c5"></colgroup>
+      <thead>
+        <tr>
+          <th>Наименование</th>
+          <th class="c">Кол-во, шт.</th>
+          <th class="r">Цена, ${curr}</th>
+          <th class="r last-col">Сумма, ${curr}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || '<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:8px;">Добавьте товары из каталога ←</td></tr>'}
+        ${subtotalRow}
+        ${discountRows}
+        ${kmRow}
+        ${pkgRow}
+        ${mountRow}
+        ${totalRow}
+      </tbody>
+    </table>
+    <div class="no-print" style="margin-top:3mm;"><button class="btn ghost sm" onclick="addKpRow('${esc(String(kpNum))}')" style="font-size:10px;padding:3px 9px;">+ строка</button></div>
+
+    <div class="kp-remark" contenteditable="true">Все модели скамеек являются авторскими и защищены законом об авторских и смежных правах РК.</div>
+
+    <div class="kp-terms">
+      <div>
+        <div class="terms-head" contenteditable="true">Сроки и условия:</div>
+        ${termLines.map(t => `<div class="term-li" contenteditable="true">${t}</div>`).join('')}
+      </div>
+      <div class="kp-notes">
+        <div class="terms-head" contenteditable="true">Примечания:</div>
+        ${notes.map(n => `<div class="term-li" contenteditable="true">${n}</div>`).join('')}
+      </div>
+    </div>
+
+    ${reqSignBlock(hasInterior, hasExterior)}`;
+  return el;
+}
+
+// реквизиты производителя + подпись/печать — зависят от выбора ИП / ТОО
+function reqSignBlock(hasInterior, hasExterior) {
+  const entity = (document.getElementById('kp-entity') || {}).value || 'ip';
+  // адреса общие для ИП и ТОО (как в реквизитах ТОО)
+  const addr = [
+    'Республика Казахстан, г. Усть-Каменогорск,',
+    'пр-т Нурсултана Назарбаева 66, 59',
+    'фактический адрес:',
+    'ТЦ "Ush Sunqar"',
+    '050962, г. Алматы, мкр. Аксай-5, 25, оф. 1332'
+  ];
+  const isToo = entity === 'too';
+  // счёт показываем ОДИН — под выбранную валюту
+  const curr = getCurr();
+  const TOO_IBAN = { KZT:'KZ4596502F0008782969', USD:'KZ1596502F0008989537', EUR:'KZ6496502F0021753079', CHF:'KZ9596502F0021340465' };
+  const IP_IBAN  = { KZT:'KZ0396502F0008451791', USD:'KZ5296502F0014889381' };
+  const ibanMap = isToo ? TOO_IBAN : IP_IBAN;
+  const ibanCurr = ibanMap[curr] ? curr : 'KZT';   // нет счёта в выбранной валюте (напр. RUB) → показываем счёт в тенге
+  const ibanNum = ibanMap[ibanCurr];
+  const ibanLine = ibanNum ? ('IBAN&nbsp;' + ibanNum + ' ' + ibanCurr) : '';
+  let head, lines, stamp;
+  if (isToo) {
+    head = 'ТОО «Parametrica»';
+    lines = ['БИН 170640008981'].concat(addr, [ibanLine, 'в филиале «ForteBank» г. Алматы', 'БИК IRTYKZKA'].filter(Boolean));
+    stamp = 'stamp.png';      // печать ТОО «parametrica»
+  } else {
+    head = 'ИП «Сатиков Руслан Айдынович»';
+    lines = ['БИН 871216302486'].concat(addr, [ibanLine, 'в филиале «ForteBank» г. Алматы', 'БИК IRTYKZKA'].filter(Boolean));
+    stamp = 'ip_stamp.png';   // печать ИП (если файла нет — скрывается)
+  }
+  // в варианте ТОО «Директор» пишем перед «Сатиков» (без отдельной строки-метки)
+  const signName = (isToo ? 'Директор ' : '') + 'Сатиков Р.А. /';
+  const signImgLeft = isToo ? 42 : 24;   // подпись садится на линию ПОСЛЕ имени
+  const reqRows = `<div class="kp-req-row kp-req-name">${esc(head)}</div>`
+    + lines.map(l => `<div class="kp-req-row">${l}</div>`).join('');
+  // образцы покраски: интерьерные (слева) и/или уличные (справа) — по составу КП
+  const samples = [];
+  if (hasInterior) samples.push(`<figure class="kp-sample"><img src="kp_assets/sample_interior.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"><figcaption>интерьерные</figcaption></figure>`);
+  if (hasExterior) samples.push(`<figure class="kp-sample"><img src="kp_assets/sample_exterior.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"><figcaption>уличные</figcaption></figure>`);
+  const samplesHtml = samples.length ? `<div class="kp-samples"><div class="kp-samples-title">образец покраски</div><div class="kp-samples-row">${samples.join('')}</div></div>` : '';
+  return `<div class="kp-signblock">
+      <div class="kp-leftspace">${samplesHtml}</div>
+      <div class="kp-rightcol">
+        <div class="kp-req">
+          <div class="kp-req-head">ПРОИЗВОДИТЕЛЬ:</div>
+          <div class="kp-req-details">${reqRows}</div>
+          <div class="kp-req-spacer"></div>
+        </div>
+        <div class="kp-sign">
+          <div class="kp-sign-row">
+            <div class="kp-sign-name">${signName}</div>
+            <div class="kp-sign-line"></div>
+          </div>
+          <img class="kp-sign-img" style="left:${signImgLeft}mm" src="signature.png" alt="" onerror="this.style.display='none'">
+          <img class="kp-stamp-img" src="${stamp}?a=2" alt="" onerror="this.style.display='none'">
+        </div>
+      </div>
+    </div>`;
+}
+
+// одноразовая миграция дефолтов сроков (изготовление 30 / доставка 7 / монтаж 5):
+// перетирает сохранённые старые значения один раз, далее уважает ручные правки пользователя
+const DEFAULTS_V = '2026-06-06';
+function applyDefaultsMigration() {
+  try {
+    if (localStorage.getItem('parametrica_defaults_v') === DEFAULTS_V) return;
+    const set = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+    set('kp-days', '30'); set('kp-delivery', '7'); set('kp-mountdays', '5');
+    localStorage.setItem('parametrica_defaults_v', DEFAULTS_V);
+    render();
+  } catch (e) {}
+}
+
+// если страница КП переполняется по высоте (примечания «залазят» на ПРОИЗВОДИТЕЛЬ) —
+// схлопываем все строки реквизитов между «ПРОИЗВОДИТЕЛЬ» и «Сатиков» в одну пустую строку
+function fitReqBlocks() {
+  document.querySelectorAll('.page-table').forEach(pg => {
+    const req = pg.querySelector('.kp-req');
+    if (!req) return;
+    req.classList.remove('req-collapsed');
+    if (pg.scrollHeight > pg.clientHeight + 2) req.classList.add('req-collapsed');
+  });
+}
+
+// ===== HELPERS =====
+function div(cls) {
+  const el = document.createElement('div');
+  el.className = cls;
+  return el;
+}
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+// ссылка на страницу товара на parametrica.org
+function artLinkWrap(article, innerHtml, cls) {
+  const u = PRODUCT_URLS[article];
+  return u ? `<a class="${cls}" href="${esc(u)}" target="_blank" rel="noopener" contenteditable="false" onclick="event.stopPropagation();">${innerHtml}</a>` : innerHtml;
+}
+function artLinkHTML(article) { return artLinkWrap(article, esc('«' + article + '»'), 'art-link'); }
+
+// ===== ЭКСПОРТ/ИМПОРТ СОСТОЯНИЯ (для авто-сборки PDF через headless Chrome) =====
+function isExportMode() { return new URLSearchParams(location.search).get('export') === '1'; }
+function exportState() {
+  const g = id => { const e = document.getElementById(id); return e ? e.value : null; };
+  const gc = id => { const e = document.getElementById(id); return e ? e.checked : false; };
+  return { num:g('kp-num'), date:g('kp-date'), client:g('kp-client'), city:g('kp-city'),
+    curr:g('kp-curr'), rate:g('kp-rate'), pkg:g('kp-pkg'), prepay:g('kp-prepay'), days:g('kp-days'),
+    mat:g('kp-mat'), assembly:g('kp-assembly'), discount:g('kp-discount'), entity:g('kp-entity'),
+    mount:g('kp-mount'), valid:g('kp-valid'), pay2p:g('kp-pay2-pct'), pay2t:g('kp-pay2-text'), pay3p:g('kp-pay3-pct'), pay3t:g('kp-pay3-text'), delivery:g('kp-delivery'), mountdays:g('kp-mountdays'),
+    optDiscount:gc('opt-discount'), optSheets:gc('opt-sheets'), optPortfolio:gc('opt-portfolio'),
+    optTrust:gc('opt-trust'), optNoteAssembly:gc('opt-note-assembly'), optCatalog:gc('opt-catalog'), optPrice:gc('opt-price'), opt2up:gc('opt-2up'), optFxAuto:gc('opt-fxauto'), optPay4:gc('opt-pay4'), optKmAuto:gc('opt-km-auto'),
+    items: ITEMS, kps: KPS, activeKp: activeKp, catalog: CATALOG, price: PRICE };
+}
+function applyState(s) {
+  if (!s) return;
+  const set = (id,v) => { const e = document.getElementById(id); if (e && v != null) e.value = v; };
+  const chk = (id,v) => { const e = document.getElementById(id); if (e) e.checked = !!v; };
+  set('kp-num',s.num); set('kp-date',s.date); set('kp-client',s.client); set('kp-city',s.city);
+  set('kp-curr',s.curr); set('kp-rate',s.rate); set('kp-pkg',s.pkg); set('kp-prepay',s.prepay); set('kp-days',s.days);
+  set('kp-mat',s.mat); set('kp-assembly',s.assembly); set('kp-discount',s.discount); set('kp-entity',s.entity);
+  set('kp-mount',s.mount); set('kp-valid',s.valid); set('kp-pay2-pct',s.pay2p); set('kp-pay2-text',s.pay2t); set('kp-pay3-pct',s.pay3p); set('kp-pay3-text',s.pay3t); set('kp-delivery',s.delivery); set('kp-mountdays',s.mountdays);
+  chk('opt-discount',s.optDiscount); chk('opt-sheets',s.optSheets); chk('opt-portfolio',s.optPortfolio);
+  chk('opt-trust',s.optTrust); chk('opt-note-assembly',s.optNoteAssembly); chk('opt-catalog',s.optCatalog); chk('opt-price',s.optPrice); chk('opt-2up',s.opt2up); chk('opt-fxauto', s.optFxAuto !== false); chk('opt-pay4', s.optPay4); chk('opt-km-auto', s.optKmAuto !== false);
+  const dw = document.getElementById('discount-wrap'); if (dw) dw.style.display = s.optDiscount ? '' : 'none';
+  if (typeof buildCurrOptions === 'function') buildCurrOptions();   // набор валют под производителя
+  { const cs = document.getElementById('kp-curr'); if (cs && s.curr) cs.value = s.curr; }
+  if (typeof onCurrChange === 'function') onCurrChange();
+  if (Array.isArray(s.items)) ITEMS = s.items;
+  if (Array.isArray(s.kps)) KPS = s.kps;
+  // миграция: у каждого КП — свои данные (старые КП брали общий конфиг формы, восстановленный выше)
+  KPS.forEach(k => {
+    if (!k.data) k.data = kpFormData();
+    if (k.pkgUSD !== undefined) { k.data.pkgUSD = k.pkgUSD; delete k.pkgUSD; }
+    if (k.mountUSD !== undefined) { k.data.mountUSD = k.mountUSD; delete k.mountUSD; }
+    if (k.data.pkgOn === undefined) k.data.pkgOn = true;
+    if (k.data.mountOn === undefined) k.data.mountOn = true;
+  });
+  activeKp = (s.activeKp != null && KPS.some(k => k.num === s.activeKp)) ? s.activeKp : (KPS.length ? KPS[0].num : null);
+  if (Array.isArray(s.catalog)) CATALOG = s.catalog;
+  if (Array.isArray(s.price)) PRICE = s.price;
+  // nextId выше всех id (буфер + все КП)
+  let mx = 0;
+  ITEMS.forEach(i => { if (i.id > mx) mx = i.id; });
+  KPS.forEach(k => (k.items || []).forEach(i => { if (i.id > mx) mx = i.id; }));
+  nextId = mx + 1;
+  const _a = activeKpObj(); if (_a) loadKpForm(_a);
+  if (typeof buildShowcase === 'function') buildShowcase();
+  renderItemsList(); render();
+  window.__kpReady = true;  // сигнал готовности для headless-печати
+}
+
+// ===== СОХРАНЕНИЕ КП: автосейв в браузер (localStorage) + запись в папку (File System Access API) =====
+const LS_KEY = 'parametrica_kp_state_v1';
+const FS_DB  = 'parametrica_kp_fs';
+let DIR_HANDLE = null;     // привязанная папка
+let PENDING_DIR = null;    // handle есть, но нужно подтвердить доступ
+let _saveTimer = null, _folderTimer = null, _flashTimer = null;
+
+function scheduleAutosave() { clearTimeout(_saveTimer); _saveTimer = setTimeout(autosave, 400); }
+function autosave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(exportState())); } catch (e) {}
+  if (DIR_HANDLE) { clearTimeout(_folderTimer); _folderTimer = setTimeout(folderSaveNow, 800); }
+  updateSaveStatus();
+}
+function loadAutosave() {
+  try { const s = localStorage.getItem(LS_KEY); if (s) return JSON.parse(s); } catch (e) {}
+  return null;
+}
+
+// --- IndexedDB: хранение handle папки между сессиями ---
+function _idb(cb) {
+  let req; try { req = indexedDB.open(FS_DB, 1); } catch (e) { return cb(null); }
+  req.onupgradeneeded = () => { try { req.result.createObjectStore('h'); } catch (e) {} };
+  req.onsuccess = () => cb(req.result);
+  req.onerror = () => cb(null);
+}
+function idbSet(k, v) { _idb(db => { if (!db) return; try { db.transaction('h', 'readwrite').objectStore('h').put(v, k); } catch (e) {} }); }
+function idbGet(k, cb) { _idb(db => { if (!db) return cb(null); try { const g = db.transaction('h', 'readonly').objectStore('h').get(k); g.onsuccess = () => cb(g.result || null); g.onerror = () => cb(null); } catch (e) { cb(null); } }); }
+
+async function _perm(h, req) {
+  if (!h) return false;
+  const o = { mode: 'readwrite' };
+  try {
+    if ((await h.queryPermission(o)) === 'granted') return true;
+    if (req && (await h.requestPermission(o)) === 'granted') return true;
+  } catch (e) {}
+  return false;
+}
+function restoreFolder() {
+  idbGet('dir', async h => {
+    if (h) { if (await _perm(h, false)) DIR_HANDLE = h; else PENDING_DIR = h; }
+    updateSaveStatus();
+  });
+}
+async function linkFolder() {
+  if (!window.showDirectoryPicker) { alert('Этот браузер не умеет писать в папку напрямую. Откройте КП в Chrome или Edge — либо пользуйтесь «💾 Сохранить» (файл скачается).'); return; }
+  try {
+    let h = DIR_HANDLE || PENDING_DIR;
+    if (h) { if (!(await _perm(h, true))) h = null; }     // подтвердить доступ к уже выбранной папке
+    if (!h) h = await window.showDirectoryPicker({ id: 'parametrica-kp', mode: 'readwrite' });
+    DIR_HANDLE = h; PENDING_DIR = null; idbSet('dir', h);
+    await folderSaveNow();
+    updateSaveStatus();
+    alert('Папка привязана. КП автоматически сохраняется в неё (файл current.json) при каждом изменении.');
+  } catch (e) { /* отмена выбора — игнор */ }
+}
+async function folderSaveNow() {
+  if (!DIR_HANDLE) return;
+  if (!(await _perm(DIR_HANDLE, false))) { PENDING_DIR = DIR_HANDLE; DIR_HANDLE = null; updateSaveStatus(); return; }
+  try {
+    const fh = await DIR_HANDLE.getFileHandle('current.json', { create: true });
+    const w = await fh.createWritable(); await w.write(JSON.stringify(exportState(), null, 2)); await w.close();
+  } catch (e) {}
+}
+function _kpFileName() {
+  const st = exportState();
+  const n = 'kp_' + (st.num || '') + (st.client ? '_' + st.client : '');
+  return n.replace(/[\\/:*?"<>|]+/g, '_').replace(/\s+/g, '_').replace(/_+/g, '_') + '.json';
+}
+async function saveNamed() {
+  const name = _kpFileName();
+  const json = JSON.stringify(exportState(), null, 2);
+  if (DIR_HANDLE && await _perm(DIR_HANDLE, true)) {
+    try { const fh = await DIR_HANDLE.getFileHandle(name, { create: true }); const w = await fh.createWritable(); await w.write(json); await w.close(); flashStatus('сохранено: ' + name); return; } catch (e) {}
+  }
+  if (window.showSaveFilePicker) {
+    try {
+      const opt = { suggestedName: name, types: [{ description: 'KP', accept: { 'application/json': ['.json'] } }] };
+      if (DIR_HANDLE || PENDING_DIR) opt.startIn = DIR_HANDLE || PENDING_DIR;
+      const fh = await window.showSaveFilePicker(opt); const w = await fh.createWritable(); await w.write(json); await w.close(); flashStatus('сохранено'); return;
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  _download(name, json);
+}
+function _download(name, json) {
+  const blob = new Blob([json], { type: 'application/json' });
+  // iOS/мобильный вебвью: File System API нет, <a download> часто не срабатывает —
+  // используем «Поделиться» (→ «Сохранить в Файлы» / отправить). Требует жеста (есть — клик по кнопке).
+  try {
+    const file = new File([blob], name, { type: 'application/json' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: name }).catch(function () {});
+      return;
+    }
+  } catch (e) {}
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+async function openSaved() {
+  if (window.showOpenFilePicker) {
+    try {
+      const opt = { multiple: false, types: [{ description: 'KP', accept: { 'application/json': ['.json'] } }] };
+      if (DIR_HANDLE || PENDING_DIR) opt.startIn = DIR_HANDLE || PENDING_DIR;
+      const [fh] = await window.showOpenFilePicker(opt);
+      const f = await fh.getFile(); applyState(JSON.parse(await f.text())); flashStatus('загружено'); return;
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json';
+  inp.onchange = () => { const f = inp.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { try { applyState(JSON.parse(rd.result)); flashStatus('загружено'); } catch (e) { alert('Не удалось прочитать файл.'); } }; rd.readAsText(f); };
+  inp.click();
+}
+function flashStatus(msg) {
+  const el = document.getElementById('save-status'); if (!el) return;
+  el.textContent = '✓ ' + msg; el.style.color = '#5ab55a';
+  clearTimeout(_flashTimer); _flashTimer = setTimeout(updateSaveStatus, 2500);
+}
+function updateSaveStatus() {
+  const el = document.getElementById('save-status'); if (!el) return;
+  if (DIR_HANDLE) { el.textContent = '● автосейв → папка'; el.style.color = '#5ab55a'; el.title = 'КП автоматически пишется в привязанную папку (current.json).'; }
+  else if (PENDING_DIR) { el.textContent = '● папка: нажмите 📁'; el.style.color = '#c8a24a'; el.title = 'Папка была привязана ранее — нажмите «📁 Папка», чтобы подтвердить доступ.'; }
+  else { el.textContent = '● автосейв в браузер'; el.style.color = '#c8a24a'; el.title = 'Автосохранение в этом браузере (localStorage). Нажмите «📁 Папка» для записи файлов в папку.'; }
+}
+
+// ===== INIT =====
+(function() {
+  const now = new Date();
+  const m = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  document.getElementById('kp-date').value = now.getDate() + ' ' + m[now.getMonth()] + ' ' + now.getFullYear() + 'г.';
+  const vd = new Date(now.getTime() + 7 * 86400000);   // действует до = +1 неделя (по умолчанию)
+  const iso = vd.getFullYear() + '-' + String(vd.getMonth() + 1).padStart(2, '0') + '-' + String(vd.getDate()).padStart(2, '0');
+  const vEl = document.getElementById('kp-valid'); if (vEl) vEl.value = iso;
+})();
+
+render();
+loadProducts();
+</script>
+</body>
+</html>
