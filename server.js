@@ -49,7 +49,7 @@ app.post('/pdf', async (req, res) => {
     });
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="' + encodeURIComponent(name) + '.pdf"');
-    res.send(pdf);
+    res.end(Buffer.from(pdf));   // pdf = Uint8Array; Buffer.from -> сырые байты (иначе Express отдаёт JSON-массив чисел)
   } catch (e) {
     console.error('PDF error:', e);
     res.status(500).json({ error: String(e && e.message || e) });
