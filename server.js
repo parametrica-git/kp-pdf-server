@@ -102,7 +102,7 @@ app.post('/lead', async (req, res) => {
 const ADMIN_PWD   = process.env.ADMIN_PWD || '';
 const SHOP        = process.env.SHOPIFY_STORE || '';
 const SHOP_TOKEN  = process.env.SHOPIFY_ADMIN_TOKEN || '';
-const SHOP_API    = process.env.SHOPIFY_API_VERSION || '2024-10';
+const SHOP_API    = process.env.SHOPIFY_API_VERSION || '2026-01';
 function nrmArt(s){ return String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
 async function shopifyGQL(query, variables){
   const r = await fetch('https://' + SHOP + '/admin/api/' + SHOP_API + '/graphql.json', {
@@ -120,6 +120,7 @@ app.post('/admin/apply-prices', async (req, res) => {
 
   // — Shopify: цена варианта = интерьерная; товар ищем по названию Bench "<артикул>"
   let shopify = 'пропущен (нет токена)';
+  let diag = null;   // ДИАГНОСТИКА: первый реальный ответ/ошибка Shopify (за паролём, безопасно)
   if (SHOP && SHOP_TOKEN) {
     let ok = 0, fail = 0, miss = 0;
     for (const ch of changes) {
@@ -128,6 +129,7 @@ app.post('/admin/apply-prices', async (req, res) => {
         const q = '{ products(first:5, query:' + JSON.stringify(String(ch.article)) +
                   '){edges{node{id title variants(first:1){edges{node{id}}}}}}}';
         const j = await shopifyGQL(q);
+        if (diag === null) diag = { stage: 'search', errors: j.errors || null, found: ((((j.data || {}).products || {}).edges) || []).length, apiVersion: SHOP_API };
         const edges = (((j.data || {}).products || {}).edges) || [];
         const want = nrmArt(ch.article);
         let node = null;
@@ -137,8 +139,9 @@ app.post('/admin/apply-prices', async (req, res) => {
         const m = 'mutation($p:ID!,$v:[ProductVariantsBulkInput!]!){productVariantsBulkUpdate(productId:$p,variants:$v){userErrors{message}}}';
         const mj = await shopifyGQL(m, { p: node.id, v: [{ id: vid, price: String(ch.interior) }] });
         const errs = (((mj.data || {}).productVariantsBulkUpdate || {}).userErrors) || [];
+        diag = { stage: 'update', errors: mj.errors || null, userErrors: errs, apiVersion: SHOP_API };
         if (errs.length) { fail++; } else { ok++; }
-      } catch (e) { fail++; }
+      } catch (e) { fail++; if (diag === null) diag = { stage: 'exception', message: String(e && e.message || e) }; }
     }
     shopify = 'обновлено ' + ok + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '');
   }
@@ -146,7 +149,7 @@ app.post('/admin/apply-prices', async (req, res) => {
   // — Wix Stores: требует подтверждённого Catalog API (site ' + (process.env.WIX_SITE_ID||'') + ')
   let wix = process.env.WIX_API_KEY ? 'нужно подключить Stores Catalog API' : 'пропущен (нет ключа)';
 
-  res.json({ shopify, wix, note: 'products.json/prices.json обновляются заменой файла в репозитории' });
+  res.json({ shopify, wix, diag, note: 'products.json/prices.json обновляются заменой файла в репозитории' });
 });
 
 const PORT = process.env.PORT || 3000;
