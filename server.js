@@ -98,16 +98,38 @@ app.post('/lead', async (req, res) => {
 
 // ===== АВТО-ОБНОВЛЕНИЕ ЦЕН (инструмент price-admin.html) =====
 // env на Render: ADMIN_PWD (пароль тула), SHOPIFY_STORE (parametrica-store.myshopify.com),
-//               SHOPIFY_ADMIN_TOKEN (Admin API токен кастомного приложения), [WIX_API_KEY, WIX_SITE_ID]
+//   ВАРИАНТ 1 (Dev Dashboard, рекомендуется): SHOPIFY_CLIENT_ID + SHOPIFY_CLIENT_SECRET (со страницы Credentials)
+//   ВАРИАНТ 2 (старый): SHOPIFY_ADMIN_TOKEN (статичный Admin API токен). [WIX_API_KEY, WIX_SITE_ID]
 const ADMIN_PWD   = process.env.ADMIN_PWD || '';
 const SHOP        = process.env.SHOPIFY_STORE || '';
 const SHOP_TOKEN  = process.env.SHOPIFY_ADMIN_TOKEN || '';
+const SHOP_CID    = process.env.SHOPIFY_CLIENT_ID || '';
+const SHOP_SECRET = process.env.SHOPIFY_CLIENT_SECRET || '';
 const SHOP_API    = process.env.SHOPIFY_API_VERSION || '2026-01';
 function nrmArt(s){ return String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
+// Токен Admin API: при наличии Client ID+Secret меняем их на токен (client credentials grant —
+// для приложения Dev Dashboard на своём магазине; токен живёт ~24ч, кэшируем). Иначе — статичный токен.
+let _tok = null, _tokExp = 0;
+async function getShopToken(){
+  if (_tok && Date.now() < _tokExp - 60000) return _tok;
+  if (SHOP_CID && SHOP_SECRET) {
+    const r = await fetch('https://' + SHOP + '/admin/oauth/access_token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'client_credentials', client_id: SHOP_CID, client_secret: SHOP_SECRET })
+    });
+    const j = await r.json().catch(function(){ return {}; });
+    if (!r.ok || !j.access_token) throw new Error('token exchange ' + r.status + ': ' + JSON.stringify(j).slice(0, 200));
+    _tok = j.access_token; _tokExp = Date.now() + ((j.expires_in || 86399) * 1000);
+    return _tok;
+  }
+  return SHOP_TOKEN;
+}
 async function shopifyGQL(query, variables){
+  const tok = await getShopToken();
   const r = await fetch('https://' + SHOP + '/admin/api/' + SHOP_API + '/graphql.json', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': SHOP_TOKEN },
+    headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': tok },
     body: JSON.stringify({ query, variables })
   });
   return r.json();
@@ -121,7 +143,7 @@ app.post('/admin/apply-prices', async (req, res) => {
   // — Shopify: цена варианта = интерьерная; товар ищем по названию Bench "<артикул>"
   let shopify = 'пропущен (нет токена)';
   let diag = null;   // ДИАГНОСТИКА: первый реальный ответ/ошибка Shopify (за паролём, безопасно)
-  if (SHOP && SHOP_TOKEN) {
+  if (SHOP && (SHOP_TOKEN || (SHOP_CID && SHOP_SECRET))) {
     let ok = 0, fail = 0, miss = 0;
     for (const ch of changes) {
       if (ch.interior == null) continue;
