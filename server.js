@@ -106,6 +106,12 @@ const SHOP_TOKEN  = process.env.SHOPIFY_ADMIN_TOKEN || '';
 const SHOP_CID    = process.env.SHOPIFY_CLIENT_ID || '';
 const SHOP_SECRET = process.env.SHOPIFY_CLIENT_SECRET || '';
 const SHOP_API    = process.env.SHOPIFY_API_VERSION || '2026-01';
+const WIX_KEY     = process.env.WIX_API_KEY || '';      // Wix: API-ключ (manage.wix.com/account/api-keys)
+const WIX_SITE    = process.env.WIX_SITE_ID || '';      // Wix: site id (de4f9737-...)
+const GH_TOKEN    = process.env.GITHUB_TOKEN || '';     // GitHub PAT (Contents: write) — сохранять живой products.json
+const GH_REPO     = process.env.GITHUB_REPO || 'parametrica-git/kp-pdf-server';
+const GH_PATH     = process.env.GITHUB_PRODUCTS_PATH || 'products.json';
+const GH_BRANCH   = process.env.GITHUB_BRANCH || 'main';
 function nrmArt(s){ return String(s == null ? '' : s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
 // Токен Admin API: при наличии Client ID+Secret меняем их на токен (client credentials grant —
 // для приложения Dev Dashboard на своём магазине; токен живёт ~24ч, кэшируем). Иначе — статичный токен.
@@ -133,6 +139,49 @@ async function shopifyGQL(query, variables){
     body: JSON.stringify({ query, variables })
   });
   return r.json();
+}
+// ── Wix Stores (Catalog V1): авторизация API-ключом; товар по названию Bench "<арт>"; обновление цены ──
+function wixHeaders(){ return { 'Authorization': WIX_KEY, 'wix-site-id': WIX_SITE, 'Content-Type': 'application/json' }; }
+let _wixMap = null;   // nrmArt(name) -> productId
+async function wixLoadProducts(){
+  if (_wixMap) return _wixMap;
+  const m = {}; let offset = 0;
+  for (let page = 0; page < 6; page++) {
+    const r = await fetch('https://www.wixapis.com/stores/v1/products/query', {
+      method: 'POST', headers: wixHeaders(),
+      body: JSON.stringify({ query: { paging: { limit: 100, offset: offset } } })
+    });
+    const j = await r.json().catch(function(){ return {}; });
+    if (!r.ok) throw new Error('query ' + r.status + ': ' + JSON.stringify(j).slice(0, 150));
+    const prods = j.products || [];
+    for (let i = 0; i < prods.length; i++) m[nrmArt(prods[i].name)] = prods[i].id;
+    if (prods.length < 100) break;
+    offset += 100;
+  }
+  _wixMap = m; return m;
+}
+async function wixSetPrice(productId, price){
+  const r = await fetch('https://www.wixapis.com/stores/v1/products/' + productId, {
+    method: 'PATCH', headers: wixHeaders(),
+    body: JSON.stringify({ product: { priceData: { price: Number(price) } } })
+  });
+  const j = await r.json().catch(function(){ return {}; });
+  return { ok: r.ok, status: r.status, err: (j && (j.message || j.error)) || null };
+}
+// ── GitHub: сохранить актуальный products.json в репозиторий (живой источник цен для КП/инвойс/сайта) ──
+async function commitFileToGitHub(contentObj){
+  const api = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_PATH;
+  const hdr = { 'Authorization': 'Bearer ' + GH_TOKEN, 'Accept': 'application/vnd.github+json', 'User-Agent': 'kp-pdf-server', 'Content-Type': 'application/json' };
+  let sha = null;
+  const g = await fetch(api + '?ref=' + GH_BRANCH, { headers: hdr });
+  if (g.ok) { const gj = await g.json().catch(function(){ return {}; }); sha = gj.sha || null; }
+  const content = Buffer.from(JSON.stringify(contentObj, null, 2), 'utf8').toString('base64');
+  const body = { message: 'price update', content: content, branch: GH_BRANCH };
+  if (sha) body.sha = sha;
+  const p = await fetch(api, { method: 'PUT', headers: hdr, body: JSON.stringify(body) });
+  const pj = await p.json().catch(function(){ return {}; });
+  if (!p.ok) throw new Error('github ' + p.status + ': ' + JSON.stringify(pj).slice(0, 150));
+  return { commit: (pj.commit && pj.commit.sha) ? pj.commit.sha.slice(0, 7) : 'ok' };
 }
 app.post('/admin/apply-prices', async (req, res) => {
   const B = req.body || {};
@@ -168,10 +217,33 @@ app.post('/admin/apply-prices', async (req, res) => {
     shopify = 'обновлено ' + ok + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '');
   }
 
-  // — Wix Stores: требует подтверждённого Catalog API (site ' + (process.env.WIX_SITE_ID||'') + ')
-  let wix = process.env.WIX_API_KEY ? 'нужно подключить Stores Catalog API' : 'пропущен (нет ключа)';
+  // — Wix Stores (Catalog V1): цена = интерьерная; товар по названию Bench "<артикул>"
+  let wix = 'пропущен (нет ключа)';
+  let wdiag = null;
+  if (WIX_KEY && WIX_SITE) {
+    try {
+      const map = await wixLoadProducts();
+      let ok = 0, fail = 0, miss = 0;
+      for (const ch of changes) {
+        if (ch.interior == null) continue;
+        const id = map['bench' + nrmArt(ch.article)];
+        if (!id) { miss++; continue; }
+        const res2 = await wixSetPrice(id, ch.interior);
+        if (wdiag === null) wdiag = res2;
+        if (res2.ok) ok++; else fail++;
+      }
+      wix = 'обновлено ' + ok + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '');
+    } catch (e) { wix = 'ошибка: ' + String(e && e.message || e).slice(0, 150); }
+  }
 
-  res.json({ shopify, wix, diag, note: 'products.json/prices.json обновляются заменой файла в репозитории' });
+  // — Живой products.json в GitHub: его читают КП/инвойс/сайт вживую (без пересборки и без меня)
+  let pricesFile = 'пропущен (нет productsJson или GITHUB_TOKEN)';
+  if (B.productsJson && GH_TOKEN) {
+    try { const r = await commitFileToGitHub(B.productsJson); pricesFile = 'сохранён (' + r.commit + ')'; }
+    catch (e) { pricesFile = 'ошибка: ' + String(e && e.message || e).slice(0, 150); }
+  }
+
+  res.json({ shopify, wix, pricesFile, diag, wdiag, note: 'Shopify/Wix обновлены пушем; products.json сохранён в GitHub (живой источник для КП/инвойс/сайта)' });
 });
 
 const PORT = process.env.PORT || 3000;
