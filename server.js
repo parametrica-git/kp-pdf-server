@@ -58,6 +58,89 @@ app.post('/pdf', async (req, res) => {
   }
 });
 
+// ===== БОЛЬШИЕ ДОКУМЕНТЫ ПО ЧАСТЯМ (каталог целиком) =====
+// Каталог — 77 листов и ~280 фото. Одним запросом /pdf не проходит: на бесплатном тарифе
+// (0.1 CPU) запрос обрывается примерно на минуте. Склеивать на телефоне тоже нельзя —
+// pdf-lib в мобильном браузере жуёт 20 МБ по несколько минут.
+// Поэтому: клиент шлёт части в /pdf-part (каждая рендерится быстро и живёт в памяти сервера),
+// затем зовёт /pdf-join — склейка идёт здесь, где есть процессор, и отдаётся один файл.
+// СТАРЫЙ /pdf НЕ ТРОНУТ: обычные КП идут по нему как раньше.
+const PART_TTL_MS = 15 * 60 * 1000;             // недособранные сессии живут 15 минут
+const partSessions = new Map();                 // id -> { parts: [Buffer], at: number }
+
+function sweepSessions() {
+  const now = Date.now();
+  for (const [id, s] of partSessions) if (now - s.at > PART_TTL_MS) partSessions.delete(id);
+}
+setInterval(sweepSessions, 60 * 1000).unref();
+
+async function renderPdfBuffer(html) {
+  let page;
+  try {
+    const browser = await getBrowser();
+    page = await browser.newPage();
+    await page.emulateMediaType('print');
+    await page.setContent(html, { waitUntil: 'networkidle0', timeout: 90000 });
+    try { await page.evaluate(() => document.fonts && document.fonts.ready); } catch (_) {}
+    const pdf = await page.pdf({
+      printBackground: true,
+      preferCSSPageSize: true,
+      margin: { top: '0mm', right: '0mm', bottom: '0mm', left: '0mm' }
+    });
+    return Buffer.from(pdf);
+  } finally {
+    if (page) { try { await page.close(); } catch (_) {} }
+  }
+}
+
+app.post('/pdf-part', async (req, res) => {
+  if (TOKEN && req.get('x-kp-key') !== TOKEN) return res.status(401).json({ error: 'unauthorized' });
+  const { session, index, html } = req.body || {};
+  if (!session || typeof session !== 'string') return res.status(400).json({ error: 'no session' });
+  if (!html || typeof html !== 'string') return res.status(400).json({ error: 'no html' });
+  const i = Number(index);
+  if (!Number.isInteger(i) || i < 0 || i > 999) return res.status(400).json({ error: 'bad index' });
+  try {
+    const buf = await renderPdfBuffer(html);
+    let s = partSessions.get(session);
+    if (!s) { s = { parts: [], at: Date.now() }; partSessions.set(session, s); }
+    s.parts[i] = buf; s.at = Date.now();
+    res.json({ ok: true, index: i, bytes: buf.length, have: s.parts.filter(Boolean).length });
+  } catch (e) {
+    console.error('pdf-part error:', e);
+    res.status(500).json({ error: String(e && e.message || e) });
+  }
+});
+
+app.post('/pdf-join', async (req, res) => {
+  if (TOKEN && req.get('x-kp-key') !== TOKEN) return res.status(401).json({ error: 'unauthorized' });
+  const { session, total } = req.body || {};
+  const s = session && partSessions.get(session);
+  if (!s) return res.status(404).json({ error: 'session not found (истекла или не начата)' });
+  const parts = s.parts.filter(Boolean);
+  if (Number.isInteger(Number(total)) && parts.length !== Number(total)) {
+    return res.status(409).json({ error: 'не все части дошли', have: parts.length, need: Number(total) });
+  }
+  const name = (req.body.name || 'KP').toString().replace(/[\\/:*?"<>|\r\n]+/g, ' ').trim() || 'KP';
+  try {
+    const { PDFDocument } = require('pdf-lib');
+    const out = await PDFDocument.create();
+    for (const buf of parts) {
+      const src = await PDFDocument.load(buf);
+      const copied = await out.copyPages(src, src.getPageIndices());
+      copied.forEach(p => out.addPage(p));
+    }
+    const bytes = await out.save();
+    partSessions.delete(session);                 // память не держим
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="' + encodeURIComponent(name) + '.pdf"');
+    res.end(Buffer.from(bytes));
+  } catch (e) {
+    console.error('pdf-join error:', e);
+    res.status(500).json({ error: String(e && e.message || e) });
+  }
+});
+
 // ===== ЗАЯВКА С САЙТА («Запросить КП») → Telegram + email =====
 // env на Render: TG_TOKEN (бот @BotFather), TG_CHAT (ваш chat id), WEB3FORMS_KEY (web3forms.com)
 const TG_TOKEN = process.env.TG_TOKEN || '';
