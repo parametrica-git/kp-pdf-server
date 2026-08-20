@@ -511,7 +511,11 @@ input, select, textarea, button { font-family: inherit; }
 /* ====== ПРАЙС-ЛИСТ (каталог) ====== */
 .page-pricelist { padding: 9mm 12mm 14mm; display: flex; flex-direction: column; }
 .page-pricelist .kp-header { margin: -9mm -12mm 4mm; height: 42mm; }
+/* заголовок прайса + дата на одной базовой линии — дата не съедает высоту одностраничного прайса */
+.pl-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8mm; margin-bottom: 2mm; }
+.pl-head .pl-title { margin-bottom: 0; }
 .pl-title { font-size: 46px; font-weight: 200; color: var(--ink); letter-spacing: 0.5px; line-height: 1; margin-bottom: 2mm; }
+.pl-date { font-size: 8.5pt; font-weight: 300; color: var(--ink-soft); white-space: nowrap; }
 .pl-sub { font-size: 6.5pt; color: var(--muted); font-weight: 400; letter-spacing: 0; }
 .pl-section { font-size: 12pt; font-weight: 700; color: var(--ink); letter-spacing: 0.5px; margin: 2.5mm 0 0.5mm; }
 /* СРОКИ И УСЛОВИЯ / ПРИМЕЧАНИЯ под таблицами прайса — в 2 колонки */
@@ -2344,7 +2348,7 @@ function makePriceList(groups, side) {
   const secG = ['radial', 'contour', 'slicing'].map(c => plTable(c, groups.green[c], 3)).join('');
   el.innerHTML = `
     <div class="kp-header"><img src="kp_assets/header_${side === 'right' ? 'right' : 'left'}.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"></div>
-    <div class="pl-title">Прайс</div>
+    <div class="pl-head"><div class="pl-title">Прайс</div><div class="pl-date">${esc(fmtDate())}</div></div>
     <div class="pl-section">Benches</div>
     ${secB}
     <div class="pl-section">Green Islands</div>
@@ -2384,6 +2388,8 @@ function makeCover() {
     + tp(31.0, 90.5, 90, 200, '#fff', 'parametrica')
     + tp(68.8, 122.0, 15, 700, '#fff', 'benches', 'HNeueCond')
     + tp(87.8, 122.0, 15, 300, '#fff', '// by SATIKOV DESIGN')
+    // дата документа — строкой ниже, тем же тонким HNeue Light (300), что и «// by SATIKOV DESIGN»
+    + tp(68.8, 129.6, 10, 300, '#fff', esc(fmtDate()))
     + tp(82.5, 284.5, 12, 700, '#fff', '<a href="https://www.parametrica.org" target="_blank" rel="noopener">www.parametrica.org</a>');
   return el;
 }
