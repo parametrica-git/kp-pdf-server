@@ -318,6 +318,16 @@ input, select, textarea, button { font-family: inherit; }
 .sc-ctl select { flex: 1; min-width: 0; font-size: 10px; padding: 3px 4px; border: 1px solid #cfcfcf; border-radius: 4px; background: #fff; color: #1c1c1c; }
 .sc-ctl input { width: 40px; font-size: 10px; padding: 3px 4px; border: 1px solid #cfcfcf; border-radius: 4px; text-align: center; }
 .sc-card:not(.sel) .sc-ctl { opacity: 0.5; }
+/* ± вместо ввода количества цифрами (витрина и страница продукта). 0 = модель не выбрана */
+.qstep { display: flex; align-items: stretch; flex-shrink: 0; border: 1px solid #cfcfcf; border-radius: 4px; overflow: hidden; background: #fff; }
+.qstep button { border: 0; background: #f2f2f2; color: #1c1c1c; cursor: pointer; font: inherit; font-weight: 700; line-height: 1; padding: 0 7px; -webkit-appearance: none; appearance: none; }
+.qstep button:hover:not(:disabled) { background: var(--accent); color: #fff; }
+.qstep button:disabled { color: #c4c4c4; background: #fafafa; cursor: default; }
+.qstep .qs-val { align-self: center; text-align: center; padding: 3px 2px; font-variant-numeric: tabular-nums; color: #1c1c1c; }
+.sc-ctl .qstep { font-size: 10px; }
+.sc-ctl .qstep .qs-val { min-width: 18px; }
+.prod-controls .pc-ctl .qstep { font-size: 9pt; }
+.prod-controls .pc-ctl .qstep .qs-val { min-width: 26px; }
 /* управление на странице продукта (НЕ печатается) */
 /* выбор на странице продукта (НЕ печатается): крупная галочка сверху, под ней назначение + кол-во */
 .prod-controls { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin: 0 0 5mm; }
@@ -1039,7 +1049,7 @@ html.pdf-exporting .kt input[type="number"] { -moz-appearance: textfield; }
       <!-- Страницы -->
       <div class="panel">
         <div class="panel-title">Состав КП</div>
-        <div style="font-size:9px;color:var(--sb-muted);margin:0 0 5px;line-height:1.4;">КП, Каталог и Прайс формируются из <b>витрины справа</b> — отметьте модели и нажмите «Сформировать в ▾». Несколько КП идут стопкой.</div>
+        <div style="font-size:9px;color:var(--sb-muted);margin:0 0 5px;line-height:1.4;">КП, Каталог и Прайс формируются из <b>витрины справа</b> — наберите модели кнопками «+»/«−» и нажмите «Сформировать в ▾». Несколько КП идут стопкой; «Отдельные КП по моделям» сделает по одному КП на каждую модель.</div>
         <label class="toggle-row"><input type="checkbox" id="opt-sheets" checked onchange="render()"> Листы моделей (фото + описание)</label>
         <label class="toggle-row" style="padding-left:14px;"><input type="checkbox" id="opt-2up" onchange="render()"> 2 модели на странице</label>
         <label class="toggle-row"><input type="checkbox" id="opt-portfolio" checked onchange="render()"> Портфолио проектов (стр. 4–8)</label>
@@ -1340,6 +1350,13 @@ function setSelType(art, type, qty) {
 function selToggle(art) { if (isSel(art)) ITEMS = ITEMS.filter(i => i.article !== art); else setSelType(art, 'interior', 1); afterSelChange(); }
 function selSetType(art, t) { if (!t) ITEMS = ITEMS.filter(i => i.article !== art); else setSelType(art, t, selQty(art)); afterSelChange(); }
 function selSetQty(art, q) { q = Math.max(1, +q || 1); if (!isSel(art)) setSelType(art, 'interior', q); else selEntries(art).forEach(e => e.qty = q); afterSelChange(); }
+// шаг ±1 в витрине: 0 = не выбрано, «+» с нуля добавляет модель, «−» до нуля снимает выбор
+function selQtyStep(art, d) {
+  const q = (isSel(art) ? selQty(art) : 0) + d;
+  if (q <= 0) { ITEMS = ITEMS.filter(i => i.article !== art); afterSelChange(); return; }
+  if (!isSel(art)) { setSelType(art, 'interior', q); afterSelChange(); return; }
+  selSetQty(art, q);
+}
 // правка буфера: обновляем только витрину/сайдбар/счётчик — документ НЕ трогаем (до «Сформировать»)
 function afterSelChange() { if (typeof renderItemsList === 'function') renderItemsList(); buildShowcase(); if (typeof scheduleAutosave === 'function') scheduleAutosave(); }
 
@@ -1366,7 +1383,11 @@ function selCtlHTML(art, cls) {
         <option value="exterior"${t==='exterior'?' selected':''}>Улица</option>
         <option value="both"${t==='both'?' selected':''}>Обе</option>
       </select>
-      <input type="number" min="1" value="${selQty(art)}" title="Количество" onchange="selSetQty('${esc(art)}', this.value)">
+      <div class="qstep">
+        <button type="button" onclick="selQtyStep('${esc(art)}', -1)" title="Меньше на одну"${isSel(art) ? '' : ' disabled'}>−</button>
+        <span class="qs-val">${isSel(art) ? selQty(art) : 0}</span>
+        <button type="button" onclick="selQtyStep('${esc(art)}', 1)" title="Больше на одну">+</button>
+      </div>
     </div>`;
 }
 function scCardHTML(art) {
@@ -1486,8 +1507,9 @@ window.addEventListener('resize', fitPaper);
 window.addEventListener('orientationchange', function () { setTimeout(fitPaper, 250); });
 // ---- формирование документов из буфера витрины (ITEMS) ----
 function bufArts() { return [...new Set(ITEMS.map(i => i.article).filter(a => PRODS[a]))]; }
-function bufToItems() {  // копия буфера с новыми id (для записи в КП)
-  return ITEMS.filter(i => PRODS[i.article]).map(i => ({ id: ++nextId, article: i.article, typeLabel: i.typeLabel || '', priceType: i.priceType, qty: i.qty || 1, customPrice: null, customDesc: null }));
+function bufToItems(only) {  // копия буфера с новыми id (для записи в КП); only — взять лишь один артикул
+  return ITEMS.filter(i => PRODS[i.article] && (!only || i.article === only))
+    .map(i => ({ id: ++nextId, article: i.article, typeLabel: i.typeLabel || '', priceType: i.priceType, qty: i.qty || 1, customPrice: null, customDesc: null }));
 }
 function nextKpNum() { return KPS.reduce((m, k) => Math.max(m, +k.num || 0), 0) + 1; }
 // ---- per-КП: активный КП, чтение/запись формы ----
@@ -1566,15 +1588,25 @@ function syncPkgMountFields() {
 function onPkgInput() { const kp = activeKpObj(); if (!kp) return; kp.data.pkgUSD = amountDisplayToUSD(document.getElementById('kp-pkg').value); render(); }
 function onMountInput() { const kp = activeKpObj(); if (!kp) return; kp.data.mountUSD = amountDisplayToUSD(document.getElementById('kp-mount').value); render(); }
 
+// данные для нового КП: клиент/условия/примечания наследуются от активного КП (или из формы-шаблона)
+function newKpData() {
+  const src = activeKpObj();
+  const data = src ? JSON.parse(JSON.stringify(src.data || kpFormData())) : kpFormData();
+  data.pkgUSD = null; data.mountUSD = null;   // суммы упаковки/монтажа пересчитаются авто под свой состав
+  return data;
+}
 function formNewKP() {
   if (!isAnySel()) { alert('Сначала отметьте модели в витрине.'); return; }
   saveActiveKp();
-  const src = activeKpObj();
-  // новый КП наследует клиента/условия/примечания от текущего активного (или из формы-шаблона)
-  const data = src ? JSON.parse(JSON.stringify(src.data || kpFormData())) : kpFormData();
-  data.pkgUSD = null; data.mountUSD = null;   // суммы упаковки/монтажа пересчитаются авто под свой состав
-  const num = nextKpNum();
-  KPS.push({ num: num, items: bufToItems(), data: data });
+  KPS.push({ num: nextKpNum(), items: bufToItems(), data: newKpData() });
+  loadKpForm(KPS[KPS.length - 1]);
+  closeFormMenu(); render();
+}
+// разом: по одному КП на каждую отмеченную модель (обе записи «Обе» идут в свой же КП)
+function formSeparateKPs() {
+  if (!isAnySel()) { alert('Сначала отметьте модели в витрине.'); return; }
+  saveActiveKp();
+  bufArts().forEach(art => KPS.push({ num: nextKpNum(), items: bufToItems(art), data: newKpData() }));
   loadKpForm(KPS[KPS.length - 1]);
   closeFormMenu(); render();
 }
@@ -1638,6 +1670,11 @@ function buildFormMenu() {
   const m = document.getElementById('form-menu'); if (!m) return;
   let h = '<div class="fm-sec">КП</div>';
   h += `<div class="fm-item" onclick="formNewKP()">➕ Новый КП (№${nextKpNum()})</div>`;
+  const nSel = bufArts().length;   // «по одному КП на модель» имеет смысл только от двух моделей
+  if (nSel > 1) {
+    const from = nextKpNum();
+    h += `<div class="fm-item" onclick="formSeparateKPs()">📑 Отдельные КП по моделям <span class="fm-hint">${nSel} шт., №${from}–${from + nSel - 1}</span></div>`;
+  }
   KPS.forEach(k => { h += `<div class="fm-item" onclick="formIntoKP(${k.num})">КП №${k.num} <span class="fm-hint">заменить</span></div>`; });
   h += '<div class="fm-sec">Прочее</div>';
   h += `<div class="fm-item" onclick="formCatalog()">📕 Каталог${CATALOG.length ? ' <span class="fm-hint">заменить</span>' : ''}</div>`;
