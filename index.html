@@ -1811,7 +1811,7 @@ function tbSetDims(article, text) {
   if (parts[0]) d.length_mm = parseInt(parts[0], 10) || null;
   if (parts[1]) d.width_mm = parseInt(parts[1], 10) || null;
   if (parts[2]) {
-    const mm = parts[2].match(/(\d+)\s*-\s*(\d+)/);
+    const mm = parts[2].match(/(\d+)\s*[-\/]\s*(\d+)/);   // диапазон высоты: и «380-570», и «380/570»
     if (mm) { d.height_min_mm = +mm[1]; d.height_max_mm = +mm[2]; }
     else { const h = parseInt(parts[2], 10); if (h) { d.height_min_mm = h; d.height_max_mm = h; } }
   }

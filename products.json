@@ -2411,11 +2411,11 @@
     "name_ru": "Параметрическая скамья N-1.85",
     "description_ru": "скамья N-1.85 1850x450x450 мм",
     "dimensions": {
-      "length_mm": null,
-      "width_mm": null,
-      "height_min_mm": null,
-      "height_max_mm": null,
-      "raw": ""
+      "length_mm": 1850,
+      "width_mm": 450,
+      "height_min_mm": 450,
+      "height_max_mm": 450,
+      "raw": "1850×450×450мм"
     },
     "weight_net_kg": null,
     "weight_gross_kg": null,
@@ -2989,9 +2989,9 @@
     "dimensions": {
       "length_mm": 4925,
       "width_mm": 4950,
-      "height_min_mm": null,
-      "height_max_mm": null,
-      "raw": "4925×4950×мм"
+      "height_min_mm": 380,
+      "height_max_mm": 570,
+      "raw": "4925×4950×380-570мм"
     },
     "weight_net_kg": 1530,
     "weight_gross_kg": 1618,
