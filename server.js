@@ -243,10 +243,12 @@ async function wixLoadProducts(){
   }
   _wixMap = m; return m;
 }
-async function wixSetPrice(productId, price){
+async function wixSetPrice(productId, price, discountPct){
+  const product = { priceData: { price: Number(price) } };
+  if (discountPct != null) product.discount = discountPct > 0 ? { type: 'PERCENT', value: Number(discountPct) } : { type: 'NONE', value: 0 };
   const r = await fetch('https://www.wixapis.com/stores/v1/products/' + productId, {
     method: 'PATCH', headers: wixHeaders(),
-    body: JSON.stringify({ product: { priceData: { price: Number(price) } } })
+    body: JSON.stringify({ product })
   });
   const j = await r.json().catch(function(){ return {}; });
   return { ok: r.ok, status: r.status, err: (j && (j.message || j.error)) || null };
@@ -270,7 +272,19 @@ app.post('/admin/apply-prices', async (req, res) => {
   const B = req.body || {};
   if (!ADMIN_PWD || B.pwd !== ADMIN_PWD) return res.status(401).json({ error: 'unauthorized' });
   const changes = Array.isArray(B.changes) ? B.changes : [];
-  if (!changes.length) return res.json({ shopify: 'нет изменений', wix: '—' });
+  // Скидки из ХАБа (parametrica-hub /hub/save): apply_discounts=true → в Shopify цена варианта = интерьерная
+  // со скидкой, а compareAtPrice = полная; в Wix — discount PERCENT. Старый price-admin флага не шлёт → как раньше.
+  const applyDisc = B.apply_discounts === true;
+  const discOf = (ch) => (applyDisc && Number(ch.discount_pct) > 0 && Number(ch.discount_qty) > 0) ? Math.min(90, Number(ch.discount_pct)) : 0;
+  if (!changes.length) {
+    // без изменений цен всё равно можем сохранить products.json (скидки/размеры) — если его прислали
+    let pricesFile = 'пропущен (нет productsJson или GITHUB_TOKEN)';
+    if (B.productsJson && GH_TOKEN) {
+      try { const r = await commitFileToGitHub(B.productsJson); pricesFile = 'сохранён (' + r.commit + ')'; }
+      catch (e) { pricesFile = 'ошибка: ' + String(e && e.message || e).slice(0, 150); }
+    }
+    return res.json({ shopify: 'нет изменений', wix: '—', pricesFile });
+  }
 
   // — Shopify: цена варианта = интерьерная; товар ищем по названию Bench "<артикул>"
   let shopify = 'пропущен (нет токена)';
@@ -291,7 +305,11 @@ app.post('/admin/apply-prices', async (req, res) => {
         if (!node || !node.variants.edges.length) { miss++; continue; }
         const vid = node.variants.edges[0].node.id;
         const m = 'mutation($p:ID!,$v:[ProductVariantsBulkInput!]!){productVariantsBulkUpdate(productId:$p,variants:$v){userErrors{message}}}';
-        const mj = await shopifyGQL(m, { p: node.id, v: [{ id: vid, price: String(ch.interior) }] });
+        const d = discOf(ch);
+        const variant = d
+          ? { id: vid, price: String(Math.round(Number(ch.interior) * (1 - d / 100))), compareAtPrice: String(ch.interior) }
+          : { id: vid, price: String(ch.interior), compareAtPrice: null };
+        const mj = await shopifyGQL(m, { p: node.id, v: [variant] });
         const errs = (((mj.data || {}).productVariantsBulkUpdate || {}).userErrors) || [];
         diag = { stage: 'update', errors: mj.errors || null, userErrors: errs, apiVersion: SHOP_API };
         if (errs.length) { fail++; } else { ok++; }
@@ -311,7 +329,7 @@ app.post('/admin/apply-prices', async (req, res) => {
         if (ch.interior == null) continue;
         const id = map['bench' + nrmArt(ch.article)];
         if (!id) { miss++; continue; }
-        const res2 = await wixSetPrice(id, ch.interior);
+        const res2 = await wixSetPrice(id, ch.interior, applyDisc ? discOf(ch) : null);
         if (wdiag === null) wdiag = res2;
         if (res2.ok) ok++; else fail++;
       }
