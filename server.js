@@ -253,15 +253,44 @@ async function wixSetPrice(productId, price, discountPct){
   const j = await r.json().catch(function(){ return {}; });
   return { ok: r.ok, status: r.status, err: (j && (j.message || j.error)) || null };
 }
+// ── Wix: создать товар (новая модель из ХАБа — копия/нестандарт), фото — по URL с parametrica.biz ──
+async function wixCreateProduct(article, cr, price){
+  const r = await fetch('https://www.wixapis.com/stores/v1/products', {
+    method: 'POST', headers: wixHeaders(),
+    body: JSON.stringify({ product: { name: cr.name || ('Bench ' + article), productType: 'physical', priceData: { price: Number(price) },
+      description: cr.description || '', visible: true, manageVariants: false, sku: article } })
+  });
+  const j = await r.json().catch(function(){ return {}; });
+  if (!r.ok || !j.product) throw new Error('wix create ' + r.status + ': ' + JSON.stringify(j).slice(0, 150));
+  const id = j.product.id;
+  if (Array.isArray(cr.images) && cr.images.length) {
+    await fetch('https://www.wixapis.com/stores/v1/products/' + id + '/media', {
+      method: 'POST', headers: wixHeaders(), body: JSON.stringify({ media: cr.images.map(function(u){ return { url: u }; }) })
+    }).catch(function(){});
+  }
+  if (_wixMap) _wixMap['bench' + nrmArt(article)] = id;
+  return { id: id, slug: j.product.slug || null };
+}
+// ── Shopify: создать товар с фото по URL и вернуть id варианта по умолчанию ──
+async function shopifyCreateProduct(article, cr){
+  const m = 'mutation($p:ProductCreateInput!,$m:[CreateMediaInput!]){productCreate(product:$p,media:$m){product{id handle variants(first:1){edges{node{id}}}} userErrors{field message}}}';
+  const media = (Array.isArray(cr.images) ? cr.images : []).slice(0, 6).map(function(u){ return { originalSource: u, mediaContentType: 'IMAGE', alt: cr.name || article }; });
+  const j = await shopifyGQL(m, { p: { title: cr.name || ('Bench ' + article), descriptionHtml: cr.description || '', vendor: 'Parametrica', productType: 'Parametric bench', status: 'ACTIVE' }, m: media });
+  const pc = (j.data || {}).productCreate || {};
+  const errs = pc.userErrors || [];
+  if (!pc.product || errs.length) throw new Error('shopify create: ' + JSON.stringify(errs.length ? errs : (j.errors || j)).slice(0, 150));
+  return { id: pc.product.id, handle: pc.product.handle, vid: pc.product.variants.edges.length ? pc.product.variants.edges[0].node.id : null };
+}
+
 // ── GitHub: сохранить актуальный products.json в репозиторий (живой источник цен для КП/инвойс/сайта) ──
-async function commitFileToGitHub(contentObj){
+async function commitFileToGitHub(contentObj, message){
   const api = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_PATH;
   const hdr = { 'Authorization': 'Bearer ' + GH_TOKEN, 'Accept': 'application/vnd.github+json', 'User-Agent': 'kp-pdf-server', 'Content-Type': 'application/json' };
   let sha = null;
   const g = await fetch(api + '?ref=' + GH_BRANCH, { headers: hdr });
   if (g.ok) { const gj = await g.json().catch(function(){ return {}; }); sha = gj.sha || null; }
   const content = Buffer.from(JSON.stringify(contentObj, null, 2), 'utf8').toString('base64');
-  const body = { message: 'price update', content: content, branch: GH_BRANCH };
+  const body = { message: String(message || 'price update').slice(0, 200), content: content, branch: GH_BRANCH };
   if (sha) body.sha = sha;
   const p = await fetch(api, { method: 'PUT', headers: hdr, body: JSON.stringify(body) });
   const pj = await p.json().catch(function(){ return {}; });
@@ -275,12 +304,13 @@ app.post('/admin/apply-prices', async (req, res) => {
   // Скидки из ХАБа (parametrica-hub /hub/save): apply_discounts=true → в Shopify цена варианта = интерьерная
   // со скидкой, а compareAtPrice = полная; в Wix — discount PERCENT. Старый price-admin флага не шлёт → как раньше.
   const applyDisc = B.apply_discounts === true;
+  const created = { shopify: [], wix: [] };   // созданные товары (новые модели из ХАБа: ch.create = {name, description, images, ...})
   const discOf = (ch) => (applyDisc && Number(ch.discount_pct) > 0 && Number(ch.discount_qty) > 0) ? Math.min(90, Number(ch.discount_pct)) : 0;
   if (!changes.length) {
     // без изменений цен всё равно можем сохранить products.json (скидки/размеры) — если его прислали
     let pricesFile = 'пропущен (нет productsJson или GITHUB_TOKEN)';
     if (B.productsJson && GH_TOKEN) {
-      try { const r = await commitFileToGitHub(B.productsJson); pricesFile = 'сохранён (' + r.commit + ')'; }
+      try { const r = await commitFileToGitHub(B.productsJson, B.message); pricesFile = 'сохранён (' + r.commit + ')'; }
       catch (e) { pricesFile = 'ошибка: ' + String(e && e.message || e).slice(0, 150); }
     }
     return res.json({ shopify: 'нет изменений', wix: '—', pricesFile });
@@ -302,8 +332,13 @@ app.post('/admin/apply-prices', async (req, res) => {
         const want = nrmArt(ch.article);
         let node = null;
         for (const e of edges) { if (nrmArt(e.node.title).indexOf(want) >= 0) { node = e.node; break; } }
-        if (!node || !node.variants.edges.length) { miss++; continue; }
-        const vid = node.variants.edges[0].node.id;
+        let vid = null;
+        if (!node || !node.variants.edges.length) {
+          if (!ch.create) { miss++; continue; }
+          const cp = await shopifyCreateProduct(ch.article, ch.create);      // новая модель — создаём
+          node = { id: cp.id }; vid = cp.vid; created.shopify.push({ article: ch.article, handle: cp.handle });
+          if (!vid) { miss++; continue; }
+        } else vid = node.variants.edges[0].node.id;
         const m = 'mutation($p:ID!,$v:[ProductVariantsBulkInput!]!){productVariantsBulkUpdate(productId:$p,variants:$v){userErrors{message}}}';
         const d = discOf(ch);
         const variant = d
@@ -315,7 +350,7 @@ app.post('/admin/apply-prices', async (req, res) => {
         if (errs.length) { fail++; } else { ok++; }
       } catch (e) { fail++; if (diag === null) diag = { stage: 'exception', message: String(e && e.message || e) }; }
     }
-    shopify = 'обновлено ' + ok + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '');
+    shopify = 'обновлено ' + ok + (created.shopify.length ? (', создано ' + created.shopify.length) : '') + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '');
   }
 
   // — Wix Stores (Catalog V1): цена = интерьерная; товар по названию Bench "<артикул>"
@@ -327,24 +362,31 @@ app.post('/admin/apply-prices', async (req, res) => {
       let ok = 0, fail = 0, miss = 0;
       for (const ch of changes) {
         if (ch.interior == null) continue;
-        const id = map['bench' + nrmArt(ch.article)];
-        if (!id) { miss++; continue; }
+        let id = map['bench' + nrmArt(ch.article)];
+        if (!id) {
+          if (!ch.create) { miss++; continue; }
+          try {
+            const cw = await wixCreateProduct(ch.article, ch.create, ch.interior);   // новая модель — создаём
+            id = cw.id; created.wix.push({ article: ch.article, slug: cw.slug });
+            if (B.productsJson && B.productsJson[ch.article] && cw.slug) B.productsJson[ch.article].wix_slug = cw.slug;   // ссылка на карточку для страниц скидок
+          } catch (e) { fail++; if (wdiag === null) wdiag = { create_error: String(e && e.message || e).slice(0, 200) }; continue; }
+        }
         const res2 = await wixSetPrice(id, ch.interior, applyDisc ? discOf(ch) : null);
         if (wdiag === null) wdiag = res2;
         if (res2.ok) ok++; else fail++;
       }
-      wix = 'обновлено ' + ok + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '');
+      wix = 'обновлено ' + ok + (created.wix.length ? (', создано ' + created.wix.length) : '') + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '');
     } catch (e) { wix = 'ошибка: ' + String(e && e.message || e).slice(0, 150); }
   }
 
   // — Живой products.json в GitHub: его читают КП/инвойс/сайт вживую (без пересборки и без меня)
   let pricesFile = 'пропущен (нет productsJson или GITHUB_TOKEN)';
   if (B.productsJson && GH_TOKEN) {
-    try { const r = await commitFileToGitHub(B.productsJson); pricesFile = 'сохранён (' + r.commit + ')'; }
+    try { const r = await commitFileToGitHub(B.productsJson, B.message); pricesFile = 'сохранён (' + r.commit + ')'; }
     catch (e) { pricesFile = 'ошибка: ' + String(e && e.message || e).slice(0, 150); }
   }
 
-  res.json({ shopify, wix, pricesFile, diag, wdiag, note: 'Shopify/Wix обновлены пушем; products.json сохранён в GitHub (живой источник для КП/инвойс/сайта)' });
+  res.json({ shopify, wix, pricesFile, diag, wdiag, created, note: 'Shopify/Wix обновлены пушем; products.json сохранён в GitHub (живой источник для КП/инвойс/сайта)' });
 });
 
 const PORT = process.env.PORT || 3000;
