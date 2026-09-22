@@ -35,7 +35,11 @@
       "03.jpg",
       "04.jpg"
     ],
-    "image_count": 4
+    "image_count": 4,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "P4.6": {
     "article": "P4.6",
@@ -81,7 +85,11 @@
       "11.jpg",
       "12.jpg"
     ],
-    "image_count": 12
+    "image_count": 12,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "W2.12": {
     "article": "W2.12",
@@ -130,7 +138,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "FL1.235": {
     "article": "FL1.235",
@@ -170,7 +182,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "P4.3": {
     "article": "P4.3",
@@ -219,7 +235,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "Wi-F": {
     "article": "Wi-F",
@@ -267,7 +287,11 @@
       "13.jpg",
       "14.jpg"
     ],
-    "image_count": 14
+    "image_count": 14,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "Wi-8": {
     "article": "Wi-8",
@@ -314,7 +338,11 @@
       "12.jpg",
       "13.jpg"
     ],
-    "image_count": 13
+    "image_count": 13,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "Gi-5.25": {
     "article": "Gi-5.25",
@@ -363,7 +391,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "Gi-5.2": {
     "article": "Gi-5.2",
@@ -412,7 +444,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "Gi-5.1": {
     "article": "Gi-5.1",
@@ -460,7 +496,11 @@
       "13.jpg",
       "14.jpg"
     ],
-    "image_count": 14
+    "image_count": 14,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "B2.3": {
     "article": "B2.3",
@@ -509,7 +549,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "F1.5": {
     "article": "F1.5",
@@ -558,7 +602,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "FL1.266": {
     "article": "FL1.266",
@@ -604,7 +652,11 @@
       "11.jpg",
       "12.jpg"
     ],
-    "image_count": 12
+    "image_count": 12,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "L3.1": {
     "article": "L3.1",
@@ -653,7 +705,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "P4.52": {
     "article": "P4.52",
@@ -695,7 +751,11 @@
       "07.jpg",
       "08.jpg"
     ],
-    "image_count": 8
+    "image_count": 8,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "P4.51": {
     "article": "P4.51",
@@ -736,7 +796,11 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "P4.5": {
     "article": "P4.5",
@@ -778,7 +842,11 @@
       "07.jpg",
       "08.jpg"
     ],
-    "image_count": 8
+    "image_count": 8,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "Gi-6.3": {
     "article": "Gi-6.3",
@@ -827,7 +895,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "Gi-6.22": {
     "article": "Gi-6.22",
@@ -876,7 +948,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S4.124": {
     "article": "S4.124",
@@ -925,7 +1001,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S4.1210": {
     "article": "S4.1210",
@@ -974,7 +1054,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.71": {
     "article": "S3.71",
@@ -1023,7 +1107,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GLT4.1": {
     "article": "GLT4.1",
@@ -1072,7 +1160,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "LT1.8": {
     "article": "LT1.8",
@@ -1113,7 +1205,61 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
+  },
+  "LT1.8.1": {
+    "article": "LT1.8.1",
+    "collection": "contour",
+    "series_ru": null,
+    "name_en": "Bench LT1.8.1",
+    "name_ru": "Параметрическая скамья LT1.8.1",
+    "description_ru": "Параметрическая скамья. Модель - \"LT1.8\". Габариты: длина-1890мм., ширина-750мм., высота-455мм. Вес нетто- 55кг, брутто- 58кг. Материалы: покрытая маслом влагостойкая фанера (ФСФ) 26мм., сталь. Каркасная скамья. Поставляется в разобранном виде. Собирается на конфирматы. Монтируется на месте.",
+    "dimensions": {
+      "length_mm": 1670,
+      "width_mm": 750,
+      "height_min_mm": null,
+      "height_max_mm": 455,
+      "raw": "1670×750×455мм"
+    },
+    "weight_net_kg": 55,
+    "weight_gross_kg": 58,
+    "segments": 73,
+    "plywood_mm": 26,
+    "construction": "frame",
+    "assembly": "confirmats",
+    "mounted_on_site": true,
+    "purpose": [
+      "exterior",
+      "interior"
+    ],
+    "price_interior_usd": 664,
+    "price_exterior_usd": 730,
+    "cost_usd": null,
+    "visible": true,
+    "ribbon": "BEST PRICE",
+    "images": [
+      "01.jpg",
+      "02.jpg",
+      "03.jpg",
+      "04.jpg",
+      "05.jpg",
+      "06.jpg",
+      "07.jpg"
+    ],
+    "image_count": 7,
+    "custom": true,
+    "images_from": "LT1.8",
+    "created_at": "2026-09-22T13:45:09.340Z",
+    "discount_int_pct": 25,
+    "discount_int_qty": 4,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0,
+    "updated_at": "2026-09-22T13:46:04.508Z",
+    "price_updated_at": "2026-09-22T13:46:04.508Z"
   },
   "S4.18": {
     "article": "S4.18",
@@ -1154,7 +1300,11 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S4.12": {
     "article": "S4.12",
@@ -1203,7 +1353,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.411": {
     "article": "S3.411",
@@ -1243,7 +1397,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.421": {
     "article": "S3.421",
@@ -1284,7 +1442,11 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.431": {
     "article": "S3.431",
@@ -1325,7 +1487,11 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GL1.32": {
     "article": "GL1.32",
@@ -1374,7 +1540,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "FL1.1": {
     "article": "FL1.1",
@@ -1423,7 +1593,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "T2.31": {
     "article": "T2.31",
@@ -1472,7 +1646,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "ST1.31": {
     "article": "ST1.31",
@@ -1512,7 +1690,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.33": {
     "article": "S3.33",
@@ -1558,7 +1740,11 @@
       "11.jpg",
       "12.jpg"
     ],
-    "image_count": 12
+    "image_count": 12,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.22": {
     "article": "S3.22",
@@ -1598,7 +1784,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "ST1.21": {
     "article": "ST1.21",
@@ -1638,7 +1828,13 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0,
+    "discount_int_pct": 25,
+    "discount_int_qty": 1,
+    "updated_at": "2026-09-22T13:46:04.508Z",
+    "price_updated_at": "2026-09-22T13:46:04.508Z"
   },
   "S3.32": {
     "article": "S3.32",
@@ -1679,7 +1875,11 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "ST1.1": {
     "article": "ST1.1",
@@ -1719,7 +1919,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.31": {
     "article": "S3.31",
@@ -1759,7 +1963,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.21": {
     "article": "S3.21",
@@ -1799,7 +2007,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GI-3.12": {
     "article": "GI-3.12",
@@ -1837,7 +2049,11 @@
       "03.jpg",
       "04.jpg"
     ],
-    "image_count": 4
+    "image_count": 4,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "V1.36": {
     "article": "V1.36",
@@ -1882,7 +2098,11 @@
       "10.jpg",
       "11.jpg"
     ],
-    "image_count": 11
+    "image_count": 11,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "W5.12-2": {
     "article": "W5.12-2",
@@ -1931,7 +2151,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "W5.12-1": {
     "article": "W5.12-1",
@@ -1978,7 +2202,11 @@
       "12.jpg",
       "13.jpg"
     ],
-    "image_count": 13
+    "image_count": 13,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "L1.8": {
     "article": "L1.8",
@@ -2026,7 +2254,13 @@
       "13.jpg",
       "14.jpg"
     ],
-    "image_count": 14
+    "image_count": 14,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0,
+    "discount_int_pct": 25,
+    "discount_int_qty": 2,
+    "updated_at": "2026-09-22T13:46:04.508Z",
+    "price_updated_at": "2026-09-22T13:46:04.508Z"
   },
   "GL4.13": {
     "article": "GL4.13",
@@ -2065,7 +2299,11 @@
       "04.jpg",
       "05.jpg"
     ],
-    "image_count": 5
+    "image_count": 5,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GL4.12": {
     "article": "GL4.12",
@@ -2103,7 +2341,11 @@
       "03.jpg",
       "04.jpg"
     ],
-    "image_count": 4
+    "image_count": 4,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GL4.11": {
     "article": "GL4.11",
@@ -2141,7 +2383,11 @@
       "03.jpg",
       "04.jpg"
     ],
-    "image_count": 4
+    "image_count": 4,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "L4.1": {
     "article": "L4.1",
@@ -2181,7 +2427,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GL2.12": {
     "article": "GL2.12",
@@ -2219,7 +2469,11 @@
       "03.jpg",
       "04.jpg"
     ],
-    "image_count": 4
+    "image_count": 4,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GL2.11": {
     "article": "GL2.11",
@@ -2268,7 +2522,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "L2.1": {
     "article": "L2.1",
@@ -2308,7 +2566,11 @@
       "05.jpg",
       "06.jpg"
     ],
-    "image_count": 6
+    "image_count": 6,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "F4.1": {
     "article": "F4.1",
@@ -2357,7 +2619,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "F5.1": {
     "article": "F5.1",
@@ -2401,7 +2667,11 @@
       "09.jpg",
       "10.jpg"
     ],
-    "image_count": 10
+    "image_count": 10,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "N-1.85": {
     "article": "N-1.85",
@@ -2439,7 +2709,11 @@
       "03.jpg",
       "04.jpg"
     ],
-    "image_count": 4
+    "image_count": 4,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "W3.1": {
     "article": "W3.1",
@@ -2485,7 +2759,11 @@
       "11.jpg",
       "12.jpg"
     ],
-    "image_count": 12
+    "image_count": 12,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "P4.2": {
     "article": "P4.2",
@@ -2534,7 +2812,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "P4.1": {
     "article": "P4.1",
@@ -2583,7 +2865,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "B2.4": {
     "article": "B2.4",
@@ -2620,7 +2906,11 @@
       "02.jpg",
       "03.jpg"
     ],
-    "image_count": 3
+    "image_count": 3,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "W6.1": {
     "article": "W6.1",
@@ -2659,7 +2949,11 @@
       "04.jpg",
       "05.jpg"
     ],
-    "image_count": 5
+    "image_count": 5,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S1": {
     "article": "S1",
@@ -2696,7 +2990,11 @@
       "02.jpg",
       "03.jpg"
     ],
-    "image_count": 3
+    "image_count": 3,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "F3": {
     "article": "F3",
@@ -2733,7 +3031,11 @@
       "02.jpg",
       "03.jpg"
     ],
-    "image_count": 3
+    "image_count": 3,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "F2.81": {
     "article": "F2.81",
@@ -2782,7 +3084,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "F1": {
     "article": "F1",
@@ -2825,7 +3131,11 @@
       "08.jpg",
       "09.jpg"
     ],
-    "image_count": 9
+    "image_count": 9,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "C1.3": {
     "article": "C1.3",
@@ -2862,7 +3172,11 @@
       "02.jpg",
       "03.jpg"
     ],
-    "image_count": 3
+    "image_count": 3,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "C1.2": {
     "article": "C1.2",
@@ -2899,7 +3213,11 @@
       "02.jpg",
       "03.jpg"
     ],
-    "image_count": 3
+    "image_count": 3,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "C1.1": {
     "article": "C1.1",
@@ -2936,7 +3254,11 @@
       "02.jpg",
       "03.jpg"
     ],
-    "image_count": 3
+    "image_count": 3,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GI-8": {
     "article": "GI-8",
@@ -2977,7 +3299,11 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GI-6": {
     "article": "GI-6",
@@ -3025,7 +3351,11 @@
       "13.jpg",
       "14.jpg"
     ],
-    "image_count": 14
+    "image_count": 14,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.2": {
     "article": "S3.2",
@@ -3063,7 +3393,11 @@
       "03.jpg",
       "04.jpg"
     ],
-    "image_count": 4
+    "image_count": 4,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S3.26": {
     "article": "S3.26",
@@ -3104,7 +3438,11 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "W2.1": {
     "article": "W2.1",
@@ -3145,7 +3483,11 @@
       "06.jpg",
       "07.jpg"
     ],
-    "image_count": 7
+    "image_count": 7,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "S2.35": {
     "article": "S2.35",
@@ -3194,7 +3536,11 @@
       "14.jpg",
       "15.jpg"
     ],
-    "image_count": 15
+    "image_count": 15,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "P2": {
     "article": "P2",
@@ -3231,7 +3577,11 @@
       "02.jpg",
       "03.jpg"
     ],
-    "image_count": 3
+    "image_count": 3,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "L1.9": {
     "article": "L1.9",
@@ -3268,7 +3618,11 @@
       "02.jpg",
       "03.jpg"
     ],
-    "image_count": 3
+    "image_count": 3,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   },
   "GI-3.11": {
     "article": "GI-3.11",
@@ -3315,6 +3669,10 @@
       "12.jpg",
       "13.jpg"
     ],
-    "image_count": 13
+    "image_count": 13,
+    "discount_int_pct": 0,
+    "discount_int_qty": 0,
+    "discount_ext_pct": 0,
+    "discount_ext_qty": 0
   }
 }
