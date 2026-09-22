@@ -253,6 +253,46 @@ async function wixSetPrice(productId, price, discountPct){
   const j = await r.json().catch(function(){ return {}; });
   return { ok: r.ok, status: r.status, err: (j && (j.message || j.error)) || null };
 }
+// ── Wix: коллекция SALE (страница /sale сайта) — модели со скидкой из ХАБа попадают в неё сами, без скидки уходят.
+//    Снимаем только те, кому скидку ставил ХАБ (discount PERCENT в Wix) или у кого скидка снята этим сохранением;
+//    положенные в SALE вручную без скидки не трогаем. Имя/id коллекции — ENV WIX_SALE_COLLECTION (деф. «SALE»).
+const WIX_SALE = process.env.WIX_SALE_COLLECTION || 'SALE';
+let _wixSaleId = null;
+async function wixSaleId(){
+  if (_wixSaleId) return _wixSaleId;
+  if (/^[0-9a-f-]{36}$/i.test(WIX_SALE)) return (_wixSaleId = WIX_SALE);
+  const r = await fetch('https://www.wixapis.com/stores/v1/collections/query', { method: 'POST', headers: wixHeaders(), body: JSON.stringify({ query: { paging: { limit: 100 } } }) });
+  const j = await r.json().catch(function(){ return {}; });
+  if (!r.ok) throw new Error('collections ' + r.status);
+  const c = (j.collections || []).find(function(x){ return String(x.name || '').trim().toLowerCase() === WIX_SALE.trim().toLowerCase(); });
+  if (!c) throw new Error('коллекция «' + WIX_SALE + '» не найдена');
+  return (_wixSaleId = c.id);
+}
+async function wixSaleMembers(saleId){   // {productId: тип скидки}
+  const r = await fetch('https://www.wixapis.com/stores/v1/products/query', {
+    method: 'POST', headers: wixHeaders(),
+    body: JSON.stringify({ query: { filter: JSON.stringify({ 'collections.id': { $hasSome: [saleId] } }), paging: { limit: 100 } } })
+  });
+  const j = await r.json().catch(function(){ return {}; });
+  if (!r.ok) throw new Error('sale query ' + r.status);
+  const m = {};
+  for (const p of (j.products || [])) m[p.id] = (p.discount && p.discount.type) || 'NONE';
+  return m;
+}
+async function wixSaleEdit(saleId, ids, remove){
+  if (!ids.length) return true;
+  const r = await fetch('https://www.wixapis.com/stores/v1/collections/' + saleId + '/productIds' + (remove ? '/delete' : ''), { method: 'POST', headers: wixHeaders(), body: JSON.stringify({ productIds: ids }) });
+  return r.ok;
+}
+// want — id товаров, которые должны быть в SALE; off — id, у которых скидка снята этим сохранением; before — снимок до правок
+async function wixSyncSale(want, off, before){
+  const saleId = await wixSaleId();
+  const members = before || await wixSaleMembers(saleId);
+  const add = Array.from(want).filter(function(id){ return !(id in members); });
+  const del = Object.keys(members).filter(function(id){ return !want.has(id) && (members[id] === 'PERCENT' || off.has(id)); });
+  const okAdd = await wixSaleEdit(saleId, add, false), okDel = await wixSaleEdit(saleId, del, true);
+  return { added: add.length, removed: del.length, ok: okAdd && okDel };
+}
 // ── Wix: создать товар (новая модель из ХАБа — копия/нестандарт), фото — по URL с parametrica.biz ──
 async function wixCreateProduct(article, cr, price){
   const r = await fetch('https://www.wixapis.com/stores/v1/products', {
@@ -360,6 +400,16 @@ app.post('/admin/apply-prices', async (req, res) => {
     try {
       const map = await wixLoadProducts();
       let ok = 0, fail = 0, miss = 0;
+      let saleBefore = null;
+      if (applyDisc) { try { saleBefore = await wixSaleMembers(await wixSaleId()); } catch (_) {} }
+      const saleWant = new Set(), saleOff = new Set();
+      if (applyDisc && B.productsJson) {   // полная база: в SALE — все модели с активной интерьерной скидкой
+        for (const art of Object.keys(B.productsJson)) {
+          const p = B.productsJson[art];
+          const pid = map['bench' + nrmArt(art)] || map[nrmArt(art)];
+          if (pid && p && p.visible !== false && Number(p.discount_int_pct) > 0 && Number(p.discount_int_qty) > 0) saleWant.add(pid);
+        }
+      }
       for (const ch of changes) {
         if (ch.interior == null) continue;
         let id = map['bench' + nrmArt(ch.article)];
@@ -374,8 +424,14 @@ app.post('/admin/apply-prices', async (req, res) => {
         const res2 = await wixSetPrice(id, ch.interior, applyDisc ? discOf(ch) : null);
         if (wdiag === null) wdiag = res2;
         if (res2.ok) ok++; else fail++;
+        if (applyDisc) { if (discOf(ch) > 0) saleWant.add(id); else saleOff.add(id); }
       }
-      wix = 'обновлено ' + ok + (created.wix.length ? (', создано ' + created.wix.length) : '') + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '');
+      let sale = '';
+      if (applyDisc) {
+        try { const s = await wixSyncSale(saleWant, saleOff, saleBefore); if (s.added || s.removed || !s.ok) sale = ', SALE ' + (s.ok ? '' : '(с ошибкой) ') + '+' + s.added + ' −' + s.removed; }
+        catch (e) { sale = ', SALE: ' + String(e && e.message || e).slice(0, 80); }
+      }
+      wix = 'обновлено ' + ok + (created.wix.length ? (', создано ' + created.wix.length) : '') + (fail ? (', ошибок ' + fail) : '') + (miss ? (', не найдено ' + miss) : '') + sale;
     } catch (e) { wix = 'ошибка: ' + String(e && e.message || e).slice(0, 150); }
   }
 
