@@ -901,8 +901,11 @@ html.pdf-exporting .kt input[type="number"] { -moz-appearance: textfield; }
       <div class="panel" id="kp-switch-panel" style="display:none;">
         <div class="panel-title">Активный КП</div>
         <div class="field">
-          <select id="kp-active-select" onchange="selectKp(+this.value)"></select>
-          <div style="font-size:9px;color:var(--sb-muted);margin-top:4px;line-height:1.35;">Поля ниже правят выбранный КП. Новый КП формируется из витрины справа и наследует клиента, условия и примечания.</div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <select id="kp-active-select" onchange="selectKp(+this.value)" style="flex:1;min-width:0;"></select>
+            <button type="button" class="btn ghost sm" onclick="copyKP()" title="Копия активного КП — те же позиции и данные, дальше правится отдельно (другая валюта, условия…)">⧉ Копия</button>
+          </div>
+          <div style="font-size:9px;color:var(--sb-muted);margin-top:4px;line-height:1.35;">Поля ниже правят выбранный КП. Новый КП формируется из витрины справа и наследует клиента, условия, валюту и примечания. У каждого КП своя валюта и курс. «⧉ Копия» — дубль активного КП для правки с другими условиями.</div>
         </div>
       </div>
 
@@ -1146,8 +1149,10 @@ let nextId = 0;
 let KPS = [];        // [{num, items:[...], data:{...поля КП...}}] — несколько независимых КП (стопкой)
 let activeKp = null; // номер редактируемого КП (форма слева правит именно его); null = шаблон (до 1-го КП)
 // поля формы, которые ХРАНЯТСЯ ПО КАЖДОМУ КП (клиент, условия, примечания). v=value, c=checkbox.
-// (валюта/курс/производитель/состав документа — общие для всего документа, не дублируются.)
+// валюта/курс — тоже СВОИ у каждого КП (в одной сессии можно КП в KZT, USD, EUR…).
+// (производитель/состав документа — общие для всего документа, не дублируются.)
 const KP_FIELDS = [
+  ['curr','kp-curr','v'], ['rate','kp-rate','v'], ['fxAuto','opt-fxauto','c'],
   ['date','kp-date','v'], ['validOn','opt-valid','c'], ['valid','kp-valid','v'], ['client','kp-client','v'], ['objOn','opt-obj','c'], ['obj','kp-obj','v'], ['city','kp-city','v'],
   ['prepay','kp-prepay','v'], ['days','kp-days','v'],
   ['pay2pct','kp-pay2-pct','v'], ['pay2text','kp-pay2-text','v'], ['pay3pct','kp-pay3-pct','v'], ['pay3text','kp-pay3-text','v'],
@@ -1507,7 +1512,10 @@ function loadKpForm(kp) {  // data КП → поля формы; делает К
   const d = kp.data || {};
   const set = (id, v) => { const e = document.getElementById(id); if (e) e.value = (v == null ? '' : v); };
   const chk = (id, v) => { const e = document.getElementById(id); if (e) e.checked = !!v; };
-  KP_FIELDS.forEach(([k, id, t]) => { (t === 'c') ? chk(id, d[k]) : set(id, d[k]); });
+  if (typeof buildCurrOptions === 'function') buildCurrOptions();
+  KP_FIELDS.forEach(([k, id, t]) => { if (d[k] === undefined) return; (t === 'c') ? chk(id, d[k]) : set(id, d[k]); });
+  { const cs = document.getElementById('kp-curr'); if (cs && !cs.value) cs.value = 'KZT'; }   // валюты нет у производителя
+  if (typeof syncCurrUI === 'function') syncCurrUI();
   set('kp-num', kp.num);
   const dw = document.getElementById('discount-wrap'); if (dw) dw.style.display = d.optDiscount ? '' : 'none';
   const ow = document.getElementById('obj-wrap'); if (ow) ow.style.display = d.objOn ? '' : 'none';
@@ -1523,8 +1531,8 @@ function buildKpSwitcher() {
   if (!panel || !sel) return;
   if (!KPS.length) { panel.style.display = 'none'; return; }
   panel.style.display = '';
-  if (activeKp == null || !KPS.some(k => k.num === activeKp)) activeKp = KPS[0].num;
-  sel.innerHTML = KPS.map(k => `<option value="${k.num}" ${k.num === activeKp ? 'selected' : ''}>КП №${k.num}${(k.data && k.data.client) ? ' — ' + esc(k.data.client) : ''}</option>`).join('');
+  if (activeKp == null || !KPS.some(k => k.num === activeKp)) loadKpForm(KPS[0]);   // форма ← данные КП (иначе чужие поля перезапишут его)
+  sel.innerHTML = KPS.map(k => `<option value="${k.num}" ${k.num === activeKp ? 'selected' : ''}>КП №${k.num}${(k.data && k.data.client) ? ' — ' + esc(k.data.client) : ''}${(k.data && k.data.curr) ? ' · ' + esc(k.data.curr) : ''}</option>`).join('');
 }
 // запись КП для модели (приоритет — активный КП) — чтобы цена/кол-во на стр. продукта были синхронны с таблицей
 function kpItemFor(art) {
@@ -1547,7 +1555,7 @@ function syncPkgMountFields() {
   const tariff = wixTariffUSD(kpSubtotalUSD(kp.items));
   const pkgEff = (d.pkgUSD != null) ? d.pkgUSD : tariff;
   const mEff = (d.mountUSD != null) ? d.mountUSD : tariff;
-  const disp = usd => getCurr() === 'KZT' ? String(Math.round(usd * getRate())) : String(+(+usd).toFixed(2));
+  const disp = usd => priceDisplayStr(usd);
   const pkgOn = d.pkgOn !== false, mntOn = d.mountOn !== false;
   if (pkgF && document.activeElement !== pkgF) pkgF.value = disp(pkgEff);
   if (mF && document.activeElement !== mF) mF.value = disp(mEff);
@@ -1573,6 +1581,18 @@ function formNewKP() {
   KPS.push({ num: num, items: bufToItems(), data: data });
   loadKpForm(KPS[KPS.length - 1]);
   closeFormMenu(); render();
+}
+// копия любого КП (позиции + клиент/условия/валюта/ручные суммы) → новый КП для правки с другими условиями
+function copyKP(num) {
+  saveActiveKp();
+  const src = KPS.find(k => k.num === (num == null ? activeKp : num)); if (!src) return;
+  const copy = JSON.parse(JSON.stringify(src));
+  copy.num = nextKpNum();
+  copy.items = (copy.items || []).map(i => Object.assign(i, { id: ++nextId }));
+  KPS.splice(KPS.indexOf(src) + 1, 0, copy);   // сразу за исходным
+  loadKpForm(copy);
+  closeFormMenu(); render();
+  if (typeof autosave === 'function') autosave();
 }
 function formIntoKP(num) {
   if (!isAnySel()) { alert('Сначала отметьте модели в витрине.'); return; }
@@ -1635,6 +1655,7 @@ function buildFormMenu() {
   let h = '<div class="fm-sec">КП</div>';
   h += `<div class="fm-item" onclick="formNewKP()">➕ Новый КП (№${nextKpNum()})</div>`;
   KPS.forEach(k => { h += `<div class="fm-item" onclick="formIntoKP(${k.num})">КП №${k.num} <span class="fm-hint">заменить</span></div>`; });
+  KPS.forEach(k => { h += `<div class="fm-item" onclick="copyKP(${k.num})">⧉ Копия КП №${k.num} <span class="fm-hint">→ №${nextKpNum()}</span></div>`; });
   h += '<div class="fm-sec">Прочее</div>';
   h += `<div class="fm-item" onclick="formCatalog()">📕 Каталог${CATALOG.length ? ' <span class="fm-hint">заменить</span>' : ''}</div>`;
   h += `<div class="fm-item" onclick="formPrice()">💰 Прайс${PRICE.length ? ' <span class="fm-hint">заменить</span>' : ''}</div>`;
@@ -1724,8 +1745,22 @@ function renderItemsList() {
 }
 
 // ===== FORMAT =====
-function getCurr() { return document.getElementById('kp-curr').value; }
+// CUR_CTX — валюта/курс КП, который сейчас рисуется/правится (null = форма слева = активный КП)
+let CUR_CTX = null;
+function kpCurrCtx(kp) {
+  const d = (kp && kp.data) || {};
+  const curr = d.curr || document.getElementById('kp-curr').value || 'KZT';
+  const r = +d.rate;
+  return { curr: curr, rate: curr === 'USD' ? 1 : (r > 0 ? r : (FX_RATES[curr] || 1)) };
+}
+function withKpCurr(kp, fn) {   // выполнить fn в валюте КП kp
+  if (!kp) return fn();
+  const prev = CUR_CTX; CUR_CTX = kpCurrCtx(kp);
+  try { return fn(); } finally { CUR_CTX = prev; }
+}
+function getCurr() { return CUR_CTX ? CUR_CTX.curr : document.getElementById('kp-curr').value; }
 function getRate() {                                  // курс USD→текущая валюта
+  if (CUR_CTX) return CUR_CTX.rate;
   if (getCurr() === 'USD') return 1;
   const el = document.getElementById('kp-rate'); const v = el ? +el.value : 0;
   return v > 0 ? v : (FX_RATES[getCurr()] || 1);
@@ -1762,6 +1797,10 @@ function applyFxRate(force) {                         // подставить а
   const curr = getCurr();
   const r = (curr === 'USD') ? null : FX_RATES[curr];
   if (r && el && (force || (auto && auto.checked))) el.value = Math.round(r * 1e6) / 1e6;
+  KPS.forEach(k => {   // неактивные КП с авто-курсом — тоже на свежий курс своей валюты
+    const d = k.data || {};
+    if (k.num !== activeKp && d.fxAuto !== false && d.curr && d.curr !== 'USD' && FX_RATES[d.curr]) d.rate = String(Math.round(FX_RATES[d.curr] * 1e6) / 1e6);
+  });
   updateFxInfo();
   render();
 }
@@ -1783,7 +1822,12 @@ function buildCurrOptions() {
   sel.innerHTML = list.map(c => `<option value="${c}">${c}</option>`).join('');
   sel.value = list.indexOf(cur) >= 0 ? cur : 'KZT';
 }
-function onEntityChange() { buildCurrOptions(); onCurrChange(); }
+function onEntityChange() {
+  buildCurrOptions();
+  const allowed = [...document.getElementById('kp-curr').options].map(o => o.value);
+  KPS.forEach(k => { const d = k.data || {}; if (k.num !== activeKp && d.curr && allowed.indexOf(d.curr) < 0) { d.curr = 'KZT'; d.fxAuto = true; d.rate = FX_RATES.KZT ? String(FX_RATES.KZT) : d.rate; } });
+  onCurrChange();
+}
 
 function fmtMoney(usd) { return moneyNum(usd) + ' ' + getCurr(); }
 
@@ -1859,12 +1903,16 @@ function imgSrc(p, filename) {
   return 'PRODUCTS/' + p.collection + '/' + p.article + '/' + filename + '?c=4';
 }
 
-function onCurrChange() {
+function syncCurrUI() {   // подписи/видимость полей под валюту формы (активного КП)
   const curr = getCurr();
   document.getElementById('rate-wrap').style.display = (curr === 'USD') ? 'none' : '';   // курс нужен всем, кроме USD
   document.getElementById('pkg-curr').textContent = curr;
   const mc = document.getElementById('mount-curr'); if (mc) mc.textContent = curr;
   const lab = document.getElementById('fx-rate-cur'); if (lab) lab.textContent = curr;
+  updateFxInfo();
+}
+function onCurrChange() {
+  syncCurrUI();
   applyFxRate(true);   // подставить авто-курс выбранной валюты + render
 }
 
@@ -1981,7 +2029,7 @@ function tbSetQty(id, q) {
 }
 function tbSetPrice(id, disp) {
   const r = findKpItem(id); if (!r) return;
-  r.customPrice = (disp === '' || disp == null) ? null : toUSDfromDisplay(+disp); render();
+  r.customPrice = (disp === '' || disp == null) ? null : withKpCurr(findKpOf(id), () => toUSDfromDisplay(+disp)); render();
 }
 function tbSetDesc(id, text) {
   const r = findKpItem(id); if (!r) return;
@@ -2010,12 +2058,16 @@ function amountDisplayToUSD(text) {
   const s = String(text == null ? '' : text).replace(/[^\d.,-]/g, '').replace(',', '.');
   if (s === '' || s === '-') return null;
   const v = parseFloat(s); if (isNaN(v)) return null;
-  return getCurr() === 'KZT' ? v / getRate() : v;
+  return v / getRate();   // getRate() = USD→валюта (USD→1)
 }
 // ручная правка сумм «Упаковка и транспортные расходы» / «Монтаж» (хранится на КП; пусто → авто-тариф)
-function tbSetKpPkg(kpNum, text) { const kp = KPS.find(k => String(k.num) === String(kpNum)); if (!kp) return; kp.data = kp.data || {}; kp.data.pkgUSD = amountDisplayToUSD(text); render(); }
-function tbSetKpMount(kpNum, text) { const kp = KPS.find(k => String(k.num) === String(kpNum)); if (!kp) return; kp.data = kp.data || {}; kp.data.mountUSD = amountDisplayToUSD(text); render(); }
-function tbSetDiscPct(v) { document.getElementById('kp-discount').value = v; render(); }
+function tbSetKpPkg(kpNum, text) { const kp = KPS.find(k => String(k.num) === String(kpNum)); if (!kp) return; kp.data = kp.data || {}; kp.data.pkgUSD = withKpCurr(kp, () => amountDisplayToUSD(text)); render(); }
+function tbSetKpMount(kpNum, text) { const kp = KPS.find(k => String(k.num) === String(kpNum)); if (!kp) return; kp.data = kp.data || {}; kp.data.mountUSD = withKpCurr(kp, () => amountDisplayToUSD(text)); render(); }
+function tbSetDiscPct(v, kpNum) {
+  const kp = KPS.find(k => String(k.num) === String(kpNum));
+  if (kp && kp.num !== activeKp) { kp.data = kp.data || {}; kp.data.discount = v; render(); return; }
+  document.getElementById('kp-discount').value = v; render();
+}
 
 // ===== ИТОГОВЫЙ PDF (скидка распределена в цены позиций, без строки «Скидка») =====
 function printFinalKP() {
@@ -2159,7 +2211,8 @@ function kpPrintFilename() {
   let s = client + ' - ' + mine;
   if (arts.length) s += ' ' + arts.join(',') + (more ? ' и др.' : '');
   if (nums.length) s += ' КП№' + nums.join(',');   // напр. «КП№1,2»
-  s += ' ' + getCurr();                            // валюта в самом конце, напр. «KZT»
+  const currs = KPS.length ? [...new Set(KPS.map(k => kpCurrCtx(k).curr))] : [getCurr()];
+  s += ' ' + currs.join(',');                      // валюта(ы) в самом конце, напр. «KZT» или «KZT,USD»
   return s.replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 window.addEventListener('beforeprint', function () { _savedDocTitle = document.title; document.title = kpPrintFilename(); });
@@ -2537,20 +2590,21 @@ function productInner(p, article, side, withHeader, galleryCount, opts) {
 // --- 1 модель на страницу ---
 function makeProductSheet1(unit, side) {
   const el = div('page page-product' + (side === 'right' ? ' right' : ''));
-  el.innerHTML = productInner(PRODS[unit.article], unit.article, side, true, 2, unit);
+  el.innerHTML = withKpCurr(unit.kp, () => productInner(PRODS[unit.article], unit.article, side, true, 2, unit));
   return el;
 }
 // --- 2 модели на страницу ---
 function makeProductSheet2up(u1, u2, side) {
   const el = div('page page-product2' + (side === 'right' ? ' right' : ''));
   const header = `<div class="prod-header"><img src="kp_assets/header_${side === 'right' ? 'right' : 'left'}.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"></div>`;
-  const cell = u => (u && PRODS[u.article]) ? `<div class="pp-unit">${productInner(PRODS[u.article], u.article, side, false, 4, u)}</div>` : '<div class="pp-unit"></div>';
+  const cell = u => (u && PRODS[u.article]) ? `<div class="pp-unit">${withKpCurr(u.kp, () => productInner(PRODS[u.article], u.article, side, false, 4, u))}</div>` : '<div class="pp-unit"></div>';
   el.innerHTML = header + cell(u1) + '<div class="pp-divider"></div>' + cell(u2);
   return el;
 }
 // --- добавить листы (units = [{article, entry, kpMode}]) ---
 function renderSheets(units, add, sideForNext) {
   const twoUp = document.getElementById('opt-2up').checked;
+  units.forEach(u => { if (u && u.entry && !u.kp) u.kp = findKpOf(u.entry.id); });
   if (twoUp) {
     for (let i = 0; i < units.length; i += 2) add(makeProductSheet2up(units[i], units[i + 1], sideForNext()), true);
   } else {
@@ -2559,7 +2613,8 @@ function renderSheets(units, add, sideForNext) {
 }
 
 // --- Pricing Table (конфигурируемая, перенос из инвойсов) ---
-function makeTable(kp, side) {
+function makeTable(kp, side) { return withKpCurr(kp, () => makeTableCur(kp, side)); }
+function makeTableCur(kp, side) {
   const items = kp.items || [];
   const d = kp.data || {};
   const kpNum = kp.num;
@@ -2669,7 +2724,7 @@ function makeTable(kp, side) {
   if (showDisc && !FINAL_MODE) {
     discountRows += `<tr class="tr-discount">
       <td colspan="2">Скидка</td>
-      <td class="r"><input type="number" class="pct" step="0.5" min="0" max="100" value="${pct}" onchange="tbSetDiscPct(this.value)"> %</td>
+      <td class="r"><input type="number" class="pct" step="0.5" min="0" max="100" value="${pct}" onchange="tbSetDiscPct(this.value, '${esc(String(kpNum))}')"> %</td>
       <td class="r">${discUSD > 0 ? '−' + moneyNum(discUSD) : moneyNum(0)}</td>
     </tr>`;
     if (discUSD > 0) {
@@ -2910,6 +2965,7 @@ function applyState(s) {
     if (k.mountUSD !== undefined) { k.data.mountUSD = k.mountUSD; delete k.mountUSD; }
     if (k.data.pkgOn === undefined) k.data.pkgOn = true;
     if (k.data.mountOn === undefined) k.data.mountOn = true;
+    if (k.data.curr == null) { k.data.curr = s.curr || 'KZT'; k.data.rate = s.rate; k.data.fxAuto = s.optFxAuto !== false; }
   });
   activeKp = (s.activeKp != null && KPS.some(k => k.num === s.activeKp)) ? s.activeKp : (KPS.length ? KPS[0].num : null);
   if (Array.isArray(s.catalog)) CATALOG = s.catalog;
