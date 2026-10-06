@@ -90,12 +90,6 @@ input, select, textarea, button { font-family: inherit; }
 .field-row { display: flex; gap: 6px; }
 .field-row .field { flex: 1; }
 .field textarea { resize: vertical; line-height: 1.4; }
-/* панель «Сообщение клиента» */
-#ai-panel .btn.ghost { color: var(--sb-text); border-color: var(--sb-border); }
-#ai-panel .btn.ghost:hover { border-color: var(--accent); color: #fff; }
-#ai-panel .btn:disabled { opacity: .5; cursor: default; }
-#ai-result { color: var(--sb-text); }
-#ai-result select, #ai-result input[type=number] { padding: 3px 5px; background: #3a4448; border: 1px solid var(--sb-border); color: var(--sb-text); border-radius: 4px; }
 
 .toggle-row {
   display: flex; align-items: center; gap: 7px;
@@ -1047,20 +1041,6 @@ html.pdf-exporting .kt input[type="number"] { -moz-appearance: textfield; }
         </div>
       </div>
 
-      <!-- Сообщение клиента: текст/голос → Gemini → черновик КП (замена Telegram-бота) -->
-      <div class="panel no-print" id="ai-panel">
-        <div class="panel-title">Сообщение клиента</div>
-        <div class="field">
-          <textarea id="ai-text" rows="4" placeholder="Вставьте сообщение клиента или надиктуйте: «ТОО Астра, две скамьи B2.4 уличные и одна S1, доставка в Шымкент»"></textarea>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <button type="button" class="btn sm ghost" id="ai-mic" onclick="aiMicToggle()" title="Записать голос (распознаёт Groq Whisper или Gemini)">🎤 Голос</button>
-          <button type="button" class="btn sm accent" id="ai-go" onclick="aiExtract()" style="flex:1;">Разобрать</button>
-        </div>
-        <div id="ai-status" style="font-size:9.5px;color:var(--sb-muted);margin-top:5px;line-height:1.35;min-height:12px;"></div>
-        <div id="ai-result" style="display:none;"></div>
-      </div>
-
       <!-- Реквизиты -->
       <div class="panel">
         <div class="panel-title">Реквизиты</div>
@@ -1499,38 +1479,6 @@ function applyExclusions() {
 }
 
 // ===== LOAD =====
-// Заявка клиента → документ КП. Источники: ссылка ?import=<base64url> (корзина сайта)
-// и панель «Сообщение клиента» (текст/голос → Gemini). Формат: {client:{company}, delivery:{region, method},
-// models:[{article, type:'interior'|'exterior', qty}], currency?}
-function applyImportPayload(_d) {
-  const _cl = _d.client || {};
-  const _ce = document.getElementById('kp-client'); if (_ce) _ce.value = _cl.company || _cl.name || _ce.value;
-  const _city = (_d.delivery && (_d.delivery.region || _d.delivery.country)) || '';
-  const _cye = document.getElementById('kp-city'); if (_cye && _city) _cye.value = _city;
-  // повторное открытие ссылки бота не плодит дубликаты: убираем прежние КП этой же заявки
-  try {
-    const _sig = o => JSON.stringify(o);
-    const _key = _sig({ c: _cl.company || '', y: _city, m: _d.models.filter(m => m && m.article).map(m => [m.article, m.type === 'exterior' ? 'e' : 'i', m.qty || 1]) });
-    for (let _i = KPS.length - 1; _i >= 0; _i--) {
-      const _k = KPS[_i];
-      const _kk = _sig({ c: (_k.data && _k.data.client) || '', y: (_k.data && _k.data.city) || '', m: (_k.items || []).map(it => [it.article, it.type === 'exterior' ? 'e' : 'i', it.qty || 1]) });
-      if (_kk === _key) KPS.splice(_i, 1);
-    }
-  } catch (e) {}
-  ITEMS = [];
-  _d.models.forEach(m => { if (m && m.article) setSelType(m.article, (m.type === 'exterior' ? 'exterior' : 'interior'), m.qty || 1); });
-  if (typeof afterSelChange === 'function') afterSelChange();
-  // авто-формируем документ КП из буфера — ссылка открывается РЕАЛЬНО заполненной (а не пустой)
-  if (typeof formNewKP === 'function' && typeof isAnySel === 'function' && isAnySel()) formNewKP();
-  else render();
-  // доставка из заявки: метод (air/cargo/exw) + город → авто-расчёт движком (хаб)
-  const _dm = _d.delivery && _d.delivery.method;
-  if (_dm && typeof applyImportedDelivery === 'function') applyImportedDelivery(_dm, _city);
-  // валюта из заявки — в только что сформированный КП (у каждого КП своя)
-  const _cur = String(_d.currency || '').toUpperCase(), _cs = document.getElementById('kp-curr');
-  if (_cur && _cs && [..._cs.options].some(o => o.value === _cur) && _cs.value !== _cur) { _cs.value = _cur; onCurrChange(); }
-}
-
 async function loadProducts() {
   try {
     // Живой источник цен — products.json рабочего контура (price-admin → kp-pdf-server → GitHub).
@@ -1559,13 +1507,64 @@ async function loadProducts() {
     } else {
       const saved = loadAutosave();        // восстановить последнюю сессию (localStorage)
       if (saved) applyState(saved); else { buildCurrOptions(); render(); }
+      _stateRestored = true;               // с этого момента автосейв безопасен
       // ИМПОРТ из заявки клиента (мост: корзина сайта → КП). ?import=<base64url {client,delivery,models}>
       try {
         const _imp = new URLSearchParams(location.search).get('import');
         if (_imp) {
           let _s = String(_imp).replace(/-/g,'+').replace(/_/g,'/').replace(/ /g,'+'); while (_s.length % 4) _s += '=';
           const _d = JSON.parse(decodeURIComponent(escape(atob(_s))));
-          if (_d && Array.isArray(_d.models)) { applyImportPayload(_d); flashStatus('Загружено из заявки клиента'); }
+          if (_d && Array.isArray(_d.models)) {
+            const _cl = _d.client || {};
+            const _city = (_d.delivery && (_d.delivery.region || _d.delivery.country)) || '';
+            // поля клиента ставим ПОСЛЕ formNewKP: иначе saveActiveKp() внутри formNewKP запишет
+            // клиента/город заявки в ПРЕДЫДУЩИЙ открытый КП оператора (было: портило прошлый КП)
+            // повторное открытие ссылки бота не плодит дубликаты: убираем прежние КП этой же заявки
+            try {
+              const _sig = o => JSON.stringify(o);
+              const _key = _sig({ c: _cl.company || '', y: _city, m: _d.models.filter(m => m && m.article).map(m => [m.article, m.type === 'exterior' ? 'e' : 'i', m.qty || 1]) });
+              for (let _i = KPS.length - 1; _i >= 0; _i--) {
+                const _k = KPS[_i];
+                const _kk = _sig({ c: (_k.data && _k.data.client) || '', y: (_k.data && _k.data.city) || '', m: (_k.items || []).map(it => [it.article, it.type === 'exterior' ? 'e' : 'i', it.qty || 1]) });
+                if (_kk === _key) KPS.splice(_i, 1);
+              }
+            } catch (e) {}
+            ITEMS = [];
+            _d.models.forEach(m => { if (m && m.article) setSelType(m.article, (m.type === 'exterior' ? 'exterior' : 'interior'), m.qty || 1); });
+            if (typeof afterSelChange === 'function') afterSelChange();
+            // авто-формируем документ КП из буфера — ссылка открывается РЕАЛЬНО заполненной (а не пустой)
+            const _formed = typeof formNewKP === 'function' && typeof isAnySel === 'function' && isAnySel();
+            if (_formed) {
+              formNewKP();
+              const _set = (id, v) => { const e = document.getElementById(id); if (e && v != null && v !== '') e.value = v; };
+              _set('kp-client', _cl.company || _cl.name);
+              _set('kp-city', _city);
+              // объект (форма заявки): «для объекта …»
+              const _obj = String(_d.object || '').trim();
+              const _oe = document.getElementById('opt-obj');
+              if (_oe) { _oe.checked = !!_obj; const _ow = document.getElementById('obj-wrap'); if (_ow) _ow.style.display = _obj ? '' : 'none'; }
+              { const _oi = document.getElementById('kp-obj'); if (_oi) _oi.value = _obj; }   // пусто — тоже ставим, чтобы не тянуть объект прошлого КП
+              // монтаж: true — включить (сумма = авто-тариф), false — выкл. (в КП уйдёт «сборка заказчиком»)
+              const _me = document.getElementById('opt-mount');
+              if (_me && typeof _d.mount === 'boolean') _me.checked = _d.mount;
+              // валюта КП — только из доступных для текущего юрлица (ИП: KZT/USD; ТОО: + RUB/EUR/CHF)
+              const _cur = String(_d.cur || _d.currency || '').toUpperCase();
+              const _cs = document.getElementById('kp-curr');
+              if (_cs && _cur && [..._cs.options].some(o => o.value === _cur) && _cs.value !== _cur) {
+                _cs.value = _cur; if (typeof onCurrChange === 'function') onCurrChange();
+              }
+              saveActiveKp();
+              if (_d.lang === 'en' || _d.lang === 'ru') {
+                const _le = document.getElementById('kp-lang'); if (_le) _le.value = _d.lang;
+                if (typeof setKpLang === 'function') setKpLang(_d.lang);
+              }
+              render();
+            } else render();
+            // доставка из заявки: метод (air/cargo/exw) + город → авто-расчёт движком (хаб)
+            const _dm = _d.delivery && _d.delivery.method;
+            if (_dm && typeof applyImportedDelivery === 'function') applyImportedDelivery(_dm, _city);
+            if (typeof flashStatus === 'function') flashStatus('Загружено из заявки клиента');
+          }
         }
       } catch (e) { console.warn('import parse failed', e); }
       applyDefaultsMigration();            // одноразово применить новые дефолты сроков (30/7/5)
@@ -4224,8 +4223,12 @@ let DIR_HANDLE = null;     // привязанная папка
 let PENDING_DIR = null;    // handle есть, но нужно подтвердить доступ
 let _saveTimer = null, _folderTimer = null, _flashTimer = null;
 
+// Автосейв включается только ПОСЛЕ восстановления прошлой сессии (loadProducts). Иначе при медленной
+// загрузке каталога ранний render()/витрина успевали сохранить ПУСТОЕ состояние поверх всех КП оператора.
+let _stateRestored = false;
 function scheduleAutosave() { clearTimeout(_saveTimer); _saveTimer = setTimeout(autosave, 400); }
 function autosave() {
+  if (!_stateRestored) return;
   try { localStorage.setItem(LS_KEY, JSON.stringify(exportState())); } catch (e) {}
   if (DIR_HANDLE) { clearTimeout(_folderTimer); _folderTimer = setTimeout(folderSaveNow, 800); }
   updateSaveStatus();
@@ -4949,273 +4952,5 @@ function formEmptyKP() {
 setTimeout(function () { loadCustomModels(true); }, 1200);
 
 </script>
-<script>
-// ============================================================================
-// СООБЩЕНИЕ КЛИЕНТА → КП (замена Telegram-бота kp-bot)
-// ----------------------------------------------------------------------------
-// Текст или голос клиента → черновик: компания, город, валюта, доставка, позиции.
-//   голос → ai/stt.php (Groq Whisper) → текст
-//   текст → ai/extract.php (Gemini Flash, JSON-схема) → сырые поля
-//   доводка и резолв артикулов — здесь, по PRODS (перенесено из kp-bot/extract.py, catalog.py)
-//   «Собрать КП» → applyImportPayload (тот же путь, что ссылка ?import=)
-// Ключи Gemini/Groq только на сервере, страница их не видит.
-// ============================================================================
-const AI_URL = 'ai/';
-
-// ---- орг-формы (kp-bot/extract.py: _ORG_CANON, _LETTER, _fix_company) ----
-const AI_ORG = {
-  'тоо':'ТОО','то':'ТОО','ип':'ИП','ао':'АО','нао':'НАО','зао':'ЗАО','оао':'ОАО','пк':'ПК','кх':'КХ','фх':'ФХ',
-  'ргп':'РГП','гкп':'ГКП','гккп':'ГККП','тдо':'ТДО','ооо':'ООО','пао':'ПАО','одо':'ОДО','тов':'ТОВ','фоп':'ФОП',
-  'чуп':'ЧУП','уп':'УП','llc':'LLC','llp':'LLP','ltd':'Ltd','inc':'Inc','corp':'Corp','plc':'PLC','jsc':'JSC',
-  'cjsc':'CJSC','pjsc':'PJSC','gmbh':'GmbH','ag':'AG','ug':'UG','sa':'SA','sas':'SAS','sarl':'SARL','srl':'S.r.l.',
-  'spa':'S.p.A.','bv':'B.V.','nv':'N.V.','oy':'Oy','fze':'FZE','fzco':'FZCO','dmcc':'DMCC','wll':'WLL',
-  'spzoo':'Sp. z o.o.','sro':'s.r.o.','doo':'d.o.o.','элэлси':'LLC','элэлпи':'LLP','лимитед':'Ltd','лтд':'Ltd',
-  'инк':'Inc','инкорпорейтед':'Inc','корп':'Corp','гмбх':'GmbH','джиэмбиэйч':'GmbH','джейэсси':'JSC','пиэлси':'PLC','сарл':'SARL'
-};
-const AI_LETTER = { 'тэ':'т','т':'т','о':'о','и':'и','п':'п','а':'а','эн':'н','н':'н','з':'з','эл':'l','си':'c',
-  'пи':'p','джи':'g','эм':'m','би':'b','эйч':'h','джей':'j','эс':'s','ю':'u' };
-function aiFixCompany(name) {
-  if (!name) return name;
-  const toks = name.split(/\s+/);
-  for (let k = Math.min(4, toks.length); k > 0; k--) {
-    const head = toks.slice(0, k);
-    const joined = head.join('').toLowerCase().replace(/[.\-]/g, '');
-    const spelled = k > 1 ? head.map(t => { const x = t.toLowerCase().replace(/^\.+|\.+$/g, ''); return AI_LETTER[x] || x; }).join('') : joined;
-    for (const cand of [joined, spelled]) {
-      const canon = AI_ORG[cand];
-      if (canon) {
-        let rest = toks.slice(k).join(' ').trim();
-        if (rest && rest[0] === rest[0].toLowerCase() && rest[0] !== rest[0].toUpperCase()) rest = rest[0].toUpperCase() + rest.slice(1);
-        return (canon + ' ' + rest).trim();
-      }
-    }
-  }
-  return name;
-}
-
-// ---- города (kp-bot/extract.py: _CITIES, _CITY_ALIAS, _fix_city) ----
-const AI_CITIES = ['Алматы','Астана','Шымкент','Караганда','Актобе','Тараз','Павлодар','Усть-Каменогорск','Семей',
-  'Атырау','Костанай','Кызылорда','Уральск','Петропавловск','Актау','Темиртау','Туркестан','Кокшетау','Талдыкорган',
-  'Экибастуз','Рудный','Жезказган','Балхаш','Кентау','Каскелен','Конаев','Москва','Санкт-Петербург','Ташкент',
-  'Бишкек','Дубай','Эр-Рияд'];
-const AI_CITY_ALIAS = { 'чимкент':'Шымкент','нур-султан':'Астана','нурсултан':'Астана','алма-ата':'Алматы','алмата':'Алматы',
-  'семипалатинск':'Семей','капчагай':'Конаев','усть-кама':'Усть-Каменогорск','уска-ман':'Усть-Каменогорск' };
-function aiFixCity(city) {
-  if (!city) return city;
-  const c = city.replace(/^г\.\s*/i, '').trim(), lc = c.toLowerCase();
-  if (AI_CITY_ALIAS[lc]) return AI_CITY_ALIAS[lc];
-  let best = null, bs = 0;
-  AI_CITIES.forEach(x => { const r = aiRatio(lc, x.toLowerCase()); if (r > bs) { bs = r; best = x; } });
-  return bs >= 0.72 ? best : c;
-}
-
-// способ доставки — по ключевым словам исходного текста, не по LLM (она теряет «самовывоз»
-// и ставит cargo на просто названный город). exw раньше cargo: «без доставки» содержит «достав».
-function aiDetectDelivery(text) {
-  const t = ' ' + String(text || '').toLowerCase();
-  const has = a => a.some(k => t.indexOf(k) >= 0);
-  if (has(['самовывоз','забер','забир','без доставки','exw','ex works'])) return 'exw';
-  if (has(['авиа','самол','воздух'])) return 'air';
-  if (has(['достав','вез','отправ','фур','машин','грузовик','карго','cargo',' авто'])) return 'cargo';
-  return '';
-}
-
-// сходство строк 0..1 (аналог difflib.SequenceMatcher.ratio: 2·совпадения / сумма длин)
-function aiRatio(a, b) {
-  if (!a.length && !b.length) return 1;
-  const m = a.length, n = b.length, dp = new Array(n + 1).fill(0);
-  for (let i = 1; i <= m; i++) { let prev = 0; for (let j = 1; j <= n; j++) { const tmp = dp[j]; dp[j] = a[i-1] === b[j-1] ? prev + 1 : Math.max(dp[j], dp[j-1]); prev = tmp; } }
-  return 2 * dp[n] / (m + n);
-}
-
-// ---- резолвер «как сказал клиент» → артикул (kp-bot/catalog.py: resolve) ----
-const AI_HOMO = { 'а':'a','б':'b','в':'b','г':'g','е':'e','к':'k','м':'m','н':'h','о':'o','р':'p','с':'c','т':'t','у':'y',
-  'х':'x','і':'i','ѕ':'s','ф':'f','л':'l','п':'p','ш':'w','ж':'g' };
-const AI_NUMW = { 'ноль':'0','один':'1','одна':'1','одно':'1','два':'2','две':'2','три':'3','четыре':'4','пять':'5',
-  'шесть':'6','семь':'7','восемь':'8','девять':'9','десять':'10' };
-const aiDigits = s => String(s || '').replace(/\D/g, '');
-const aiCompact = s => String(s || '').toLowerCase().trim().replace(/./g, ch => AI_HOMO[ch] || ch).replace(/[^a-z0-9]/g, '');
-const aiQueryDigits = q => aiDigits(String(q || '').toLowerCase().replace(/[a-zа-яё]+/g, w => AI_NUMW[w] || w));
-let AI_IDX = null;
-function aiIndex() {
-  if (AI_IDX && AI_IDX.src === PRODS) return AI_IDX;
-  const aliases = [], entries = [];
-  Object.keys(PRODS || {}).forEach(art => {
-    const p = PRODS[art] || {}; if (p.visible === false) return;
-    const al = [];
-    [art, p.series_ru, p.name_ru, p.name_en].forEach(x => { const c = aiCompact(x); if (c) { aliases.push([c, art]); al.push(c); } });
-    entries.push({ art: art, aliases: al, digits: aiDigits(art) });
-  });
-  AI_IDX = { src: PRODS, aliases: aliases, entries: entries };
-  return AI_IDX;
-}
-function aiResolve(query, llmArt) {
-  const ix = aiIndex();
-  if (llmArt) {
-    if (PRODS[llmArt]) return llmArt;
-    const cl = aiCompact(llmArt); const hit = ix.aliases.find(a => a[0] === cl); if (hit) return hit[1];
-  }
-  const cq = aiCompact(query); if (!cq) return null;
-  const exact = ix.aliases.find(a => a[0] === cq); if (exact) return exact[1];
-  // номера артикулов почти уникальны: «Зелёный остров 5.25» → 525 → Gi-5.25; «эс один» → S1
-  const qd = aiQueryDigits(query);
-  if (qd) {
-    const byD = ix.entries.filter(e => e.digits === qd);
-    if (byD.length === 1) return byD[0].art;
-    if (byD.length > 1) {
-      let best = byD[0], bs = -1;
-      byD.forEach(e => { const r = Math.max.apply(null, e.aliases.map(a => aiRatio(cq, a))); if (r > bs) { bs = r; best = e; } });
-      return best.art;
-    }
-  }
-  const cands = ix.aliases.filter(a => a[0].indexOf(cq) >= 0 || cq.indexOf(a[0]) >= 0).map(a => a[1]);
-  if (new Set(cands).size === 1) return cands[0];
-  let near = null, ns = 0;
-  ix.aliases.forEach(a => { const r = aiRatio(cq, a[0]); if (r > ns) { ns = r; near = a[1]; } });
-  if (ns >= 0.72) return near;
-  if (cands.length) return cands.reduce((x, y) => (y.length < x.length ? y : x));
-  return null;
-}
-function aiCatalogHint() {
-  return Object.keys(PRODS || {}).filter(a => (PRODS[a] || {}).visible !== false)
-    .map(a => PRODS[a].series_ru ? a + ' (' + PRODS[a].series_ru + ')' : a).join(', ');
-}
-
-// ---- сеть ----
-async function aiPost(path, body, isForm) {
-  const opt = { method: 'POST', headers: { 'x-kp-key': (typeof KP_KEY !== 'undefined' ? KP_KEY : '') }, body: body };
-  if (!isForm) opt.headers['Content-Type'] = 'application/json';
-  const r = await fetch(AI_URL + path, opt);
-  const txt = await r.text(); let j = null; try { j = JSON.parse(txt); } catch (e) {}
-  if (!r.ok || !j) throw new Error((j && j.error) || ('сервер ' + r.status));
-  return j;
-}
-function aiSay(msg, bad) { const el = document.getElementById('ai-status'); if (el) { el.textContent = msg || ''; el.style.color = bad ? '#e07070' : ''; } }
-function aiBusy(on) { ['ai-go', 'ai-mic'].forEach(id => { const b = document.getElementById(id); if (b && !(id === 'ai-mic' && AI_REC)) b.disabled = on; }); }
-
-// ---- голос: MediaRecorder в браузере → stt.php ----
-// Запись → WAV 16 кГц моно: этот формат понимают и Groq, и Gemini (webm из Chrome Gemini не берёт),
-// а файл получается ~32 КБ/с. Не вышло перекодировать — шлём исходник как есть.
-async function aiToWav(blob) {
-  try {
-    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
-    const ac = new AC(); const buf = await ac.decodeAudioData(await blob.arrayBuffer()); ac.close && ac.close();
-    const rate = 16000, len = Math.max(1, Math.round(buf.duration * rate));
-    const off = new OfflineAudioContext(1, len, rate);
-    const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
-    const pcm = (await off.startRendering()).getChannelData(0);
-    const dv = new DataView(new ArrayBuffer(44 + pcm.length * 2));
-    const str = (o, t) => { for (let i = 0; i < t.length; i++) dv.setUint8(o + i, t.charCodeAt(i)); };
-    str(0, 'RIFF'); dv.setUint32(4, 36 + pcm.length * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
-    dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
-    dv.setUint32(24, rate, true); dv.setUint32(28, rate * 2, true); dv.setUint16(32, 2, true); dv.setUint16(34, 16, true);
-    str(36, 'data'); dv.setUint32(40, pcm.length * 2, true);
-    for (let i = 0; i < pcm.length; i++) { const v = Math.max(-1, Math.min(1, pcm[i])); dv.setInt16(44 + i * 2, v < 0 ? v * 0x8000 : v * 0x7FFF, true); }
-    return new Blob([dv.buffer], { type: 'audio/wav' });
-  } catch (e) { console.warn('wav convert failed', e); return null; }
-}
-let AI_REC = null, AI_CHUNKS = [], AI_T0 = 0, AI_TICK = null;
-async function aiMicToggle() {
-  const btn = document.getElementById('ai-mic');
-  if (AI_REC) { AI_REC.stop(); return; }
-  if (!navigator.mediaDevices || !window.MediaRecorder) { aiSay('Браузер не умеет записывать звук', true); return; }
-  let stream;
-  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
-  catch (e) { aiSay('Нет доступа к микрофону: ' + e.message, true); return; }
-  const mime = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4', 'audio/webm'].find(m => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || '';
-  AI_CHUNKS = [];
-  AI_REC = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
-  AI_REC.ondataavailable = e => { if (e.data && e.data.size) AI_CHUNKS.push(e.data); };
-  AI_REC.onstop = async () => {
-    stream.getTracks().forEach(t => t.stop());
-    clearInterval(AI_TICK); const type = AI_REC.mimeType || mime || 'audio/webm'; AI_REC = null;
-    btn.textContent = '🎤 Голос'; btn.classList.remove('accent'); btn.classList.add('ghost');
-    const blob = new Blob(AI_CHUNKS, { type: type });
-    if (blob.size < 1000) { aiSay('Запись пустая', true); return; }
-    aiBusy(true); aiSay('Распознаю голос…');
-    try {
-      const wav = await aiToWav(blob);
-      const fd = new FormData(); fd.append('audio', wav || blob, wav ? 'voice.wav' : 'voice'); fd.append('lang', 'ru');
-      const j = await aiPost('stt.php', fd, true);
-      if (!j.text) throw new Error('речь не распознана');
-      const ta = document.getElementById('ai-text'); ta.value = (ta.value.trim() ? ta.value.trim() + '\n' : '') + j.text;
-      aiBusy(false); await aiExtract();
-    } catch (e) { aiBusy(false); aiSay('Голос: ' + e.message, true); }
-  };
-  AI_REC.start(); AI_T0 = Date.now();
-  btn.textContent = '■ Стоп'; btn.classList.remove('ghost'); btn.classList.add('accent');
-  AI_TICK = setInterval(() => aiSay('Идёт запись… ' + Math.round((Date.now() - AI_T0) / 1000) + ' с — нажмите «Стоп»'), 500);
-  aiSay('Идёт запись… нажмите «Стоп»');
-}
-
-// ---- текст → черновик ----
-let AI_DRAFT = null;
-async function aiExtract() {
-  const text = (document.getElementById('ai-text').value || '').trim();
-  if (!text) { aiSay('Вставьте текст или запишите голос', true); return; }
-  if (!PRODS || !Object.keys(PRODS).length) { aiSay('Каталог ещё загружается', true); return; }
-  aiBusy(true); aiSay('Разбираю сообщение…');
-  try {
-    const raw = await aiPost('extract.php', JSON.stringify({ text: text, catalog: aiCatalogHint() }));
-    const cur = String(raw.currency || '').trim().toUpperCase();
-    AI_DRAFT = {
-      company: aiFixCompany(String(raw.company || '').trim()),
-      city: aiFixCity(String(raw.city || '').trim()),
-      currency: ['KZT', 'USD', 'EUR', 'RUB', 'CHF'].indexOf(cur) >= 0 ? cur : '',
-      delivery: aiDetectDelivery(text),
-      requisites: String(raw.requisites || '').trim(),
-      comment: String(raw.comment || '').trim(),
-      items: (raw.items || []).map(it => {
-        const q = String(it.query || '').trim();
-        return { query: q, article: aiResolve(q, it.article) || '', qty: Math.max(0, parseInt(it.qty, 10) || 0), outdoor: !!it.outdoor };
-      }).filter(it => it.query || it.article)
-    };
-    aiSay('');
-    aiRenderDraft();
-  } catch (e) { aiSay('Не получилось: ' + e.message, true); }
-  aiBusy(false);
-}
-
-function aiEsc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c])); }
-function aiRenderDraft() {
-  const box = document.getElementById('ai-result'), d = AI_DRAFT; if (!box || !d) return;
-  const arts = Object.keys(PRODS).filter(a => (PRODS[a] || {}).visible !== false).sort();
-  const dl = { air: 'авиа', cargo: 'авто', exw: 'самовывоз' };
-  const row = (lab, v) => '<div style="display:flex;gap:6px;font-size:10px;margin:2px 0;"><span style="color:var(--sb-muted);flex:0 0 62px;">' + lab + '</span><span>' + v + '</span></div>';
-  let h = '<div style="margin-top:8px;padding:8px;border:1px solid var(--sb-border);border-radius:6px;">';
-  h += row('Компания', d.company ? aiEsc(d.company) : '<span style="color:#e07070">не распознана</span>');
-  h += row('Город', d.city ? aiEsc(d.city) : '—');
-  if (d.currency) h += row('Валюта', d.currency);
-  h += row('Доставка', d.delivery ? dl[d.delivery] + (d.city ? '' : ' (город не назван)') : '—');
-  h += '<div style="font-size:9.5px;color:var(--sb-muted);margin:6px 0 3px;">Позиции</div>';
-  if (!d.items.length) h += '<div style="font-size:10px;color:#e07070;">модели не распознаны</div>';
-  d.items.forEach((it, i) => {
-    const opts = '<option value="">— не найдена —</option>' + arts.map(a => '<option' + (a === it.article ? ' selected' : '') + '>' + aiEsc(a) + '</option>').join('');
-    h += '<div style="display:flex;gap:4px;align-items:center;margin:3px 0;" title="клиент сказал: ' + aiEsc(it.query) + '">'
-      + '<select onchange="AI_DRAFT.items[' + i + '].article=this.value" style="flex:1;min-width:0;font-size:10.5px;' + (it.article ? '' : 'border-color:#e07070;') + '">' + opts + '</select>'
-      + '<input type="number" min="1" value="' + (it.qty || 1) + '" onchange="AI_DRAFT.items[' + i + '].qty=+this.value" style="width:44px;font-size:10.5px;"' + (it.qty ? '' : ' title="количество не названо — проверьте"') + '>'
-      + '<label style="font-size:9.5px;white-space:nowrap;" title="уличное исполнение"><input type="checkbox"' + (it.outdoor ? ' checked' : '') + ' onchange="AI_DRAFT.items[' + i + '].outdoor=this.checked"> ул.</label>'
-      + '</div>'
-      + '<div style="font-size:9px;color:' + (it.article ? 'var(--sb-muted)' : '#e07070') + ';margin:-1px 0 3px;">«' + aiEsc(it.query) + '»' + (it.qty ? '' : ' · кол-во не названо') + '</div>';
-  });
-  if (d.requisites) h += '<div style="font-size:9.5px;margin-top:6px;"><span style="color:var(--sb-muted);">Реквизиты (в КП не подставляются):</span> ' + aiEsc(d.requisites) + '</div>';
-  if (d.comment) h += '<div style="font-size:9.5px;margin-top:4px;"><span style="color:var(--sb-muted);">Комментарий:</span> ' + aiEsc(d.comment) + '</div>';
-  h += '<div style="display:flex;gap:6px;margin-top:8px;"><button type="button" class="btn sm accent" style="flex:1;" onclick="aiBuild()">Собрать КП</button>'
-     + '<button type="button" class="btn sm ghost" onclick="aiClear()">✕</button></div></div>';
-  box.innerHTML = h; box.style.display = '';
-}
-function aiClear() { AI_DRAFT = null; const b = document.getElementById('ai-result'); b.innerHTML = ''; b.style.display = 'none'; aiSay(''); }
-function aiBuild() {
-  const d = AI_DRAFT; if (!d) return;
-  const models = d.items.filter(it => it.article && PRODS[it.article]).map(it => ({ article: it.article, type: it.outdoor ? 'exterior' : 'interior', qty: Math.max(1, it.qty || 1) }));
-  if (!models.length) { aiSay('Нет ни одной модели из каталога — выберите артикулы', true); return; }
-  const deliv = { region: d.city || '' }; if (d.delivery) deliv.method = d.delivery;
-  applyImportPayload({ client: { company: d.company || '' }, delivery: deliv, models: models, currency: d.currency });
-  if (typeof scheduleAutosave === 'function') scheduleAutosave();
-  flashStatus('КП собран из сообщения клиента');
-  aiClear(); document.getElementById('ai-text').value = '';
-}
-</script>
-
 </body>
 </html>
