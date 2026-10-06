@@ -39,7 +39,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 5178,
+    "price_exterior_final_usd": 5696
   },
   "P4.6": {
     "article": "P4.6",
@@ -89,7 +91,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 4756,
+    "price_exterior_final_usd": 5231
   },
   "W2.12": {
     "article": "W2.12",
@@ -142,7 +146,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 15831,
+    "price_exterior_final_usd": 17414
   },
   "FL1.235": {
     "article": "FL1.235",
@@ -186,7 +192,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2091,
+    "price_exterior_final_usd": 2300
   },
   "P4.3": {
     "article": "P4.3",
@@ -239,7 +247,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2931,
+    "price_exterior_final_usd": 3224
   },
   "Wi-F": {
     "article": "Wi-F",
@@ -291,7 +301,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 18481,
+    "price_exterior_final_usd": 20329
   },
   "Wi-8": {
     "article": "Wi-8",
@@ -342,7 +354,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 20897,
+    "price_exterior_final_usd": 22987
   },
   "Gi-5.25": {
     "article": "Gi-5.25",
@@ -395,7 +409,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 5373,
+    "price_exterior_final_usd": 5910
   },
   "Gi-5.2": {
     "article": "Gi-5.2",
@@ -448,7 +464,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 4246,
+    "price_exterior_final_usd": 4671
   },
   "Gi-5.1": {
     "article": "Gi-5.1",
@@ -500,7 +518,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 9047,
+    "price_exterior_final_usd": 9952
   },
   "B2.3": {
     "article": "B2.3",
@@ -553,7 +573,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2631,
+    "price_exterior_final_usd": 2894
   },
   "F1.5": {
     "article": "F1.5",
@@ -606,7 +628,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 5841,
+    "price_exterior_final_usd": 6425
   },
   "FL1.266": {
     "article": "FL1.266",
@@ -656,7 +680,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 4048,
+    "price_exterior_final_usd": 4453
   },
   "L3.1": {
     "article": "L3.1",
@@ -709,7 +735,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1668,
+    "price_exterior_final_usd": 1834
   },
   "P4.52": {
     "article": "P4.52",
@@ -755,7 +783,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2501,
+    "price_exterior_final_usd": 2751
   },
   "P4.51": {
     "article": "P4.51",
@@ -800,7 +830,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 3586,
+    "price_exterior_final_usd": 3945
   },
   "P4.5": {
     "article": "P4.5",
@@ -846,7 +878,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 3997,
+    "price_exterior_final_usd": 4397
   },
   "Gi-6.3": {
     "article": "Gi-6.3",
@@ -899,7 +933,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 4144,
+    "price_exterior_final_usd": 4558
   },
   "Gi-6.22": {
     "article": "Gi-6.22",
@@ -952,7 +988,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2909,
+    "price_exterior_final_usd": 3200
   },
   "S4.124": {
     "article": "S4.124",
@@ -1005,7 +1043,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 3132,
+    "price_exterior_final_usd": 3445
   },
   "S4.1210": {
     "article": "S4.1210",
@@ -1058,7 +1098,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 6189,
+    "price_exterior_final_usd": 6808
   },
   "S3.71": {
     "article": "S3.71",
@@ -1111,7 +1153,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 3637,
+    "price_exterior_final_usd": 4001
   },
   "GLT4.1": {
     "article": "GLT4.1",
@@ -1164,7 +1208,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 3817,
+    "price_exterior_final_usd": 4199
   },
   "LT1.8": {
     "article": "LT1.8",
@@ -1209,7 +1255,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 752,
+    "price_exterior_final_usd": 828
   },
   "LT1.8.1": {
     "article": "LT1.8.1",
@@ -1259,7 +1307,9 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "updated_at": "2026-09-22T13:46:04.508Z",
-    "price_updated_at": "2026-09-22T13:46:04.508Z"
+    "price_updated_at": "2026-09-22T13:46:04.508Z",
+    "price_interior_final_usd": 498,
+    "price_exterior_final_usd": 730
   },
   "S4.18": {
     "article": "S4.18",
@@ -1304,7 +1354,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1304,
+    "price_exterior_final_usd": 1434
   },
   "S4.12": {
     "article": "S4.12",
@@ -1357,7 +1409,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 9077,
+    "price_exterior_final_usd": 9985
   },
   "S3.411": {
     "article": "S3.411",
@@ -1401,7 +1455,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1071,
+    "price_exterior_final_usd": 1178
   },
   "S3.421": {
     "article": "S3.421",
@@ -1446,7 +1502,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2025,
+    "price_exterior_final_usd": 2227
   },
   "S3.431": {
     "article": "S3.431",
@@ -1491,7 +1549,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2025,
+    "price_exterior_final_usd": 2227
   },
   "GL1.32": {
     "article": "GL1.32",
@@ -1544,7 +1604,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 6224,
+    "price_exterior_final_usd": 6847
   },
   "FL1.1": {
     "article": "FL1.1",
@@ -1597,7 +1659,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2925,
+    "price_exterior_final_usd": 3218
   },
   "T2.31": {
     "article": "T2.31",
@@ -1650,7 +1714,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 715,
+    "price_exterior_final_usd": 787
   },
   "ST1.31": {
     "article": "ST1.31",
@@ -1694,7 +1760,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 893,
+    "price_exterior_final_usd": 982
   },
   "S3.33": {
     "article": "S3.33",
@@ -1744,7 +1812,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1481,
+    "price_exterior_final_usd": 1630
   },
   "S3.22": {
     "article": "S3.22",
@@ -1788,7 +1858,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1623,
+    "price_exterior_final_usd": 1786
   },
   "ST1.21": {
     "article": "ST1.21",
@@ -1834,7 +1906,9 @@
     "discount_int_pct": 25,
     "discount_int_qty": 1,
     "updated_at": "2026-09-22T13:46:04.508Z",
-    "price_updated_at": "2026-09-22T13:46:04.508Z"
+    "price_updated_at": "2026-09-22T13:46:04.508Z",
+    "price_interior_final_usd": 396,
+    "price_exterior_final_usd": 581
   },
   "S3.32": {
     "article": "S3.32",
@@ -1879,7 +1953,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1481,
+    "price_exterior_final_usd": 1630
   },
   "ST1.1": {
     "article": "ST1.1",
@@ -1923,7 +1999,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 232,
+    "price_exterior_final_usd": 255
   },
   "S3.31": {
     "article": "S3.31",
@@ -1967,7 +2045,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 821,
+    "price_exterior_final_usd": 903
   },
   "S3.21": {
     "article": "S3.21",
@@ -2011,7 +2091,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 821,
+    "price_exterior_final_usd": 903
   },
   "GI-3.12": {
     "article": "GI-3.12",
@@ -2053,7 +2135,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 3473,
+    "price_exterior_final_usd": 3820
   },
   "V1.36": {
     "article": "V1.36",
@@ -2102,7 +2186,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2515,
+    "price_exterior_final_usd": 2767
   },
   "W5.12-2": {
     "article": "W5.12-2",
@@ -2155,7 +2241,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 10623,
+    "price_exterior_final_usd": 11685
   },
   "W5.12-1": {
     "article": "W5.12-1",
@@ -2206,7 +2294,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 10623,
+    "price_exterior_final_usd": 11685
   },
   "L1.8": {
     "article": "L1.8",
@@ -2258,9 +2348,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "discount_int_pct": 25,
-    "discount_int_qty": 2,
-    "updated_at": "2026-09-22T13:46:04.508Z",
-    "price_updated_at": "2026-09-22T13:46:04.508Z"
+    "discount_int_qty": 1,
+    "updated_at": "2026-10-06T21:03:41.338Z",
+    "price_updated_at": "2026-10-06T21:03:41.338Z",
+    "price_interior_final_usd": 680,
+    "price_exterior_final_usd": 997
   },
   "GL4.13": {
     "article": "GL4.13",
@@ -2303,7 +2395,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 6594,
+    "price_exterior_final_usd": 7253
   },
   "GL4.12": {
     "article": "GL4.12",
@@ -2345,7 +2439,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 4396,
+    "price_exterior_final_usd": 4835
   },
   "GL4.11": {
     "article": "GL4.11",
@@ -2387,7 +2483,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 4396,
+    "price_exterior_final_usd": 4835
   },
   "L4.1": {
     "article": "L4.1",
@@ -2431,7 +2529,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2198,
+    "price_exterior_final_usd": 2418
   },
   "GL2.12": {
     "article": "GL2.12",
@@ -2473,7 +2573,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 3602,
+    "price_exterior_final_usd": 3962
   },
   "GL2.11": {
     "article": "GL2.11",
@@ -2526,7 +2628,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 3602,
+    "price_exterior_final_usd": 3962
   },
   "L2.1": {
     "article": "L2.1",
@@ -2570,7 +2674,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1801,
+    "price_exterior_final_usd": 1981
   },
   "F4.1": {
     "article": "F4.1",
@@ -2623,7 +2729,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 4308,
+    "price_exterior_final_usd": 4739
   },
   "F5.1": {
     "article": "F5.1",
@@ -2671,7 +2779,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 10580,
+    "price_exterior_final_usd": 11638
   },
   "N-1.85": {
     "article": "N-1.85",
@@ -2713,7 +2823,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 420,
+    "price_exterior_final_usd": 420
   },
   "W3.1": {
     "article": "W3.1",
@@ -2763,7 +2875,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 7551,
+    "price_exterior_final_usd": 8306
   },
   "P4.2": {
     "article": "P4.2",
@@ -2816,7 +2930,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2931,
+    "price_exterior_final_usd": 3224
   },
   "P4.1": {
     "article": "P4.1",
@@ -2869,7 +2985,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1471,
+    "price_exterior_final_usd": 1618
   },
   "B2.4": {
     "article": "B2.4",
@@ -2910,7 +3028,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2353,
+    "price_exterior_final_usd": 2353
   },
   "W6.1": {
     "article": "W6.1",
@@ -2953,7 +3073,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 7289,
+    "price_exterior_final_usd": 7289
   },
   "S1": {
     "article": "S1",
@@ -2994,7 +3116,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1929,
+    "price_exterior_final_usd": 1929
   },
   "F3": {
     "article": "F3",
@@ -3035,7 +3159,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 13759,
+    "price_exterior_final_usd": 13759
   },
   "F2.81": {
     "article": "F2.81",
@@ -3088,7 +3214,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 7688,
+    "price_exterior_final_usd": 8456
   },
   "F1": {
     "article": "F1",
@@ -3135,7 +3263,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 6560,
+    "price_exterior_final_usd": 6560
   },
   "C1.3": {
     "article": "C1.3",
@@ -3176,7 +3306,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 519,
+    "price_exterior_final_usd": 519
   },
   "C1.2": {
     "article": "C1.2",
@@ -3217,7 +3349,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 729,
+    "price_exterior_final_usd": 729
   },
   "C1.1": {
     "article": "C1.1",
@@ -3258,7 +3392,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 719,
+    "price_exterior_final_usd": 719
   },
   "GI-8": {
     "article": "GI-8",
@@ -3303,7 +3439,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 7584,
+    "price_exterior_final_usd": 8342
   },
   "GI-6": {
     "article": "GI-6",
@@ -3355,7 +3493,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 8595,
+    "price_exterior_final_usd": 9454
   },
   "S3.2": {
     "article": "S3.2",
@@ -3397,7 +3537,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2230,
+    "price_exterior_final_usd": 2230
   },
   "S3.26": {
     "article": "S3.26",
@@ -3442,7 +3584,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 1871,
+    "price_exterior_final_usd": 2058
   },
   "W2.1": {
     "article": "W2.1",
@@ -3487,7 +3631,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 17122,
+    "price_exterior_final_usd": 18834
   },
   "S2.35": {
     "article": "S2.35",
@@ -3540,7 +3686,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 2944,
+    "price_exterior_final_usd": 3238
   },
   "P2": {
     "article": "P2",
@@ -3581,7 +3729,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 6419,
+    "price_exterior_final_usd": 6419
   },
   "L1.9": {
     "article": "L1.9",
@@ -3622,7 +3772,9 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 550,
+    "price_exterior_final_usd": 550
   },
   "GI-3.11": {
     "article": "GI-3.11",
@@ -3673,6 +3825,8 @@
     "discount_int_pct": 0,
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
-    "discount_ext_qty": 0
+    "discount_ext_qty": 0,
+    "price_interior_final_usd": 9031,
+    "price_exterior_final_usd": 9934
   }
 }
