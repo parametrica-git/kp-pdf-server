@@ -25,7 +25,7 @@
       "interior"
     ],
     "price_interior_usd": 5178,
-    "price_exterior_usd": 5696,
+    "price_exterior_usd": 6266,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -40,7 +40,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 5178,
-    "price_exterior_final_usd": 5696
+    "price_exterior_final_usd": 6266,
+    "price_exterior_list_usd": 5696,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 5178,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.904Z",
+    "price_updated_at": "2026-10-19T14:28:29.904Z"
   },
   "P4.6": {
     "article": "P4.6",
@@ -68,7 +74,7 @@
       "interior"
     ],
     "price_interior_usd": 3805,
-    "price_exterior_usd": 5231,
+    "price_exterior_usd": 5754,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -91,9 +97,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 3805,
-    "price_exterior_final_usd": 5231,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_exterior_final_usd": 5754,
+    "updated_at": "2026-10-19T14:28:29.904Z",
+    "price_updated_at": "2026-10-19T14:28:29.904Z",
+    "price_exterior_list_usd": 5231,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 3805,
+    "price_int_pct": 100
   },
   "W2.12": {
     "article": "W2.12",
@@ -121,7 +131,7 @@
       "interior"
     ],
     "price_interior_usd": 15831,
-    "price_exterior_usd": 17414,
+    "price_exterior_usd": 19155,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -147,7 +157,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 15831,
-    "price_exterior_final_usd": 17414
+    "price_exterior_final_usd": 19155,
+    "price_exterior_list_usd": 17414,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 15831,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.904Z",
+    "price_updated_at": "2026-10-19T14:28:29.904Z"
   },
   "FL1.235": {
     "article": "FL1.235",
@@ -175,7 +191,7 @@
       "interior"
     ],
     "price_interior_usd": 2091,
-    "price_exterior_usd": 2300,
+    "price_exterior_usd": 2530,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -192,7 +208,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 2091,
-    "price_exterior_final_usd": 2300
+    "price_exterior_final_usd": 2530,
+    "price_exterior_list_usd": 2300,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 2091,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.904Z",
+    "price_updated_at": "2026-10-19T14:28:29.904Z"
   },
   "P4.3": {
     "article": "P4.3",
@@ -220,7 +242,7 @@
       "interior"
     ],
     "price_interior_usd": 2931,
-    "price_exterior_usd": 3224,
+    "price_exterior_usd": 3546,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -246,7 +268,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 2931,
-    "price_exterior_final_usd": 3224
+    "price_exterior_final_usd": 3546,
+    "price_exterior_list_usd": 3224,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 2931,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.904Z",
+    "price_updated_at": "2026-10-19T14:28:29.904Z"
   },
   "Wi-F": {
     "article": "Wi-F",
@@ -273,8 +301,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 18481,
-    "price_exterior_usd": 20329,
+    "price_interior_usd": 14785,
+    "price_exterior_usd": 18296,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -298,8 +326,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 18481,
-    "price_exterior_final_usd": 20329
+    "price_interior_final_usd": 14785,
+    "price_exterior_final_usd": 18296,
+    "price_interior_list_usd": 18481,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 20329,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.904Z",
+    "price_updated_at": "2026-10-19T14:28:29.904Z"
   },
   "Wi-8": {
     "article": "Wi-8",
@@ -326,8 +360,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 20897,
-    "price_exterior_usd": 22987,
+    "price_interior_usd": 16718,
+    "price_exterior_usd": 20688,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -350,8 +384,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 20897,
-    "price_exterior_final_usd": 22987
+    "price_interior_final_usd": 16718,
+    "price_exterior_final_usd": 20688,
+    "price_interior_list_usd": 20897,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 22987,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.904Z",
+    "price_updated_at": "2026-10-19T14:28:29.904Z"
   },
   "Gi-5.25": {
     "article": "Gi-5.25",
@@ -405,7 +445,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 5373,
-    "price_exterior_final_usd": 5910
+    "price_exterior_final_usd": 5910,
+    "price_interior_list_usd": 5373,
+    "price_int_pct": 100,
+    "price_exterior_list_usd": 5910,
+    "price_ext_pct": 100
   },
   "Gi-5.2": {
     "article": "Gi-5.2",
@@ -459,7 +503,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 4246,
-    "price_exterior_final_usd": 4671
+    "price_exterior_final_usd": 4671,
+    "price_interior_list_usd": 4246,
+    "price_int_pct": 100,
+    "price_exterior_list_usd": 4671,
+    "price_ext_pct": 100
   },
   "Gi-5.1": {
     "article": "Gi-5.1",
@@ -486,8 +534,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 9047,
-    "price_exterior_usd": 9952,
+    "price_interior_usd": 7238,
+    "price_exterior_usd": 8957,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -511,8 +559,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 9047,
-    "price_exterior_final_usd": 9952
+    "price_interior_final_usd": 7238,
+    "price_exterior_final_usd": 8957,
+    "price_interior_list_usd": 9047,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 9952,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "B2.3": {
     "article": "B2.3",
@@ -539,8 +593,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2631,
-    "price_exterior_usd": 2894,
+    "price_interior_usd": 2105,
+    "price_exterior_usd": 2605,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -565,8 +619,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2631,
-    "price_exterior_final_usd": 2894
+    "price_interior_final_usd": 2105,
+    "price_exterior_final_usd": 2605,
+    "price_exterior_list_usd": 2894,
+    "price_ext_pct": 90,
+    "price_interior_list_usd": 2631,
+    "price_int_pct": 80,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "F1.5": {
     "article": "F1.5",
@@ -593,8 +653,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 5841,
-    "price_exterior_usd": 6425,
+    "price_interior_usd": 4673,
+    "price_exterior_usd": 5783,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -619,8 +679,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 5841,
-    "price_exterior_final_usd": 6425
+    "price_interior_final_usd": 4673,
+    "price_exterior_final_usd": 5783,
+    "price_exterior_list_usd": 6425,
+    "price_ext_pct": 90,
+    "price_interior_list_usd": 5841,
+    "price_int_pct": 80,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "FL1.266": {
     "article": "FL1.266",
@@ -647,8 +713,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 4048,
-    "price_exterior_usd": 4453,
+    "price_interior_usd": 3238,
+    "price_exterior_usd": 4008,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -670,8 +736,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 4048,
-    "price_exterior_final_usd": 4453
+    "price_interior_final_usd": 3238,
+    "price_exterior_final_usd": 4008,
+    "price_exterior_list_usd": 4453,
+    "price_ext_pct": 90,
+    "price_interior_list_usd": 4048,
+    "price_int_pct": 80,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "L3.1": {
     "article": "L3.1",
@@ -699,7 +771,7 @@
       "interior"
     ],
     "price_interior_usd": 1668,
-    "price_exterior_usd": 1834,
+    "price_exterior_usd": 2017,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -725,7 +797,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 1668,
-    "price_exterior_final_usd": 1834
+    "price_exterior_final_usd": 2017,
+    "price_exterior_list_usd": 1834,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 1668,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "P4.52": {
     "article": "P4.52",
@@ -753,7 +831,7 @@
       "interior"
     ],
     "price_interior_usd": 2501,
-    "price_exterior_usd": 2751,
+    "price_exterior_usd": 3026,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -772,7 +850,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 2501,
-    "price_exterior_final_usd": 2751
+    "price_exterior_final_usd": 3026,
+    "price_exterior_list_usd": 2751,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 2501,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "P4.51": {
     "article": "P4.51",
@@ -800,7 +884,7 @@
       "interior"
     ],
     "price_interior_usd": 3586,
-    "price_exterior_usd": 3945,
+    "price_exterior_usd": 4340,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -818,7 +902,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 3586,
-    "price_exterior_final_usd": 3945
+    "price_exterior_final_usd": 4340,
+    "price_exterior_list_usd": 3945,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 3586,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "P4.5": {
     "article": "P4.5",
@@ -846,7 +936,7 @@
       "interior"
     ],
     "price_interior_usd": 3997,
-    "price_exterior_usd": 4397,
+    "price_exterior_usd": 4837,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -865,7 +955,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 3997,
-    "price_exterior_final_usd": 4397
+    "price_exterior_final_usd": 4837,
+    "price_exterior_list_usd": 4397,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 3997,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "Gi-6.3": {
     "article": "Gi-6.3",
@@ -892,8 +988,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 4144,
-    "price_exterior_usd": 4558,
+    "price_interior_usd": 3315,
+    "price_exterior_usd": 4102,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -918,8 +1014,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 4144,
-    "price_exterior_final_usd": 4558
+    "price_interior_final_usd": 3315,
+    "price_exterior_final_usd": 4102,
+    "price_interior_list_usd": 4144,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 4558,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "Gi-6.22": {
     "article": "Gi-6.22",
@@ -946,8 +1048,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2909,
-    "price_exterior_usd": 3200,
+    "price_interior_usd": 2327,
+    "price_exterior_usd": 2880,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -972,8 +1074,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2909,
-    "price_exterior_final_usd": 3200
+    "price_interior_final_usd": 2327,
+    "price_exterior_final_usd": 2880,
+    "price_interior_list_usd": 2909,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 3200,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "S4.124": {
     "article": "S4.124",
@@ -1000,8 +1108,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2506,
-    "price_exterior_usd": 3445,
+    "price_interior_usd": 2005,
+    "price_exterior_usd": 3101,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -1026,10 +1134,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2506,
-    "price_exterior_final_usd": 3445,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 2005,
+    "price_exterior_final_usd": 3101,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 2506,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 3445,
+    "price_ext_pct": 90
   },
   "S4.1210": {
     "article": "S4.1210",
@@ -1056,8 +1168,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 6189,
-    "price_exterior_usd": 6808,
+    "price_interior_usd": 4951,
+    "price_exterior_usd": 6127,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -1082,8 +1194,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 6189,
-    "price_exterior_final_usd": 6808
+    "price_interior_final_usd": 4951,
+    "price_exterior_final_usd": 6127,
+    "price_interior_list_usd": 6189,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 6808,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "S3.71": {
     "article": "S3.71",
@@ -1110,8 +1228,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2910,
-    "price_exterior_usd": 4001,
+    "price_interior_usd": 2328,
+    "price_exterior_usd": 3601,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -1136,10 +1254,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2910,
-    "price_exterior_final_usd": 4001,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 2328,
+    "price_exterior_final_usd": 3601,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 2910,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 4001,
+    "price_ext_pct": 90
   },
   "GLT4.1": {
     "article": "GLT4.1",
@@ -1167,7 +1289,7 @@
       "interior"
     ],
     "price_interior_usd": 3817,
-    "price_exterior_usd": 4199,
+    "price_exterior_usd": 4619,
     "visible": true,
     "ribbon": "BEST PRICE",
     "images": [
@@ -1193,7 +1315,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 3817,
-    "price_exterior_final_usd": 4199
+    "price_exterior_final_usd": 4619,
+    "price_exterior_list_usd": 4199,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 3817,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "LT1.8": {
     "article": "LT1.8",
@@ -1220,8 +1348,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 602,
-    "price_exterior_usd": 828,
+    "price_interior_usd": 482,
+    "price_exterior_usd": 745,
     "visible": true,
     "ribbon": "BEST PRICE",
     "images": [
@@ -1238,10 +1366,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 602,
-    "price_exterior_final_usd": 828,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 482,
+    "price_exterior_final_usd": 745,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 602,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 828,
+    "price_ext_pct": 90
   },
   "LT1.8.1": {
     "article": "LT1.8.1",
@@ -1268,8 +1400,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 531,
-    "price_exterior_usd": 730,
+    "price_interior_usd": 425,
+    "price_exterior_usd": 657,
     "visible": true,
     "ribbon": "BEST PRICE",
     "images": [
@@ -1289,10 +1421,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z",
-    "price_interior_final_usd": 531,
-    "price_exterior_final_usd": 730
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_final_usd": 425,
+    "price_exterior_final_usd": 657,
+    "price_interior_list_usd": 531,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 730,
+    "price_ext_pct": 90
   },
   "S4.18": {
     "article": "S4.18",
@@ -1319,8 +1455,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 1043,
-    "price_exterior_usd": 1434,
+    "price_interior_usd": 834,
+    "price_exterior_usd": 1291,
     "visible": true,
     "ribbon": "BEST PRICE",
     "images": [
@@ -1337,10 +1473,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 1043,
-    "price_exterior_final_usd": 1434,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 834,
+    "price_exterior_final_usd": 1291,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 1043,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 1434,
+    "price_ext_pct": 90
   },
   "S4.12": {
     "article": "S4.12",
@@ -1368,7 +1508,7 @@
       "interior"
     ],
     "price_interior_usd": 9077,
-    "price_exterior_usd": 9985,
+    "price_exterior_usd": 10984,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -1394,7 +1534,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 9077,
-    "price_exterior_final_usd": 9985
+    "price_exterior_final_usd": 10984,
+    "price_exterior_list_usd": 9985,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 9077,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "S3.411": {
     "article": "S3.411",
@@ -1421,8 +1567,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 1071,
-    "price_exterior_usd": 1178,
+    "price_interior_usd": 857,
+    "price_exterior_usd": 1060,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -1438,8 +1584,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 1071,
-    "price_exterior_final_usd": 1178
+    "price_interior_final_usd": 857,
+    "price_exterior_final_usd": 1060,
+    "price_interior_list_usd": 1071,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 1178,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "S3.421": {
     "article": "S3.421",
@@ -1466,8 +1618,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2025,
-    "price_exterior_usd": 2227,
+    "price_interior_usd": 1620,
+    "price_exterior_usd": 2004,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -1484,8 +1636,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2025,
-    "price_exterior_final_usd": 2227
+    "price_interior_final_usd": 1620,
+    "price_exterior_final_usd": 2004,
+    "price_interior_list_usd": 2025,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 2227,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "S3.431": {
     "article": "S3.431",
@@ -1512,8 +1670,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2025,
-    "price_exterior_usd": 2227,
+    "price_interior_usd": 1620,
+    "price_exterior_usd": 2004,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -1530,8 +1688,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2025,
-    "price_exterior_final_usd": 2227
+    "price_interior_final_usd": 1620,
+    "price_exterior_final_usd": 2004,
+    "price_interior_list_usd": 2025,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 2227,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "GL1.32": {
     "article": "GL1.32",
@@ -1558,8 +1722,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 6224,
-    "price_exterior_usd": 6847,
+    "price_interior_usd": 4979,
+    "price_exterior_usd": 6162,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -1584,8 +1748,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 6224,
-    "price_exterior_final_usd": 6847
+    "price_interior_final_usd": 4979,
+    "price_exterior_final_usd": 6162,
+    "price_interior_list_usd": 6224,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 6847,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "FL1.1": {
     "article": "FL1.1",
@@ -1612,8 +1782,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2340,
-    "price_exterior_usd": 3218,
+    "price_interior_usd": 1872,
+    "price_exterior_usd": 2896,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -1638,10 +1808,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2340,
-    "price_exterior_final_usd": 3218,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 1872,
+    "price_exterior_final_usd": 2896,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 2340,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 3218,
+    "price_ext_pct": 90
   },
   "T2.31": {
     "article": "T2.31",
@@ -1668,8 +1842,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 572,
-    "price_exterior_usd": 787,
+    "price_interior_usd": 458,
+    "price_exterior_usd": 708,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -1694,10 +1868,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 572,
-    "price_exterior_final_usd": 787,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 458,
+    "price_exterior_final_usd": 708,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 572,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 787,
+    "price_ext_pct": 90
   },
   "ST1.31": {
     "article": "ST1.31",
@@ -1724,8 +1902,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 714,
-    "price_exterior_usd": 982,
+    "price_interior_usd": 571,
+    "price_exterior_usd": 884,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -1741,10 +1919,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 714,
-    "price_exterior_final_usd": 982,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 571,
+    "price_exterior_final_usd": 884,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 714,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 982,
+    "price_ext_pct": 90
   },
   "S3.33": {
     "article": "S3.33",
@@ -1771,8 +1953,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 1185,
-    "price_exterior_usd": 1630,
+    "price_interior_usd": 948,
+    "price_exterior_usd": 1467,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -1794,10 +1976,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 1185,
-    "price_exterior_final_usd": 1630,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 948,
+    "price_exterior_final_usd": 1467,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 1185,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 1630,
+    "price_ext_pct": 90
   },
   "S3.22": {
     "article": "S3.22",
@@ -1824,8 +2010,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 1298,
-    "price_exterior_usd": 1786,
+    "price_interior_usd": 1038,
+    "price_exterior_usd": 1607,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -1841,10 +2027,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 1298,
-    "price_exterior_final_usd": 1786,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 1038,
+    "price_exterior_final_usd": 1607,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 1298,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 1786,
+    "price_ext_pct": 90
   },
   "ST1.21": {
     "article": "ST1.21",
@@ -1871,8 +2061,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 422,
-    "price_exterior_usd": 581,
+    "price_interior_usd": 338,
+    "price_exterior_usd": 523,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -1888,10 +2078,14 @@
     "discount_ext_qty": 0,
     "discount_int_pct": 0,
     "discount_int_qty": 0,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z",
-    "price_interior_final_usd": 422,
-    "price_exterior_final_usd": 581
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_final_usd": 338,
+    "price_exterior_final_usd": 523,
+    "price_interior_list_usd": 422,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 581,
+    "price_ext_pct": 90
   },
   "S3.32": {
     "article": "S3.32",
@@ -1918,8 +2112,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 1185,
-    "price_exterior_usd": 1630,
+    "price_interior_usd": 948,
+    "price_exterior_usd": 1467,
     "visible": true,
     "ribbon": "COMFORT",
     "images": [
@@ -1936,10 +2130,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 1185,
-    "price_exterior_final_usd": 1630,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 948,
+    "price_exterior_final_usd": 1467,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 1185,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 1630,
+    "price_ext_pct": 90
   },
   "ST1.1": {
     "article": "ST1.1",
@@ -1966,8 +2164,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 186,
-    "price_exterior_usd": 255,
+    "price_interior_usd": 149,
+    "price_exterior_usd": 230,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -1983,10 +2181,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 186,
-    "price_exterior_final_usd": 255,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 149,
+    "price_exterior_final_usd": 230,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 186,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 255,
+    "price_ext_pct": 90
   },
   "S3.31": {
     "article": "S3.31",
@@ -2013,8 +2215,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 657,
-    "price_exterior_usd": 903,
+    "price_interior_usd": 526,
+    "price_exterior_usd": 813,
     "visible": true,
     "ribbon": "BEST PRICE",
     "images": [
@@ -2030,10 +2232,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 657,
-    "price_exterior_final_usd": 903,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 526,
+    "price_exterior_final_usd": 813,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 657,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 903,
+    "price_ext_pct": 90
   },
   "S3.21": {
     "article": "S3.21",
@@ -2060,8 +2266,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 657,
-    "price_exterior_usd": 903,
+    "price_interior_usd": 526,
+    "price_exterior_usd": 813,
     "visible": true,
     "ribbon": "BEST PRICE",
     "images": [
@@ -2077,10 +2283,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 657,
-    "price_exterior_final_usd": 903,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 526,
+    "price_exterior_final_usd": 813,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 657,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 903,
+    "price_ext_pct": 90
   },
   "GI-3.12": {
     "article": "GI-3.12",
@@ -2108,7 +2318,7 @@
       "interior"
     ],
     "price_interior_usd": 3473,
-    "price_exterior_usd": 3820,
+    "price_exterior_usd": 4202,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -2123,7 +2333,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 3473,
-    "price_exterior_final_usd": 3820
+    "price_exterior_final_usd": 4202,
+    "price_exterior_list_usd": 3820,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 3473,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "V1.36": {
     "article": "V1.36",
@@ -2150,8 +2366,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2515,
-    "price_exterior_usd": 2767,
+    "price_interior_usd": 2012,
+    "price_exterior_usd": 2490,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -2172,8 +2388,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2515,
-    "price_exterior_final_usd": 2767
+    "price_interior_final_usd": 2012,
+    "price_exterior_final_usd": 2490,
+    "price_exterior_list_usd": 2767,
+    "price_ext_pct": 90,
+    "price_interior_list_usd": 2515,
+    "price_int_pct": 80,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "W5.12-2": {
     "article": "W5.12-2",
@@ -2201,7 +2423,7 @@
       "interior"
     ],
     "price_interior_usd": 10623,
-    "price_exterior_usd": 11685,
+    "price_exterior_usd": 12854,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2227,7 +2449,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 10623,
-    "price_exterior_final_usd": 11685
+    "price_exterior_final_usd": 12854,
+    "price_exterior_list_usd": 11685,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 10623,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "W5.12-1": {
     "article": "W5.12-1",
@@ -2255,7 +2483,7 @@
       "interior"
     ],
     "price_interior_usd": 10623,
-    "price_exterior_usd": 11685,
+    "price_exterior_usd": 12854,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2279,7 +2507,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 10623,
-    "price_exterior_final_usd": 11685
+    "price_exterior_final_usd": 12854,
+    "price_exterior_list_usd": 11685,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 10623,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "L1.8": {
     "article": "L1.8",
@@ -2306,8 +2540,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 725,
-    "price_exterior_usd": 997,
+    "price_interior_usd": 580,
+    "price_exterior_usd": 897,
     "visible": true,
     "ribbon": "MOST POPULAR",
     "images": [
@@ -2331,10 +2565,14 @@
     "discount_ext_qty": 0,
     "discount_int_pct": 0,
     "discount_int_qty": 0,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z",
-    "price_interior_final_usd": 725,
-    "price_exterior_final_usd": 997
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_final_usd": 580,
+    "price_exterior_final_usd": 897,
+    "price_interior_list_usd": 725,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 997,
+    "price_ext_pct": 90
   },
   "GL4.13": {
     "article": "GL4.13",
@@ -2362,7 +2600,7 @@
       "interior"
     ],
     "price_interior_usd": 6594,
-    "price_exterior_usd": 7253,
+    "price_exterior_usd": 7978,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -2378,7 +2616,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 6594,
-    "price_exterior_final_usd": 7253
+    "price_exterior_final_usd": 7978,
+    "price_exterior_list_usd": 7253,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 6594,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "GL4.12": {
     "article": "GL4.12",
@@ -2406,7 +2650,7 @@
       "interior"
     ],
     "price_interior_usd": 4396,
-    "price_exterior_usd": 4835,
+    "price_exterior_usd": 5319,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2421,7 +2665,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 4396,
-    "price_exterior_final_usd": 4835
+    "price_exterior_final_usd": 5319,
+    "price_exterior_list_usd": 4835,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 4396,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "GL4.11": {
     "article": "GL4.11",
@@ -2449,7 +2699,7 @@
       "interior"
     ],
     "price_interior_usd": 4396,
-    "price_exterior_usd": 4835,
+    "price_exterior_usd": 5319,
     "visible": true,
     "ribbon": "New",
     "images": [
@@ -2464,7 +2714,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 4396,
-    "price_exterior_final_usd": 4835
+    "price_exterior_final_usd": 5319,
+    "price_exterior_list_usd": 4835,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 4396,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "L4.1": {
     "article": "L4.1",
@@ -2491,8 +2747,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 1758,
-    "price_exterior_usd": 2418,
+    "price_interior_usd": 1406,
+    "price_exterior_usd": 2176,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2508,10 +2764,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 1758,
-    "price_exterior_final_usd": 2418,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 1406,
+    "price_exterior_final_usd": 2176,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 1758,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 2418,
+    "price_ext_pct": 90
   },
   "GL2.12": {
     "article": "GL2.12",
@@ -2539,7 +2799,7 @@
       "interior"
     ],
     "price_interior_usd": 3602,
-    "price_exterior_usd": 3962,
+    "price_exterior_usd": 4358,
     "visible": true,
     "ribbon": "BEST PRICE",
     "images": [
@@ -2554,7 +2814,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 3602,
-    "price_exterior_final_usd": 3962
+    "price_exterior_final_usd": 4358,
+    "price_exterior_list_usd": 3962,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 3602,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "GL2.11": {
     "article": "GL2.11",
@@ -2581,8 +2847,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2882,
-    "price_exterior_usd": 3962,
+    "price_interior_usd": 2306,
+    "price_exterior_usd": 3566,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2607,10 +2873,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2882,
-    "price_exterior_final_usd": 3962,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 2306,
+    "price_exterior_final_usd": 3566,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 2882,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 3962,
+    "price_ext_pct": 90
   },
   "L2.1": {
     "article": "L2.1",
@@ -2637,8 +2907,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 1801,
-    "price_exterior_usd": 1981,
+    "price_interior_usd": 1441,
+    "price_exterior_usd": 1783,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2654,8 +2924,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 1801,
-    "price_exterior_final_usd": 1981
+    "price_interior_final_usd": 1441,
+    "price_exterior_final_usd": 1783,
+    "price_interior_list_usd": 1801,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 1981,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "F4.1": {
     "article": "F4.1",
@@ -2682,8 +2958,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 4308,
-    "price_exterior_usd": 4739,
+    "price_interior_usd": 3446,
+    "price_exterior_usd": 4265,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2708,8 +2984,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 4308,
-    "price_exterior_final_usd": 4739
+    "price_interior_final_usd": 3446,
+    "price_exterior_final_usd": 4265,
+    "price_interior_list_usd": 4308,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 4739,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "F5.1": {
     "article": "F5.1",
@@ -2737,7 +3019,7 @@
       "interior"
     ],
     "price_interior_usd": 10580,
-    "price_exterior_usd": 11638,
+    "price_exterior_usd": 12802,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2758,7 +3040,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 10580,
-    "price_exterior_final_usd": 11638
+    "price_exterior_final_usd": 12802,
+    "price_exterior_list_usd": 11638,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 10580,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "N-1.85": {
     "article": "N-1.85",
@@ -2801,7 +3089,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 420,
-    "price_exterior_final_usd": 420
+    "price_exterior_final_usd": 420,
+    "price_interior_list_usd": 420,
+    "price_int_pct": 100,
+    "price_exterior_list_usd": 420,
+    "price_ext_pct": 100
   },
   "W3.1": {
     "article": "W3.1",
@@ -2828,8 +3120,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 6041,
-    "price_exterior_usd": 8306,
+    "price_interior_usd": 4833,
+    "price_exterior_usd": 7475,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2851,10 +3143,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 6041,
-    "price_exterior_final_usd": 8306,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 4833,
+    "price_exterior_final_usd": 7475,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 6041,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 8306,
+    "price_ext_pct": 90
   },
   "P4.2": {
     "article": "P4.2",
@@ -2882,7 +3178,7 @@
       "interior"
     ],
     "price_interior_usd": 2931,
-    "price_exterior_usd": 3224,
+    "price_exterior_usd": 3546,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2908,7 +3204,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 2931,
-    "price_exterior_final_usd": 3224
+    "price_exterior_final_usd": 3546,
+    "price_exterior_list_usd": 3224,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 2931,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "P4.1": {
     "article": "P4.1",
@@ -2936,7 +3238,7 @@
       "interior"
     ],
     "price_interior_usd": 1471,
-    "price_exterior_usd": 1618,
+    "price_exterior_usd": 1780,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -2962,7 +3264,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 1471,
-    "price_exterior_final_usd": 1618
+    "price_exterior_final_usd": 1780,
+    "price_exterior_list_usd": 1618,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 1471,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "B2.4": {
     "article": "B2.4",
@@ -2989,8 +3297,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2353,
-    "price_exterior_usd": 2353,
+    "price_interior_usd": 1882,
+    "price_exterior_usd": 2118,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -3003,8 +3311,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2353,
-    "price_exterior_final_usd": 2353
+    "price_interior_final_usd": 1882,
+    "price_exterior_final_usd": 2118,
+    "price_exterior_list_usd": 2353,
+    "price_ext_pct": 90,
+    "price_interior_list_usd": 2353,
+    "price_int_pct": 80,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "W6.1": {
     "article": "W6.1",
@@ -3048,7 +3362,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 7289,
-    "price_exterior_final_usd": 7289
+    "price_exterior_final_usd": 7289,
+    "price_interior_list_usd": 7289,
+    "price_int_pct": 100,
+    "price_exterior_list_usd": 7289,
+    "price_ext_pct": 100
   },
   "S1": {
     "article": "S1",
@@ -3090,7 +3408,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 1929,
-    "price_exterior_final_usd": 1929
+    "price_exterior_final_usd": 1929,
+    "price_exterior_list_usd": 1929,
+    "price_ext_pct": 100,
+    "price_interior_list_usd": 1929,
+    "price_int_pct": 100
   },
   "F3": {
     "article": "F3",
@@ -3132,7 +3454,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 13759,
-    "price_exterior_final_usd": 13759
+    "price_exterior_final_usd": 13759,
+    "price_exterior_list_usd": 13759,
+    "price_ext_pct": 100,
+    "price_interior_list_usd": 13759,
+    "price_int_pct": 100
   },
   "F2.81": {
     "article": "F2.81",
@@ -3160,7 +3486,7 @@
       "interior"
     ],
     "price_interior_usd": 7688,
-    "price_exterior_usd": 8456,
+    "price_exterior_usd": 9302,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -3186,7 +3512,13 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 7688,
-    "price_exterior_final_usd": 8456
+    "price_exterior_final_usd": 9302,
+    "price_exterior_list_usd": 8456,
+    "price_ext_pct": 110,
+    "price_interior_list_usd": 7688,
+    "price_int_pct": 100,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "F1": {
     "article": "F1",
@@ -3234,7 +3566,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 6560,
-    "price_exterior_final_usd": 6560
+    "price_exterior_final_usd": 6560,
+    "price_exterior_list_usd": 6560,
+    "price_ext_pct": 100,
+    "price_interior_list_usd": 6560,
+    "price_int_pct": 100
   },
   "C1.3": {
     "article": "C1.3",
@@ -3276,7 +3612,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 519,
-    "price_exterior_final_usd": 519
+    "price_exterior_final_usd": 519,
+    "price_exterior_list_usd": 519,
+    "price_ext_pct": 100,
+    "price_interior_list_usd": 519,
+    "price_int_pct": 100
   },
   "C1.2": {
     "article": "C1.2",
@@ -3318,7 +3658,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 729,
-    "price_exterior_final_usd": 729
+    "price_exterior_final_usd": 729,
+    "price_exterior_list_usd": 729,
+    "price_ext_pct": 100,
+    "price_interior_list_usd": 729,
+    "price_int_pct": 100
   },
   "C1.1": {
     "article": "C1.1",
@@ -3360,7 +3704,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 719,
-    "price_exterior_final_usd": 719
+    "price_exterior_final_usd": 719,
+    "price_exterior_list_usd": 719,
+    "price_ext_pct": 100,
+    "price_interior_list_usd": 719,
+    "price_int_pct": 100
   },
   "GI-8": {
     "article": "GI-8",
@@ -3387,8 +3735,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 6067,
-    "price_exterior_usd": 8342,
+    "price_interior_usd": 4854,
+    "price_exterior_usd": 7508,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -3405,10 +3753,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 6067,
-    "price_exterior_final_usd": 8342,
-    "updated_at": "2026-10-19T11:50:08.151Z",
-    "price_updated_at": "2026-10-19T11:50:08.151Z"
+    "price_interior_final_usd": 4854,
+    "price_exterior_final_usd": 7508,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z",
+    "price_interior_list_usd": 6067,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 8342,
+    "price_ext_pct": 90
   },
   "GI-6": {
     "article": "GI-6",
@@ -3435,8 +3787,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 8595,
-    "price_exterior_usd": 9454,
+    "price_interior_usd": 6876,
+    "price_exterior_usd": 8509,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -3460,8 +3812,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 8595,
-    "price_exterior_final_usd": 9454
+    "price_interior_final_usd": 6876,
+    "price_exterior_final_usd": 8509,
+    "price_interior_list_usd": 8595,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 9454,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "S3.2": {
     "article": "S3.2",
@@ -3504,7 +3862,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 2230,
-    "price_exterior_final_usd": 2230
+    "price_exterior_final_usd": 2230,
+    "price_interior_list_usd": 2230,
+    "price_int_pct": 100,
+    "price_exterior_list_usd": 2230,
+    "price_ext_pct": 100
   },
   "S3.26": {
     "article": "S3.26",
@@ -3531,8 +3893,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 1871,
-    "price_exterior_usd": 2058,
+    "price_interior_usd": 1497,
+    "price_exterior_usd": 1852,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -3549,8 +3911,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 1871,
-    "price_exterior_final_usd": 2058
+    "price_interior_final_usd": 1497,
+    "price_exterior_final_usd": 1852,
+    "price_interior_list_usd": 1871,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 2058,
+    "price_ext_pct": 90,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "W2.1": {
     "article": "W2.1",
@@ -3577,8 +3945,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 17122,
-    "price_exterior_usd": 18834,
+    "price_interior_usd": 13698,
+    "price_exterior_usd": 16951,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -3595,8 +3963,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 17122,
-    "price_exterior_final_usd": 18834
+    "price_interior_final_usd": 13698,
+    "price_exterior_final_usd": 16951,
+    "price_exterior_list_usd": 18834,
+    "price_ext_pct": 90,
+    "price_interior_list_usd": 17122,
+    "price_int_pct": 80,
+    "updated_at": "2026-10-19T14:28:29.905Z",
+    "price_updated_at": "2026-10-19T14:28:29.905Z"
   },
   "S2.35": {
     "article": "S2.35",
@@ -3623,8 +3997,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 2355,
-    "price_exterior_usd": 3238,
+    "price_interior_usd": 1884,
+    "price_exterior_usd": 2914,
     "visible": true,
     "ribbon": null,
     "images": [
@@ -3649,10 +4023,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 2355,
-    "price_exterior_final_usd": 3238,
-    "updated_at": "2026-10-19T11:50:08.152Z",
-    "price_updated_at": "2026-10-19T11:50:08.152Z"
+    "price_interior_final_usd": 1884,
+    "price_exterior_final_usd": 2914,
+    "updated_at": "2026-10-19T14:28:29.906Z",
+    "price_updated_at": "2026-10-19T14:28:29.906Z",
+    "price_interior_list_usd": 2355,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 3238,
+    "price_ext_pct": 90
   },
   "P2": {
     "article": "P2",
@@ -3694,7 +4072,11 @@
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
     "price_interior_final_usd": 6419,
-    "price_exterior_final_usd": 6419
+    "price_exterior_final_usd": 6419,
+    "price_exterior_list_usd": 6419,
+    "price_ext_pct": 100,
+    "price_interior_list_usd": 6419,
+    "price_int_pct": 100
   },
   "L1.9": {
     "article": "L1.9",
@@ -3721,8 +4103,8 @@
       "interior",
       "exterior"
     ],
-    "price_interior_usd": 440,
-    "price_exterior_usd": 550,
+    "price_interior_usd": 352,
+    "price_exterior_usd": 495,
     "visible": false,
     "ribbon": null,
     "images": [
@@ -3735,10 +4117,14 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 440,
-    "price_exterior_final_usd": 550,
-    "updated_at": "2026-10-19T11:50:08.152Z",
-    "price_updated_at": "2026-10-19T11:50:08.152Z"
+    "price_interior_final_usd": 352,
+    "price_exterior_final_usd": 495,
+    "updated_at": "2026-10-19T14:28:29.906Z",
+    "price_updated_at": "2026-10-19T14:28:29.906Z",
+    "price_interior_list_usd": 440,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 550,
+    "price_ext_pct": 90
   },
   "GI-3.11": {
     "article": "GI-3.11",
@@ -3765,8 +4151,8 @@
       "exterior",
       "interior"
     ],
-    "price_interior_usd": 7225,
-    "price_exterior_usd": 9934,
+    "price_interior_usd": 5780,
+    "price_exterior_usd": 8941,
     "visible": true,
     "ribbon": "права защищены",
     "images": [
@@ -3789,9 +4175,13 @@
     "discount_int_qty": 0,
     "discount_ext_pct": 0,
     "discount_ext_qty": 0,
-    "price_interior_final_usd": 7225,
-    "price_exterior_final_usd": 9934,
-    "updated_at": "2026-10-19T11:50:08.152Z",
-    "price_updated_at": "2026-10-19T11:50:08.152Z"
+    "price_interior_final_usd": 5780,
+    "price_exterior_final_usd": 8941,
+    "updated_at": "2026-10-19T14:28:29.906Z",
+    "price_updated_at": "2026-10-19T14:28:29.906Z",
+    "price_interior_list_usd": 7225,
+    "price_int_pct": 80,
+    "price_exterior_list_usd": 9934,
+    "price_ext_pct": 90
   }
 }
