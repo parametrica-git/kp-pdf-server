@@ -1,0 +1,12 @@
+{
+  "updated": "2026-11-07T03:57:07.494Z",
+  "count": 1,
+  "items": [
+    {
+      "at": "2026-11-07T03:56:22.493Z",
+      "source": "price-guard",
+      "level": "warn",
+      "text": "### Сторож цен — 2026-11-07T03:40 UTC\n\n- Wix: 66 из 66 как в хабе\n- .biz/.uk: расходилось (parametrica.biz — карточки /benches/ (JSON-LD): 1; parametrica.uk — карточки /benches/ (JSON-LD): 1; фид Google .biz (сайт /gmc-biz.xml): 64) → воркер выложен заново\n- parametrica.biz — данные сайта: 66 из 66\n- parametrica.biz — карточки /benches/ (JSON-LD): 65 из 66 — НЕ сходится: B2.4: разметка 2353 USD / 2353 USD, хаб 1882 USD\n- parametrica.uk — данные сайта: 66 из 66\n- parametrica.uk — карточки /benches/ (JSON-LD): 65 из 66 — НЕ сходится: B2.4: разметка 1759 GBP / 1759 GBP, хаб 1882 USD\n- parametrica.kz — data/products.json: 66 из 66\n- КП-генератор (kp.parametrica.kz): 66 из 66\n- фид Google .biz (сайт /gmc-biz.xml): 0 из 64 — НЕ сходится: Gi-3.53: фид 5178, хаб 6045; P4.6: фид 4756, хаб 5565; W2.12: фид 15831, хаб 18335; FL1.235: фид 2091, хаб 2447; P4.3: фид 2931, хаб 3439\n- фид Google хаба (site=biz): 66 из 66\n- фид Google Wix (/gmc-org.xml): 65 из 65"
+    }
+  ]
+}
