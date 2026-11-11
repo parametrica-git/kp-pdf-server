@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-10T21:19:05.603Z",
-  "count": 13,
+  "updated": "2026-11-11T06:09:16.411Z",
+  "count": 14,
   "items": [
     {
       "at": "2026-11-07T03:56:22.493Z",
@@ -79,6 +79,12 @@
       "source": "price-guard",
       "level": "info",
       "text": "### Сторож цен — 2026-11-10T21:17 UTC\n\n- Wix: 66 из 66 как в хабе\n- parametrica.biz — данные сайта: 66 из 66\n- parametrica.biz — карточки /benches/ (JSON-LD): 66 из 66\n- parametrica.uk — данные сайта: 66 из 66\n- parametrica.uk — карточки /benches/ (JSON-LD): 66 из 66\n- parametrica.kz — data/products.json: 66 из 66\n- КП-генератор (kp.parametrica.kz): 66 из 66\n- фид Google .biz (сайт /gmc-biz.xml): 64 из 64\n- фид Google хаба (site=biz): 66 из 66\n- фид Google Wix (/gmc-org.xml): 65 из 65"
+    },
+    {
+      "at": "2026-11-11T06:08:31.347Z",
+      "source": "price-guard",
+      "level": "info",
+      "text": "### Сторож цен — 2026-11-11T06:07 UTC\n\n- Wix: 66 из 66 как в хабе\n- parametrica.biz — данные сайта: 66 из 66\n- parametrica.biz — карточки /benches/ (JSON-LD): 66 из 66\n- parametrica.uk — данные сайта: 66 из 66\n- parametrica.uk — карточки /benches/ (JSON-LD): 66 из 66\n- parametrica.kz — data/products.json: 66 из 66\n- КП-генератор (kp.parametrica.kz): 66 из 66\n- фид Google .biz (сайт /gmc-biz.xml): 64 из 64\n- фид Google хаба (site=biz): 66 из 66\n- фид Google Wix (/gmc-org.xml): 65 из 65"
     }
   ]
 }
