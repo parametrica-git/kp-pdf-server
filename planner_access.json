@@ -1,0 +1,11 @@
+{
+  "guest": {
+    "login": "guest",
+    "salt": "X05zZT4-eL8FH46HDnd84A",
+    "hash": "YGY88pxJjMBCGnNo/lE2TC1ZQ06IibQn1gRRpz0mcRU=",
+    "enc": "x3mjk8agkwojKZEhlyMhNDGP8VajRLzQhhSAXXEqe7lMAniB3jU",
+    "v": 1,
+    "updated": "2026-11-19T14:14:35.117Z"
+  },
+  "note": "Вход в планировщик: гостевой логин. Пароль — хешем и зашифрованным ключом сервера ХАБа; задаётся в ХАБе."
+}
