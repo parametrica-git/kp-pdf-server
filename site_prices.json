@@ -1,20 +1,24 @@
 {
-  "updated": "2026-11-17T09:36:48.911Z",
+  "updated": "2026-11-19T14:14:50.915Z",
   "version": 1,
   "sites": {
     "kz": {
-      "mode": "from"
+      "mode": "from",
+      "planner": true
     },
     "org": {
-      "mode": "hide"
+      "mode": "hide",
+      "planner": true
     },
     "biz": {
       "mode": "delivered",
+      "planner": true,
       "airport": "FRA",
       "city": "Frankfurt"
     },
     "uk": {
       "mode": "delivered",
+      "planner": true,
       "airport": "LHR",
       "city": "London"
     }
