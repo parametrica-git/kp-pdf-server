@@ -511,6 +511,21 @@ input, select, textarea, button { font-family: inherit; }
 .page-product2.right .prod-info { text-align: right; }
 .page-product2.right .prod-head { justify-content: flex-end; }
 
+/* ====== ПЛАНЫ ИЗ ПЛАНИРОВЩИКА (тот же хедер/колонтитул, что у листов моделей) ====== */
+.page-plan { padding: 0 12mm 22mm; display: flex; flex-direction: column; }
+.page-plan .prod-header { height: 42mm; margin: 0 -12mm 5mm; flex-shrink: 0; }
+.plan-cap {
+  font-family: 'DINCondensed','DIN Condensed','Oswald','HNeueCond',sans-serif;
+  font-size: 15pt; font-weight: 600; color: var(--ink); letter-spacing: 0.5px; line-height: 1.1;
+  margin: 0 0 3mm; flex-shrink: 0;
+}
+.plan-cap .plan-kit { font-weight: 400; color: var(--ink-soft); }
+.page-plan.right .plan-cap, .page-planmodel.right .plan-cap { text-align: right; }
+.plan-box { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: #fff; overflow: hidden; }
+.plan-box img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.plan-missing { font-size: 9pt; color: var(--ink-soft); text-align: center; padding: 10mm; border: 0.5px dashed var(--line); }
+.pp-plan { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 3mm 0 2mm; }
+
 /* ====== PRICING TABLE ====== */
 .page-table { padding: 9mm 12mm 22mm; display: flex; flex-direction: column; }
 /* фотополоса-хедер вверху КП (как в оригинальном PDF) */
@@ -1215,6 +1230,14 @@ html.pdf-exporting .kt input[type="number"] { -moz-appearance: textfield; }
         <div style="font-size:9px;color:var(--sb-muted);margin:0 0 5px;line-height:1.4;">КП, Каталог и Прайс формируются из <b>витрины справа</b> — отметьте модели и нажмите «Сформировать в ▾». Несколько КП идут стопкой.</div>
         <label class="toggle-row"><input type="checkbox" id="opt-sheets" checked onchange="render()"> Листы моделей (фото + описание)</label>
         <label class="toggle-row" style="padding-left:14px;"><input type="checkbox" id="opt-2up" onchange="render()"> 2 модели на странице</label>
+        <div id="plan-opts" style="display:none;margin:4px 0 2px;padding:6px 0 4px;border-top:1px dashed var(--sb-line, #444);">
+          <div style="font-size:9px;color:var(--sb-muted);margin:0 0 4px;line-height:1.4;">Планы из планировщика (каждый комплект — свой КП)</div>
+          <label class="toggle-row"><input type="radio" name="opt-plans" id="opt-plans-pages" value="pages" checked onchange="render()"> Планы отдельными листами (перед моделями)</label>
+          <label class="toggle-row"><input type="radio" name="opt-plans" id="opt-plans-combo" value="combo" onchange="render()"> Модель + план на одном листе (если модель на плане одна)</label>
+          <label class="toggle-row" style="padding-left:14px;">План на листе:
+            <select id="opt-plan-pos" onchange="render()" style="margin-left:6px;"><option value="top">сверху</option><option value="bottom">снизу</option></select></label>
+          <label class="toggle-row"><input type="checkbox" id="opt-only-kp" onchange="render()"> Только текущий КП (для отдельного файла)</label>
+        </div>
         <label class="toggle-row"><input type="checkbox" id="opt-portfolio" checked onchange="render()"> Портфолио проектов (стр. 4–8)</label>
         <label class="toggle-row"><input type="checkbox" id="opt-trust" checked onchange="render()"> Партнёры — WE ARE TRUSTED</label>
         <label class="toggle-row"><input type="checkbox" id="opt-note-assembly" onchange="render()"> Примечание: сборка заказчиком</label>
@@ -1403,6 +1426,7 @@ function plDays(n) {
 // словарь перевода документа КП. Значение — строка ИЛИ функция (для строк с подстановками).
 const I18N = {
   ru: {
+    plan: 'План', kitWord: 'Комплект', planMissing: 'изображение плана есть только в браузере, где КП оформили из планировщика',
     kpTitle: n => 'Коммерческое предложение №' + n,
     kpSub: 'Параметрические скамейки // <span style="font-weight:400">фанера березовая ФСФ Е1 23-30&nbsp;мм., сталь</span>',
     forClient: c => 'Данное предложение разработано специально для ' + c,
@@ -1446,6 +1470,7 @@ const I18N = {
     addr: ['Республика Казахстан, г. Усть-Каменогорск,', 'пр-т Нурсултана Назарбаева 66, 59', 'фактический адрес:', 'ТЦ "Ush Sunqar"', '050962, г. Алматы, мкр. Аксай-5, 25, оф. 1332']
   },
   en: {
+    plan: 'Plan', kitWord: 'Set', planMissing: 'the plan image is stored only in the browser where this offer was made from the planner',
     kpTitle: n => 'Commercial Offer No. ' + n,
     kpSub: 'Parametric benches // <span style="font-weight:400">birch plywood FSF E1 23-30&nbsp;mm, steel</span>',
     forClient: c => 'This offer has been prepared specifically for ' + c,
@@ -1604,6 +1629,7 @@ async function loadProducts() {
           if (_d && Array.isArray(_d.models)) { applyImportPayload(_d); flashStatus('Загружено из заявки клиента'); }
         }
       } catch (e) { console.warn('import parse failed', e); }
+      if (typeof plannerHandshake === 'function') plannerHandshake();   // открыт из планировщика — готов принять комплекты
       applyDefaultsMigration();            // одноразово применить новые дефолты сроков (30/7/5)
       restoreFolder();                     // подключить ранее привязанную папку
       loadFxRate(false);                   // подтянуть курс USD→KZT как на Wix (XE)
@@ -2986,8 +3012,9 @@ async function _shrinkForPdf(stackEl) {
     probe.onload = function () {
       try {
         const mx = Math.max(probe.naturalWidth, probe.naturalHeight);
-        if (mx <= PDF_IMG_PX) return done();               // уже мелкая — не трогаем
-        const k = PDF_IMG_PX / mx;
+        const lim = im.classList.contains('plan-pic') ? PLAN_PDF_PX : PDF_IMG_PX;   // план — чертёж, мельчить нельзя
+        if (mx <= lim) return done();               // уже мелкая — не трогаем
+        const k = lim / mx;
         const w = Math.max(1, Math.round(probe.naturalWidth * k));
         const h = Math.max(1, Math.round(probe.naturalHeight * k));
         const c = document.createElement('canvas'); c.width = w; c.height = h;
@@ -3318,6 +3345,170 @@ document.addEventListener('keydown', function (e) {
   e.preventDefault();
   if (e.shiftKey) histRedo(); else histUndo();
 });
+// ===== КП ИЗ ПЛАНИРОВЩИКА (примерочная parametrica.kz / .biz / .uk / .org, вход владельца) =====
+// Планировщик открывает генератор (?planner=1) и передаёт postMessage'ем комплекты: каждый комплект → свой КП
+// (позиции с ценами планировщика: размеры, скидки; доля перемоделирования — в цене), планы листов — картинками.
+// Картинки планов лежат в IndexedDB (в localStorage не влезут), в КП — только ссылки на них (kp.plans).
+// Раскладка: планы отдельными листами перед моделями, или «модель + план» на одном листе (если модель на плане
+// одна; план сверху/снизу); лист с несколькими моделями — всегда отдельным листом. Стиль листов — как у листов
+// моделей (хедер-фотополоса, развороты, колонтитул).
+const PLAN_PDF_PX = 1800;
+const PLANNER_ORIGIN = /^https:\/\/(www\.)?parametrica\.(kz|biz|uk|org)$/;
+let PLAN_IMG = {};   // id → dataURL
+const PLAN_DB = 'parametrica_kp_plans';
+function planDb(cb) {
+  let req; try { req = indexedDB.open(PLAN_DB, 1); } catch (e) { return cb(null); }
+  req.onupgradeneeded = () => { try { req.result.createObjectStore('img'); } catch (e) {} };
+  req.onsuccess = () => cb(req.result); req.onerror = () => cb(null);
+}
+function planImgPut(id, url) {
+  planDb(db => { if (!db) return; try { const tx = db.transaction('img', 'readwrite'); tx.objectStore('img').put(url, id); } catch (e) {} });
+}
+function planImgLoad() {
+  const ids = []; KPS.forEach(k => (k.plans || []).forEach(pl => { if (pl.id && !PLAN_IMG[pl.id]) ids.push(pl.id); }));
+  if (!ids.length) return;
+  planDb(db => {
+    if (!db) return;
+    let left = ids.length, got = 0;
+    ids.forEach(id => {
+      try {
+        const rq = db.transaction('img').objectStore('img').get(id);
+        rq.onsuccess = () => { if (rq.result) { PLAN_IMG[id] = rq.result; got++; } if (!--left && got) render(); };
+        rq.onerror = () => { if (!--left && got) render(); };
+      } catch (e) { if (!--left && got) render(); }
+    });
+  });
+}
+function planHeaderHTML(side) {
+  return `<div class="prod-header"><img src="kp_assets/header_${side === 'right' ? 'right' : 'left'}.jpg?v=${ASSET_V}" alt="" onerror="this.parentNode.style.display='none'"></div>`;
+}
+function planCapHTML(kp, pl) {
+  const kit = kp && kp.data && kp.data.plannerKit;
+  return `<div class="plan-cap">${esc(L('plan'))}: ${esc(pl.name || '')}${kit ? ` <span class="plan-kit">· ${esc(L('kitWord'))} «${esc(kit)}»</span>` : ''}</div>`;
+}
+function planBoxHTML(pl) {
+  const src = PLAN_IMG[pl.id];
+  return `<div class="plan-box">${src ? `<img class="plan-pic" src="${src}" alt="">` : `<div class="plan-missing">${esc(L('planMissing'))}</div>`}</div>`;
+}
+// лист «план»
+function makePlanPage(kp, pl, side) {
+  const el = div('page page-plan' + (side === 'right' ? ' right' : ''));
+  el.innerHTML = planHeaderHTML(side) + planCapHTML(kp, pl) + planBoxHTML(pl);
+  return el;
+}
+// лист «модель + план» (как «2 модели на странице»: один хедер, две части через линию)
+function makePlanModelPage(kp, unit, pl, side, pos) {
+  const el = div('page page-product2 page-planmodel' + (side === 'right' ? ' right' : ''));
+  const model = `<div class="pp-unit">${productInnerUnit(unit, side, false, 4)}</div>`;
+  const plan = `<div class="pp-plan">${planCapHTML(kp, pl)}${planBoxHTML(pl)}</div>`;
+  el.innerHTML = planHeaderHTML(side) + (pos === 'top' ? plan + '<div class="pp-divider"></div>' + model : model + '<div class="pp-divider"></div>' + plan);
+  return el;
+}
+// листы моделей одного КП (варианты — как в общем режиме)
+function kpSheetUnits(kp) {
+  const seen = {}, units = [];
+  (kp.items || []).forEach(it => {
+    if (!it || !PRODS[it.article]) return;
+    const key = sheetKey(it);
+    if (seen[key]) return;
+    seen[key] = 1;
+    units.push({ article: it.article, entry: it, kpMode: false });
+  });
+  const order = catalogModelOrder([...new Set(units.map(u => u.article))]);
+  units.sort((x, y) => order.indexOf(x.article) - order.indexOf(y.article));
+  return units;
+}
+function renderPlannerKps(add, sideForNext, showSheets) {
+  const combo = (document.getElementById('opt-plans-combo') || {}).checked;
+  const pos = (document.getElementById('opt-plan-pos') || {}).value || 'top';
+  const only = (document.getElementById('opt-only-kp') || {}).checked;
+  const list = only ? KPS.filter(k => k.num === activeKp) : KPS;
+  list.forEach(kp => {
+    const plans = kp.plans || [];
+    let units = showSheets ? kpSheetUnits(kp) : [];
+    const pairs = [];                       // [{plan, unit}] — «модель + план»
+    const solo = [];                        // планы отдельными листами
+    plans.forEach(pl => {
+      if (combo && pl.single) {
+        const i = units.findIndex(u => u.entry && u.entry.plannerKey === pl.single);
+        if (i >= 0) { pairs.push({ pl, unit: units[i] }); units.splice(i, 1); return; }
+      }
+      solo.push(pl);
+    });
+    solo.forEach(pl => add(makePlanPage(kp, pl, sideForNext()), true));
+    pairs.forEach(x => add(withKpCurr(kp, () => makePlanModelPage(kp, x.unit, x.pl, sideForNext(), pos)), true));
+    if (units.length) renderSheets(units, add, sideForNext);
+    add(withKpCurr(kp, () => makeTable(kp, sideForNext())), true);
+  });
+}
+// приём из планировщика
+function applyPlannerPayload(d) {
+  if (!d || !Array.isArray(d.kits) || !d.kits.length) return [];
+  saveActiveKp();
+  if (d.lang === 'ru' || d.lang === 'en') { KP_LANG = d.lang; const le = document.getElementById('kp-lang'); if (le) le.value = d.lang; }
+  else if (d.lang) { KP_LANG = 'en'; const le = document.getElementById('kp-lang'); if (le) le.value = 'en'; }
+  // повторная отправка той же расстановки — заменяет свои прошлые КП, а не плодит дубликаты
+  if (d.sid) for (let i = KPS.length - 1; i >= 0; i--) if (KPS[i].data && KPS[i].data.plannerSid === d.sid) KPS.splice(i, 1);
+  const src = activeKpObj();
+  const base = src ? JSON.parse(JSON.stringify(src.data || kpFormData())) : kpFormData();
+  const made = [];
+  const cl = d.client || {};
+  d.kits.forEach(kit => {
+    const items = [];
+    (kit.lines || []).forEach(l => {
+      if (!l || !PRODS[l.article]) return;
+      const it = { id: ++nextId, article: l.article, typeLabel: '', priceType: l.type === 'exterior' ? 'exterior' : 'interior',
+        qty: Math.max(1, +l.qty || 1), customPrice: (l.price_usd != null && isFinite(+l.price_usd)) ? Math.round(+l.price_usd * 100) / 100 : null,
+        customDesc: null, plannerKey: l.key };
+      if (l.dims) it.dims = l.dims;                         // нестандартный размер → артикул с индексом длины, размеры на листе
+      items.push(it);
+    });
+    if (!items.length) return;
+    const data = JSON.parse(JSON.stringify(base));
+    data.pkgUSD = null; data.mountUSD = null; data.edits = {};
+    freshKpDates(data);
+    if (cl.company || cl.name) data.client = cl.company || cl.name;
+    if (cl.city) data.city = cl.city;
+    data.plannerSid = d.sid || null;
+    data.plannerKit = d.kits.length > 1 ? kit.name : null;
+    if (kit.orderDiscountPct > 0) { data.optDiscount = true; data.discount = String(Math.round(kit.orderDiscountPct * 10) / 10); }
+    const kp = { num: nextKpNum(), items, data, plans: [] };
+    (kit.plans || []).forEach(pl => {
+      if (!pl || !pl.img) return;
+      const id = 'pl_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+      PLAN_IMG[id] = pl.img; planImgPut(id, pl.img);
+      kp.plans.push({ id, name: pl.name || '', single: pl.single || null, w: pl.w || 0, h: pl.h || 0 });
+    });
+    KPS.push(kp); made.push(kp.num);
+  });
+  if (!made.length) return [];
+  const sh = document.getElementById('opt-sheets'); if (sh) sh.checked = true;
+  loadKpForm(KPS.find(k => k.num === made[0]));
+  if (typeof setKpLang === 'function' && (KP_LANG === 'ru' || KP_LANG === 'en')) setKpLang(KP_LANG);
+  render();
+  const s = d.ship || {};
+  const m = s.method === 'air' ? 'air' : s.method === 'pickup' ? 'exw' : (s.status === 'ok' ? 'cargo' : '');
+  if (m && typeof applyImportedDelivery === 'function') applyImportedDelivery(m, s.city || cl.city || '');
+  if (typeof flashStatus === 'function') flashStatus('Из планировщика: КП ' + made.map(n => '№' + n).join(', '));
+  return made;
+}
+window.addEventListener('message', e => {
+  if (!PLANNER_ORIGIN.test(e.origin || '')) return;
+  const d = e.data;
+  if (!d || d.type !== 'pm-planner-kp') return;
+  let made = [];
+  try { made = applyPlannerPayload(d); } catch (err) { console.warn('planner payload', err); }
+  try { e.source && e.source.postMessage({ pmKpDone: true, kps: made }, e.origin); } catch (err) {}
+});
+// окно открыто планировщиком — сообщаем, что готовы принять (повторяем, пока не придёт)
+function plannerHandshake() {
+  if (!window.opener || !/[?&]planner=1/.test(location.search)) return;
+  let n = 0;
+  const tick = () => { try { window.opener.postMessage({ pmKpReady: true }, '*'); } catch (e) {} if (++n < 60) setTimeout(tick, 1000); };
+  window.addEventListener('message', e => { if (PLANNER_ORIGIN.test(e.origin || '') && e.data && e.data.type === 'pm-planner-kp') n = 999; });
+  tick();
+}
+
 function render() {
   saveActiveKp();          // форма слева → данные активного КП
   buildKpSwitcher();       // обновить список КП для переключения
@@ -3347,6 +3538,12 @@ function render() {
   // 1. ОБЛОЖКА
   add(makeCover(), false);
 
+  const withPlans = KPS.some(k => k.plans && k.plans.length);
+  { const po = document.getElementById('plan-opts'); if (po) po.style.display = withPlans ? '' : 'none'; }
+  if (withPlans) {
+    // КП из планировщика: по каждому КП (комплекту) своим блоком — планы → листы моделей → таблица
+    renderPlannerKps(add, sideForNext, showSheets);
+  } else {
   // 2. ОБЩИЕ СТРАНИЦЫ ПРОДУКТА — все модели из всех КП + каталога, каждая 1 раз (без цены/назначения)
   // по одному листу на ВАРИАНТ (модель + габариты + исполнение + подпись/материал)
   const sheetUnits = buildSheetUnits();
@@ -3354,6 +3551,7 @@ function render() {
 
   // 3. ТАБЛИЦА на каждый КП (стопкой) — каждый со своими данными
   KPS.forEach(kp => add(withKpCurr(kp, () => makeTable(kp, sideForNext())), true));   // каждая таблица — в валюте своего КП
+  }
 
   // 4. ПРАЙС (один)
   if (PRICE.length) add(makePriceList(catalogGroups(PRICE), sideForNext()), true);
@@ -4252,6 +4450,7 @@ function exportState() {
     mount:g('kp-mount'), valid:g('kp-valid'), pay2p:g('kp-pay2-pct'), pay2t:g('kp-pay2-text'), pay3p:g('kp-pay3-pct'), pay3t:g('kp-pay3-text'), delivery:g('kp-delivery'), mountdays:g('kp-mountdays'),
     optDiscount:gc('opt-discount'), optSheets:gc('opt-sheets'), optPortfolio:gc('opt-portfolio'),
     optTrust:gc('opt-trust'), optNoteAssembly:gc('opt-note-assembly'), optCatalog:gc('opt-catalog'), optPrice:gc('opt-price'), opt2up:gc('opt-2up'), optFxAuto:gc('opt-fxauto'), optPay4:gc('opt-pay4'), optKmAuto:gc('opt-km-auto'),
+    optPlans: (document.getElementById('opt-plans-combo') || {}).checked ? 'combo' : 'pages', optPlanPos: g('opt-plan-pos'), optOnlyKp: gc('opt-only-kp'),
     lang: KP_LANG,
     items: ITEMS, kps: KPS, activeKp: activeKp, catalog: CATALOG, price: PRICE,
     dimOverrides: DIM_OVERRIDES };   // иначе изменённые размеры и пересчитанные цены теряются
@@ -4267,6 +4466,7 @@ function applyState(s) {
   set('kp-mount',s.mount); set('kp-valid',s.valid); set('kp-pay2-pct',s.pay2p); set('kp-pay2-text',s.pay2t); set('kp-pay3-pct',s.pay3p); set('kp-pay3-text',s.pay3t); set('kp-delivery',s.delivery); set('kp-mountdays',s.mountdays);
   chk('opt-discount',s.optDiscount); chk('opt-sheets',s.optSheets); chk('opt-portfolio',s.optPortfolio);
   chk('opt-trust',s.optTrust); chk('opt-note-assembly',s.optNoteAssembly); chk('opt-catalog',s.optCatalog); chk('opt-price',s.optPrice); chk('opt-2up',s.opt2up); chk('opt-fxauto', s.optFxAuto !== false); chk('opt-pay4', s.optPay4); chk('opt-km-auto', s.optKmAuto !== false);
+  chk(s.optPlans === 'combo' ? 'opt-plans-combo' : 'opt-plans-pages', true); if (s.optPlanPos) set('opt-plan-pos', s.optPlanPos); chk('opt-only-kp', s.optOnlyKp);
   const dw = document.getElementById('discount-wrap'); if (dw) dw.style.display = s.optDiscount ? '' : 'none';
   if (typeof buildCurrOptions === 'function') buildCurrOptions();   // набор валют под производителя
   { const cs = document.getElementById('kp-curr'); if (cs && s.curr) cs.value = s.curr; }
@@ -4299,6 +4499,7 @@ function applyState(s) {
   if (typeof buildShowcase === 'function') buildShowcase();
   renderItemsList(); render();
   window.__kpReady = true;  // сигнал готовности для headless-печати
+  if (typeof planImgLoad === 'function') planImgLoad();   // картинки планов — из IndexedDB, потом перерисовка
 }
 
 // ===== СОХРАНЕНИЕ КП: автосейв в браузер (localStorage) + запись в папку (File System Access API) =====
