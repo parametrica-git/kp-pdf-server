@@ -1,9 +1,13 @@
 {
-  "updated": "2026-11-19T14:39:03.554Z",
+  "updated": "2026-11-26T06:43:34.065Z",
   "version": 1,
   "sites": {
     "kz": {
       "mode": "from",
+      "planner": true
+    },
+    "ru": {
+      "mode": "show",
       "planner": true
     },
     "org": {
