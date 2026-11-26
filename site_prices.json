@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-26T06:43:34.065Z",
+  "updated": "2026-11-26T06:52:02.543Z",
   "version": 1,
   "sites": {
     "kz": {
@@ -7,7 +7,7 @@
       "planner": true
     },
     "ru": {
-      "mode": "show",
+      "mode": "from",
       "planner": true
     },
     "org": {
