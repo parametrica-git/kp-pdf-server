@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-27T21:30:11.385Z",
-  "count": 60,
+  "updated": "2026-11-28T03:35:44.013Z",
+  "count": 61,
   "items": [
     {
       "at": "2026-11-07T03:56:22.493Z",
@@ -361,6 +361,12 @@
       "source": "price-guard",
       "level": "warn",
       "text": "### Сторож цен — 2026-11-27T21:11 UTC\n\n- Wix: 66 из 66 как в хабе\n- parametrica.kz: расходилось 66 → перезапись цен: ок\n- .biz/.uk: расходилось (parametrica.biz — данные сайта: 66; parametrica.biz — карточки /benches/ (JSON-LD): 66; parametrica.uk — данные сайта: 66; parametrica.uk — карточки /benches/ (JSON-LD): 66; фид Google .biz (сайт /gmc-biz.xml): 64) → воркер выложен заново\n- parametrica.biz — данные сайта: 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- parametrica.biz — карточки /benches/ (JSON-LD): 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- parametrica.uk — данные сайта: 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- parametrica.uk — карточки /benches/ (JSON-LD): 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- parametrica.kz — data/products.json: 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- КП-генератор (kp.parametrica.kz): 66 из 66\n- фид Google .biz (сайт /gmc-biz.xml): 0 из 64 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- фид Google хаба (site=biz): 66 из 66\n- фид Google Wix (/gmc-org.xml): 65 из 65"
+    },
+    {
+      "at": "2026-11-28T03:34:59.009Z",
+      "source": "price-guard",
+      "level": "warn",
+      "text": "### Сторож цен — 2026-11-28T03:17 UTC\n\n- Wix: 66 из 66 как в хабе\n- .biz/.uk: расходилось (parametrica.biz — данные сайта: 66; parametrica.biz — карточки /benches/ (JSON-LD): 66; parametrica.uk — данные сайта: 66; parametrica.uk — карточки /benches/ (JSON-LD): 66; фид Google .biz (сайт /gmc-biz.xml): 64) → воркер выложен заново\n- parametrica.biz — данные сайта: 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- parametrica.biz — карточки /benches/ (JSON-LD): 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- parametrica.uk — данные сайта: 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- parametrica.uk — карточки /benches/ (JSON-LD): 0 из 66 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- parametrica.kz — data/products.json: 66 из 66\n- КП-генератор (kp.parametrica.kz): 66 из 66\n- фид Google .biz (сайт /gmc-biz.xml): 0 из 64 — НЕ сходится: Gi-3.53, P4.6, W2.12, FL1.235, P4.3, Wi-F, Wi-8, Gi-5.25\n- фид Google хаба (site=biz): 66 из 66\n- фид Google Wix (/gmc-org.xml): 65 из 65"
     }
   ]
 }
